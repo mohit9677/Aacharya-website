@@ -57,8 +57,8 @@ export default function Navbar() {
                         </nav>
 
                         <div className="header-buttons">
-                            <button className="btn-pill"><FiPhone /> Talk to Astrologers</button>
-                            <button className="btn-pill"><FiVideo /> Live Experts</button>
+                            <button className="btn-pill"><FiPhone /> Talk to AstroHarshit Ji</button>
+                            <button className="btn-pill"><FiVideo /> Get Live Consultation</button>
                             {user ? (
                                 <div className="user-menu" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <span style={{ fontWeight: 'bold' }}>Hello, {user.name}</span>
