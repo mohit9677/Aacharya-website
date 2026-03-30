@@ -198,9 +198,16 @@ const NumerologyPage = () => {
             {/* ── Hero Banner ── */}
             <div className="numerology-header">
                 <WovenLightBg height="100%" colorHue={0.1} />
-                <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '3rem 1rem 2.5rem' }}>
+                <div style={{ 
+                    position: 'relative', 
+                    zIndex: 1, 
+                    textAlign: 'left', 
+                    padding: '4rem 1.5rem 3rem',
+                    maxWidth: '1200px',
+                    margin: '0 auto'
+                }}>
                     <h1 style={{ color: '#fff', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', marginBottom: '1.5rem' }}>Numerology</h1>
-                    <div style={{ display: 'inline-flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                    <div style={{ display: 'inline-flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'flex-start' }}>
                         {['Ancient Vedic Science', 'Expert Astrologer Reading', 'Personalised Report'].map(tag => (
                             <span key={tag} style={{ background: 'rgba(212,175,55,0.2)', border: '1px solid rgba(212,175,55,0.5)', borderRadius: '999px', padding: '0.35rem 1rem', color: '#F2C94C', fontSize: '0.9rem', fontWeight: 600 }}>
                                 {tag}
