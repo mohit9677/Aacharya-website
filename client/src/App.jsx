@@ -13,8 +13,7 @@ import ContactPage from './pages/ContactPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 import { AuthProvider } from './context/AuthContext'
-import LoginPage from './pages/LoginPage'
-import SignupPage from './pages/SignupPage'
+import AuthPage from './pages/AuthPage'
 import HoroscopePage from './pages/HoroscopePage'
 import PanchangPage from './pages/PanchangPage'
 import NumerologyPage from './pages/NumerologyPage'
@@ -49,8 +48,8 @@ function App() {
                     <Route path="/blog" element={<BlogPage />} />
                     <Route path="/blog/:slug" element={<ArticleDetailPage />} />
                     <Route path="/contact" element={<ContactPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
+                    <Route path="/login" element={<AuthPage initialMode="login" />} />
+                    <Route path="/signup" element={<AuthPage initialMode="register" />} />
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
             </main>
