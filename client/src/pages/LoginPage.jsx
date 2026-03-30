@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import './Auth.css'; // We'll create this CSS file
+import BallpitBg from '../components/ui/BallpitBg';
+import './Auth.css';
 
 const LoginPage = () => {
     const [formData, setFormData] = useState({
@@ -23,6 +24,16 @@ const LoginPage = () => {
 
     return (
         <div className="auth-container">
+            <BallpitBg height="100%" config={{
+                count: 100,
+                gravity: 0.3,
+                friction: 0.995,
+                wallBounce: 0.3,
+                maxVelocity: 0.08,
+                minSize: 0.3,
+                maxSize: 0.8,
+                size0: 1.0,
+            }} />
             <div className="auth-card">
                 <h2>Welcome Back</h2>
                 <p className="auth-subtitle">Login to access your dashboard</p>

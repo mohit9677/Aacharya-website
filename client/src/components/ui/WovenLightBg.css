@@ -1,0 +1,51 @@
+/* WovenLightBg.css */
+
+.woven-light-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+.woven-light-bg canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Numerology header with particle bg */
+.numerology-header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        to bottom,
+        rgba(93, 25, 22, 0.95),
+        rgba(62, 14, 12, 0.9)
+    );
+    padding: 4rem 1rem 3rem;
+    text-align: center;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.numerology-header h1,
+.numerology-header p {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+
+.numerology-header h1 {
+    color: #FFFFFF;
+    text-shadow: 0 2px 20px rgba(212, 175, 55, 0.3);
+}
+
+.numerology-header p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import WovenLightBg from '../components/ui/WovenLightBg';
 import '../App.css';
 
 const NumerologyPage = () => {
@@ -18,7 +19,8 @@ const NumerologyPage = () => {
 
     return (
         <div className="page-wrapper">
-            <div className="page-header">
+            <div className="numerology-header">
+                <WovenLightBg height="100%" colorHue={0.1} />
                 <h1>Numerology</h1>
                 <p>Unlock the secrets hidden in your numbers</p>
             </div>

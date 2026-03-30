@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { FiArrowRight, FiShield, FiTrendingUp, FiCheck, FiStar, FiUser, FiGlobe } from 'react-icons/fi'
 import { RiStarSFill, RiDoubleQuotesL } from 'react-icons/ri'
+import ParticleTextEffect from '../components/ui/ParticleTextEffect'
+import CobeGlobe from '../components/ui/CobeGlobe'
 import './HomePage.css'
 
 export default function HomePage() {
@@ -13,9 +15,37 @@ export default function HomePage() {
                         <div className="hero-badge animate-in">
                             <RiStarSFill /> AI-Powered Vedic Astrology
                         </div>
-                        <h1 className="animate-in" style={{ animationDelay: '0.1s' }}>
-                            Unlock Your <span className="text-gradient">Cosmic Path</span>
-                        </h1>
+                        <div className="hero-particle-wrapper animate-in" style={{ animationDelay: '0.1s' }}>
+                            <ParticleTextEffect
+                                words={["Unlock Your", "Cosmic Path"]}
+                                canvasWidth={600}
+                                canvasHeight={120}
+                                fontSize={65}
+                                fontFamily="Cinzel"
+                                pixelSteps={4}
+                                drawAsPoints={true}
+                                bgColor="transparent"
+                            />
+                            <h1 className="sr-only">
+                                Unlock Your <span className="text-gradient">Cosmic Path</span>
+                            </h1>
+                        </div>
+                        <div className="hero-particle-subtitle animate-in" style={{ animationDelay: '0.15s' }}>
+                            <ParticleTextEffect
+                                words={[
+                                    "Career • Relationships",
+                                    "Destiny • Clarity",
+                                    "AI-Powered Vedic",
+                                ]}
+                                canvasWidth={550}
+                                canvasHeight={60}
+                                fontSize={22}
+                                fontFamily="Inter"
+                                pixelSteps={3}
+                                drawAsPoints={true}
+                                bgColor="transparent"
+                            />
+                        </div>
                         <p className="hero-subtitle animate-in" style={{ animationDelay: '0.2s' }}>
                             Gain instant clarity on your career, relationships, and destiny with
                             precision Vedic astrology readings powered by advanced AI.
@@ -110,22 +140,8 @@ export default function HomePage() {
                                 See Detailed Features
                             </Link>
                         </div>
-                        <div className="preview-visual glass-panel">
-                            {/* Mockup UI representation */}
-                            <div className="mockup-header">
-                                <div className="mockup-dot red"></div>
-                                <div className="mockup-dot yellow"></div>
-                                <div className="mockup-dot green"></div>
-                            </div>
-                            <div className="mockup-body">
-                                <div className="mockup-line title"></div>
-                                <div className="mockup-line"></div>
-                                <div className="mockup-line"></div>
-                                <div className="mockup-chart-placeholder">
-                                    <div className="mockup-pie"></div>
-                                </div>
-                                <div className="mockup-line"></div>
-                            </div>
+                        <div className="preview-visual preview-globe">
+                            <CobeGlobe />
                         </div>
                     </div>
                 </div>
