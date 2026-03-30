@@ -199,11 +199,7 @@ const NumerologyPage = () => {
             <div className="numerology-header">
                 <WovenLightBg height="100%" colorHue={0.1} />
                 <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '3rem 1rem 2.5rem' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>🔢</div>
-                    <h1 style={{ color: '#fff', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', marginBottom: '1rem' }}>Numerology</h1>
-                    <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '1.15rem', maxWidth: '600px', margin: '0 auto 1.5rem' }}>
-                        Every number carries a cosmic vibration. Discover how the numbers encoded in your name and birth date shape your destiny, relationships, and life purpose.
-                    </p>
+                    <h1 style={{ color: '#fff', fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', marginBottom: '1.5rem' }}>Numerology</h1>
                     <div style={{ display: 'inline-flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                         {['Ancient Vedic Science', 'Expert Astrologer Reading', 'Personalised Report'].map(tag => (
                             <span key={tag} style={{ background: 'rgba(212,175,55,0.2)', border: '1px solid rgba(212,175,55,0.5)', borderRadius: '999px', padding: '0.35rem 1rem', color: '#F2C94C', fontSize: '0.9rem', fontWeight: 600 }}>
