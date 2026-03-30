@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { FiInstagram, FiYoutube, FiTwitter, FiMail } from 'react-icons/fi'
+import EmojiRating from '../ui/EmojiRating'
 import logo from '../../assets/logo.svg'
 import './Footer.css'
 
@@ -26,10 +27,17 @@ export default function Footer() {
 
                     <div className="footer-socials">
                         <a href="https://www.instagram.com/astrobharatai" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FiInstagram /></a>
-                        <a href="#" aria-label="Twitter"><FiTwitter /></a> {/* Twitter not found, kept as placeholder */}
+                        <a href="#" aria-label="Twitter"><FiTwitter /></a>
                         <a href="https://www.youtube.com/@AstroBharatAI" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><FiYoutube /></a>
                         <a href="mailto:support@astrobharatai.com" aria-label="Email"><FiMail /></a>
                     </div>
+                </div>
+
+                {/* Emoji Rating Section */}
+                <div className="footer-rating">
+                    <EmojiRating
+                        onChange={(val) => console.log('User rating:', val)}
+                    />
                 </div>
 
                 <div className="footer-bottom">
@@ -39,3 +47,4 @@ export default function Footer() {
         </footer>
     )
 }
+

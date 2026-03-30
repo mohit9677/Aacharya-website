@@ -1,0 +1,68 @@
+/* BallpitBg.css */
+
+.ballpit-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+.ballpit-canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Panchang header with ballpit background */
+.panchang-header {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        135deg,
+        rgba(93, 25, 22, 0.92),
+        rgba(62, 14, 12, 0.88),
+        rgba(93, 25, 22, 0.92)
+    );
+    padding: 4rem 1rem 3rem;
+    text-align: center;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.panchang-header h1,
+.panchang-header p {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+
+.panchang-header h1 {
+    color: #FFFFFF;
+    text-shadow: 0 2px 20px rgba(212, 175, 55, 0.4);
+    font-size: 3rem;
+}
+
+.panchang-header p {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Ballpit section — above-footer ball drop area */
+.ballpit-section {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    background: linear-gradient(
+        to bottom,
+        var(--bg-cosmic, #FAF5EB),
+        rgba(93, 25, 22, 0.08) 40%,
+        rgba(93, 25, 22, 0.15)
+    );
+    margin-top: 3rem;
+}

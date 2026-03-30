@@ -1,0 +1,136 @@
+/* EmojiRating.css — Styled for dark (maroon) footer */
+
+.emoji-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.emoji-rating-prompt {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 0.25rem;
+}
+
+/* ── Emoji Buttons Row ── */
+.emoji-rating-buttons {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.emoji-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 14px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    outline: none;
+    transition: transform 0.3s ease;
+    padding: 0;
+}
+
+.emoji-btn:hover {
+    transform: scale(1.08);
+}
+
+.emoji-btn--active {
+    transform: scale(1.15);
+}
+
+.emoji-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+    user-select: none;
+    transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+    filter: grayscale(1);
+    opacity: 0.4;
+}
+
+.emoji-btn:hover .emoji-icon {
+    filter: grayscale(0.3);
+    opacity: 0.7;
+}
+
+.emoji-btn--active .emoji-icon {
+    filter: grayscale(0) drop-shadow(0 2px 6px rgba(212, 175, 55, 0.5));
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+/* ── Label Display ── */
+.emoji-rating-label-container {
+    position: relative;
+    height: 1.5rem;
+    width: 8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-rating-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+
+.emoji-rating-default {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+}
+
+.emoji-rating-label:not(.emoji-rating-default) {
+    color: var(--gold-light, #F2C94C);
+}
+
+.emoji-label--visible {
+    opacity: 1;
+    filter: blur(0);
+    transform: scale(1);
+}
+
+.emoji-label--hidden {
+    opacity: 0;
+    filter: blur(6px);
+    transform: scale(0.95);
+    pointer-events: none;
+}
+
+/* ── Decorative Divider ── */
+.emoji-rating-divider {
+    margin-top: 0.25rem;
+    height: 1px;
+    width: 4rem;
+    background: linear-gradient(to right, transparent, rgba(212, 175, 55, 0.3), transparent);
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+    .emoji-rating-buttons {
+        gap: 0.3rem;
+    }
+
+    .emoji-btn {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .emoji-icon {
+        font-size: 1.4rem;
+    }
+}
