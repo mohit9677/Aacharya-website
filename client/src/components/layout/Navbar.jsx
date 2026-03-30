@@ -5,10 +5,12 @@ import logo from '../../assets/logo.svg'
 import './Navbar.css'
 
 import { useAuth } from '../../context/AuthContext'
+import ComingSoonModal from '../ui/ComingSoonModal'
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
+    const [showComingSoon, setShowComingSoon] = useState(false)
     const { user, logout } = useAuth() || {}; // Handle potential null context if used outside provider (though unlikely here)
 
     useEffect(() => {
@@ -20,6 +22,7 @@ export default function Navbar() {
     }, [])
 
     return (
+        <>
         <header className={`app-header ${isScrolled ? 'scrolled' : ''}`}>
             {/* Top Bar: White - Brand & Actions */}
             <div className="header-top">
@@ -57,8 +60,8 @@ export default function Navbar() {
                         </nav>
 
                         <div className="header-buttons">
-                            <button className="btn-pill"><FiPhone /> Talk to AstroHarshit Ji</button>
-                            <button className="btn-pill"><FiVideo /> Get Live Consultation</button>
+                            <button className="btn-pill" onClick={() => setShowComingSoon(true)}><FiPhone /> Talk to AstroHarshit Ji</button>
+                            <button className="btn-pill" onClick={() => setShowComingSoon(true)}><FiVideo /> Get Live Consultation</button>
                             {user ? (
                                 <div className="user-menu" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <span style={{ fontWeight: 'bold' }}>Hello, {user.name}</span>
@@ -92,5 +95,8 @@ export default function Navbar() {
                 </div>
             </div>
         </header>
+
+        <ComingSoonModal isOpen={showComingSoon} onClose={() => setShowComingSoon(false)} />
+        </>
     )
 }
