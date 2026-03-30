@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { FiStar, FiPhone, FiMessageCircle } from 'react-icons/fi';
 import hemantBarua from '../assets/hemant_barua.png';
 import knRao from '../assets/kn_rao.png';
@@ -9,8 +10,11 @@ import deepakKapoor from '../assets/deepak_kapoor.png';
 import induPrakash from '../assets/indu_prakash.png';
 import premSharma from '../assets/prem_sharma.png';
 import sohiniShastri from '../assets/sohini_shastri.png';
+import ComingSoonModal from '../components/ui/ComingSoonModal';
 
 const AstrologersPage = () => {
+    const [showComingSoon, setShowComingSoon] = useState(false);
+    
     const astrologers = [
         { id: 1, name: "Dr. Hemant Barua", specialty: "Vedic Astrology", exp: "25+ Years", language: "English, Hindi", rating: 4.9, image: hemantBarua },
         { id: 2, name: "Shri K.N. Rao", specialty: "Vedic Astrology", exp: "50+ Years", language: "English, Hindi", rating: 5.0, image: knRao },
@@ -64,13 +68,15 @@ const AstrologersPage = () => {
                                 </div>
                             </div>
                             <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
-                                <button className="btn btn-secondary" style={{ flex: 1, padding: '0.5rem' }}>Chat</button>
-                                <button className="btn btn-primary" style={{ flex: 1, padding: '0.5rem' }}>Call</button>
+                                <button className="btn btn-secondary" style={{ flex: 1, padding: '0.5rem' }} onClick={() => setShowComingSoon(true)}>Chat</button>
+                                <button className="btn btn-primary" style={{ flex: 1, padding: '0.5rem' }} onClick={() => setShowComingSoon(true)}>Call</button>
                             </div>
                         </div>
                     ))}
                 </div>
             </section>
+
+            <ComingSoonModal isOpen={showComingSoon} onClose={() => setShowComingSoon(false)} />
         </div>
     );
 };

@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../App.css';
+import ComingSoonModal from '../components/ui/ComingSoonModal';
 
 const MandirPage = () => {
+    const [showComingSoon, setShowComingSoon] = useState(false);
+
     return (
         <div className="page-wrapper">
             <div className="page-header">
@@ -15,13 +18,13 @@ const MandirPage = () => {
                         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🕉️</div>
                         <h2>Live Darshan</h2>
                         <p>Watch live aarti from major temples across India.</p>
-                        <button className="btn btn-primary">Watch Now</button>
+                        <button className="btn btn-primary" onClick={() => setShowComingSoon(true)}>Watch Now</button>
                     </div>
                     <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center' }}>
                         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🙏</div>
                         <h2>Book Puja</h2>
                         <p>Perform personalized puja with certified pandits online.</p>
-                        <button className="btn btn-secondary">Book Service</button>
+                        <button className="btn btn-secondary" onClick={() => setShowComingSoon(true)}>Book Service</button>
                     </div>
                 </div>
 
@@ -36,6 +39,8 @@ const MandirPage = () => {
                     </div>
                 </div>
             </section>
+
+            <ComingSoonModal isOpen={showComingSoon} onClose={() => setShowComingSoon(false)} />
         </div>
     );
 };
