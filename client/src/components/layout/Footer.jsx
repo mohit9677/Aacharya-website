@@ -8,14 +8,7 @@ export default function Footer() {
         <footer className="footer">
             <div className="container">
                 <div className="footer-content">
-                    <div className="footer-brand">
-                        <Link to="/" className="footer-logo">
-                            <img src={logo} alt="AstroBharat AI" className="footer-logo-img" />
-                        </Link>
-                        <p className="footer-tagline">
-                            Ancient Wisdom, Modern Insight.
-                        </p>
-                    </div>
+
 
                     <div className="footer-links">
                         <Link to="/about">About</Link>
