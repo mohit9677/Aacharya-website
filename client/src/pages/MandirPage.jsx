@@ -13,18 +13,12 @@ const MandirPage = () => {
             </div>
 
             <section className="container">
-                <div className="grid-cols-2">
+                <div style={{ maxWidth: '600px', margin: '0 auto' }}>
                     <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center' }}>
                         <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🕉️</div>
                         <h2>Live Darshan</h2>
                         <p>Watch live aarti from major temples across India.</p>
                         <button className="btn btn-primary" onClick={() => setShowComingSoon(true)}>Watch Now</button>
-                    </div>
-                    <div className="glass-panel" style={{ padding: '2rem', textAlign: 'center' }}>
-                        <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🙏</div>
-                        <h2>Book Puja</h2>
-                        <p>Perform personalized puja with certified pandits online.</p>
-                        <button className="btn btn-secondary" onClick={() => setShowComingSoon(true)}>Book Service</button>
                     </div>
                 </div>
 

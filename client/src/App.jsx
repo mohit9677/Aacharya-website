@@ -18,11 +18,12 @@ import SignupPage from './pages/SignupPage'
 import HoroscopePage from './pages/HoroscopePage'
 import PanchangPage from './pages/PanchangPage'
 import NumerologyPage from './pages/NumerologyPage'
-import AstrologersPage from './pages/AstrologersPage'
+
 import AIAstrologersPage from './pages/AIAstrologersPage'
 import LearningPage from './pages/LearningPage'
 import MandirPage from './pages/MandirPage'
 import MartPage from './pages/MartPage'
+import BookPujaPage from './pages/BookPujaPage'
 
 import FloatingChatbot from './components/FloatingChatbot'
 
@@ -39,11 +40,11 @@ function App() {
                     <Route path="/horoscope/:type" element={<HoroscopePage />} />
                     <Route path="/panchang" element={<PanchangPage />} />
                     <Route path="/numerology" element={<NumerologyPage />} />
-                    <Route path="/astrologers" element={<AstrologersPage />} />
                     <Route path="/ai-astrologers" element={<AIAstrologersPage />} />
                     <Route path="/learning" element={<LearningPage />} />
                     <Route path="/mandir" element={<MandirPage />} />
                     <Route path="/mart" element={<MartPage />} />
+                    <Route path="/book-puja" element={<BookPujaPage />} />
                     <Route path="/book" element={<BookingPage />} />
                     <Route path="/reports" element={<ReportsPage />} />
                     <Route path="/blog" element={<BlogPage />} />
