@@ -171,47 +171,78 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
             display: 'flex',
             flexDirection: 'column',
             height: '100%',
-            background: isWidget ? '#fff' : 'transparent'
+            background: isWidget ? '#D7D7D7' : 'transparent'
         }}>
             {isWidget && (
                 <div style={{
-                    padding: '1rem',
-                    background: 'var(--primary-maroon)',
-                    color: 'var(--primary-cream)',
-                    borderTopLeftRadius: '12px',
-                    borderTopRightRadius: '12px',
+                    padding: '0.75rem 1rem',
+                    background: 'transparent',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
                 }}>
-                    <span style={{ fontWeight: 'bold' }}>AI Vedic Astrologer</span>
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}>
-                        <FiX size={20} />
+                    {/* Title with background only as wide as the text */}
+                    <span style={{
+                        display: 'inline-block',
+                        background: 'linear-gradient(135deg, #5D1916 0%, #8B2422 100%)',
+                        color: '#F5E6C8',
+                        fontWeight: 700,
+                        fontSize: '0.95rem',
+                        padding: '4px 12px',
+                        borderRadius: '8px',
+                        letterSpacing: '0.02em',
+                        boxShadow: '0 2px 8px rgba(93,25,22,0.35)',
+                    }}>AI Vedic Astrologer</span>
+
+                    {/* Close button — coral accent */}
+                    <button onClick={onClose} style={{
+                        background: 'linear-gradient(135deg, #e05252, #c0392b)',
+                        border: 'none',
+                        color: '#fff',
+                        cursor: 'pointer',
+                        borderRadius: '50%',
+                        width: '28px',
+                        height: '28px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 6px rgba(192,57,43,0.45)',
+                        flexShrink: 0,
+                    }}>
+                        <FiX size={15} />
                     </button>
                 </div>
             )}
 
             <div className="chat-window" style={{
                 flex: 1,
-                padding: '1.5rem',
+                minHeight: 0,          /* critical: lets flex child shrink below content size */
+                padding: '1rem',
                 overflowY: 'auto',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '1rem',
-                maxHeight: isWidget ? '400px' : 'none'
+                gap: '0.85rem',
+                background: '#D7D7D7'
             }}>
                 {messages.map(msg => (
                     <div key={msg.id} style={{
                         alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
                         maxWidth: '80%',
-                        background: msg.sender === 'user' ? 'var(--gold-gradient)' : '#f0f0f0',
-                        color: msg.sender === 'user' ? '#000' : '#333',
-                        padding: '0.8rem 1rem',
+                        /* AI: warm ivory cream | User: deep maroon */
+                        background: msg.sender === 'user'
+                            ? 'linear-gradient(135deg, #5D1916 0%, #8B2422 100%)'
+                            : '#FFF8F0',
+                        color: msg.sender === 'user' ? '#F5E6C8' : '#3a1a1a',
+                        padding: '0.75rem 1rem',
                         borderRadius: '1rem',
-                        borderBottomRightRadius: msg.sender === 'user' ? '0' : '1rem',
-                        borderBottomLeftRadius: msg.sender === 'ai' ? '0' : '1rem',
-                        fontSize: '0.9rem',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                        borderBottomRightRadius: msg.sender === 'user' ? '2px' : '1rem',
+                        borderBottomLeftRadius: msg.sender === 'ai' ? '2px' : '1rem',
+                        fontSize: '0.88rem',
+                        lineHeight: '1.5',
+                        boxShadow: msg.sender === 'user'
+                            ? '0 2px 8px rgba(93,25,22,0.35)'
+                            : '0 1px 4px rgba(0,0,0,0.12)',
+                        border: msg.sender === 'ai' ? '1px solid rgba(212,175,55,0.25)' : 'none',
                     }}>
                         {msg.text}
                     </div>
@@ -219,12 +250,15 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
                 {isTyping && (
                     <div style={{
                         alignSelf: 'flex-start',
-                        background: '#f0f0f0',
-                        padding: '0.5rem 1rem',
+                        background: '#FFF8F0',
+                        border: '1px solid rgba(212,175,55,0.25)',
+                        padding: '0.45rem 0.9rem',
                         borderRadius: '1rem',
+                        borderBottomLeftRadius: '2px',
                         fontSize: '0.8rem',
-                        color: '#666',
-                        fontStyle: 'italic'
+                        color: '#8B5E3C',
+                        fontStyle: 'italic',
+                        boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
                     }}>
                         Consulting stars...
                     </div>
@@ -234,10 +268,10 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
 
             <form onSubmit={handleSend} style={{
                 padding: '1rem',
-                borderTop: '1px solid var(--border-subtle)',
+                borderTop: '1px solid rgba(0,0,0,0.1)',
                 display: 'flex',
                 gap: '0.5rem',
-                background: isWidget ? '#f9f9f9' : 'transparent',
+                background: isWidget ? '#D7D7D7' : 'transparent',
                 borderBottomLeftRadius: isWidget ? '12px' : '0',
                 borderBottomRightRadius: isWidget ? '12px' : '0'
             }}>
@@ -255,21 +289,23 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
                         fontSize: '0.9rem'
                     }}
                 />
-                <button type="submit" className="btn btn-primary" style={{
+                <button type="submit" style={{
                     borderRadius: '50%',
-                    width: '50px',
-                    height: '50px',
+                    width: '46px',
+                    height: '46px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    padding: 0, // Reset padding
-                    background: 'var(--primary-gold)',
-                    border: '2px solid rgba(255,255,255,0.2)',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
-                    transition: 'transform 0.2s',
-                    cursor: 'pointer'
+                    padding: 0,
+                    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
+                    border: 'none',
+                    boxShadow: '0 3px 10px rgba(212,175,55,0.5)',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    cursor: 'pointer',
+                    color: '#fff',
+                    flexShrink: 0,
                 }}>
-                    <FiSend size={20} style={{ marginLeft: '-2px' }} /> {/* Slight offset to visually center */}
+                    <FiSend size={18} />
                 </button>
             </form>
         </div>

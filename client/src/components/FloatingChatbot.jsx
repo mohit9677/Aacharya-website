@@ -1,193 +1,288 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import ChatInterface from './ChatInterface';
 import chatbotIdle from '../assets/chatbot_idle.webp';
 import chatbotActive from '../assets/chatbot_active.webp';
 
+// Button area height (img 80px + label ~20px + gap ~10px + margin ~10px)
+const BTN_AREA = 120;
+
+const getPhoneHeight = () => {
+    const isMobile = window.innerWidth <= 640;
+    const isTablet = window.innerWidth <= 1024 && window.innerWidth > 640;
+    
+    // Calculate offsets based on responsive positions
+    // Desktop: bottom (48) + button (120) + gap (16) + frame border (10)
+    // Tablet: bottom (24) + button (120) + gap (16) + frame border (10)
+    // Mobile: bottom (12) + button (100) + gap (8) + frame border (10)
+    
+    let offset = 48 + 120 + 16 + 10;
+    let maxHeight = 520;
+    
+    if (isMobile) {
+        offset = 12 + 100 + 8 + 10;
+        maxHeight = 460;
+    } else if (isTablet) {
+        offset = 24 + 120 + 16 + 10;
+        maxHeight = 480;
+    }
+    
+    return Math.min(maxHeight, window.innerHeight - offset);
+};
+
 const FloatingChatbot = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const [position, setPosition] = useState({ bottom: 32, right: 32 }); // 2rem = 32px
-    const [isDragging, setIsDragging] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const dragStartRef = useRef({ x: 0, y: 0 });
-    const positionStartRef = useRef({ bottom: 32, right: 32 });
+    const [phoneHeight, setPhoneHeight] = useState(getPhoneHeight);
 
-    const toggleChat = () => {
-        if (!isDragging) setIsOpen(!isOpen);
-    };
+    useEffect(() => {
+        const onResize = () => setPhoneHeight(getPhoneHeight());
+        window.addEventListener('resize', onResize);
+        // Initial call to ensure correct height on mount
+        onResize();
+        return () => window.removeEventListener('resize', onResize);
+    }, []);
 
-    const handleMouseDown = (e) => {
-        if (isOpen) return; // Disable drag when chat is open
-        setIsDragging(false);
-        dragStartRef.current = { x: e.clientX, y: e.clientY };
-        positionStartRef.current = { ...position };
-
-        const handleMouseMove = (mm) => {
-            const dx = dragStartRef.current.x - mm.clientX;
-            const dy = dragStartRef.current.y - mm.clientY;
-
-            if (Math.abs(dx) > 5 || Math.abs(dy) > 5) setIsDragging(true);
-
-            let newRight = positionStartRef.current.right + dx;
-            let newBottom = positionStartRef.current.bottom + dy;
-
-            const padding = 10;
-            const maxRight = window.innerWidth - 80;
-            const maxBottom = window.innerHeight - 80;
-
-            if (newRight < padding) newRight = padding;
-            if (newRight > maxRight) newRight = maxRight;
-            if (newBottom < padding) newBottom = padding;
-            if (newBottom > maxBottom) newBottom = maxBottom;
-
-            setPosition({
-                right: newRight,
-                bottom: newBottom
-            });
-        };
-
-        const handleMouseUp = () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('mouseup', handleMouseUp);
-        };
-
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mouseup', handleMouseUp);
-    };
-
-    const handleTouchStart = (e) => {
-        if (isOpen) return;
-        const touch = e.touches[0];
-        setIsDragging(false);
-        dragStartRef.current = { x: touch.clientX, y: touch.clientY };
-        positionStartRef.current = { ...position };
-    };
-
-    const handleTouchMove = (e) => {
-        const touch = e.touches[0];
-        const dx = dragStartRef.current.x - touch.clientX;
-        const dy = dragStartRef.current.y - touch.clientY;
-
-        if (Math.abs(dx) > 5 || Math.abs(dy) > 5) setIsDragging(true);
-
-        let newRight = positionStartRef.current.right + dx;
-        let newBottom = positionStartRef.current.bottom + dy;
-
-        const padding = 10;
-        const maxRight = window.innerWidth - 80;
-        const maxBottom = window.innerHeight - 80;
-
-        if (newRight < padding) newRight = padding;
-        if (newRight > maxRight) newRight = maxRight;
-        if (newBottom < padding) newBottom = padding;
-        if (newBottom > maxBottom) newBottom = maxBottom;
-
-        setPosition({
-            right: newRight,
-            bottom: newBottom
-        });
-    };
+    const toggleChat = () => setIsOpen(prev => !prev);
 
     return (
-        <div style={{
-            position: 'fixed',
-            bottom: `${position.bottom}px`,
-            right: `${position.right}px`,
-            zIndex: 1000,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-end',
-            gap: '1rem',
-            touchAction: 'none'
-        }}>
-            {/* Chat Window Popover */}
-            {isOpen && (
-                <div style={{
-                    width: '350px',
-                    height: '500px',
-                    background: '#fff',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'hidden',
-                    marginBottom: '10px',
-                    animation: 'slideUp 0.3s ease-out'
-                }}>
-                    <ChatInterface isWidget={true} onClose={toggleChat} />
-                </div>
-            )}
+        <>
+            {/* ── Responsive styles ── */}
+            <style>{`
+                .ai-chatbot-root {
+                    position: fixed;
+                    bottom: 48px;
+                    right: 40px;
+                    z-index: 1000;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                    gap: 1rem;
+                }
 
-            {/* Floating Icon Button */}
-            <button
-                onMouseDown={handleMouseDown}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onClick={toggleChat}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                style={{
-                    width: '90px',
-                    // Let height be auto to accommodate text, but min-height keeps hit area
-                    minHeight: '90px',
-                    borderRadius: '0',
-                    border: 'none',
-                    background: 'transparent',
-                    padding: 0,
-                    cursor: isDragging ? 'grabbing' : 'pointer',
-                    filter: isHovered
-                        ? 'drop-shadow(0 8px 12px rgba(0,0,0,0.4))'
-                        : 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))',
-                    overflow: 'visible',
-                    transition: isDragging ? 'none' : 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease',
-                    transform: isOpen
-                        ? 'scale(0.9)'
-                        : isHovered
-                            ? 'scale(1.1)'
-                            : 'scale(1)',
-                    display: 'flex',
-                    flexDirection: 'column', // Stack vertical
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: 1001,
-                    gap: '5px' // Space between image and text
-                }}
-            >
-                <img
-                    src={(isOpen || isHovered) ? chatbotActive : chatbotIdle}
-                    alt="Chat with AI Baba"
-                    style={{
-                        width: '80px', // Slightly smaller image to fit comfortably
-                        height: '80px',
-                        objectFit: 'contain',
-                        transition: 'opacity 0.2s ease-in-out'
-                    }}
-                    draggable={false}
-                />
-                <span style={{
-                    display: 'inline-block',
-                    background: 'rgba(255,255,255,0.9)', // Semi-transparent white
-                    color: '#800000', // Maroon text for contrast
-                    padding: '2px 8px',
-                    borderRadius: '12px',
-                    fontSize: '0.85rem',
-                    fontWeight: 'bold',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-                    whiteSpace: 'nowrap',
-                    pointerEvents: 'none' // Let clicks pass to button
-                }}>
-                    AI Baba
-                </span>
-            </button>
+                /* Phone frame shell */
+                .ai-phone-frame {
+                    position: relative;
+                    margin-bottom: 10px;
+                    animation: chatSlideUp 0.3s ease-out;
+                    width: 290px;
+                    background: #111;
+                    border-radius: 32px;
+                    border: 5px solid #111;
+                    box-shadow: none;
+                    padding: 0;
+                    overflow: hidden;
+                }
 
-            <style>
-                {`
-                    @keyframes slideUp {
-                        from { opacity: 0; transform: translateY(20px); }
-                        to { opacity: 1; transform: translateY(0); }
+                /* Phone screen area */
+                .ai-phone-screen {
+                    position: relative;
+                    background: #D7D7D7;
+                    /* height set via JS inline style for dynamic accuracy */
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+
+                /* Chat scroll area — flex fills remaining height */
+                .ai-chat-content {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    padding-top: 42px;
+                    overflow: hidden;
+                    min-height: 0;
+                }
+
+                /* Floating button */
+                .ai-chatbot-btn {
+                    width: 90px;
+                    min-height: 90px;
+                    border-radius: 0;
+                    border: none;
+                    background: transparent;
+                    padding: 0;
+                    cursor: pointer;
+                    overflow: visible;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1001;
+                    gap: 5px;
+                }
+                .ai-chatbot-btn img {
+                    width: 80px;
+                    height: 80px;
+                    object-fit: contain;
+                    transition: opacity 0.2s ease-in-out;
+                    display: block;
+                }
+
+                /* ── Tablet (641px – 1024px) ── */
+                @media (max-width: 1024px) and (min-width: 641px) {
+                    .ai-chatbot-root {
+                        bottom: 24px;
+                        right: 16px;
                     }
-                `}
-            </style>
-        </div>
+                    .ai-phone-frame {
+                        width: 265px;
+                    }
+                    .ai-phone-screen {
+                        height: min(480px, calc(100dvh - 110px));
+                    }
+                }
+
+                /* ── Mobile (≤640px) — stay bottom-right, just shrink frame ── */
+                @media (max-width: 640px) {
+                    .ai-chatbot-root {
+                        bottom: 12px;
+                        right: 12px;
+                    }
+                    .ai-phone-frame {
+                        width: 260px;
+                        border-radius: 26px;
+                    }
+                    .ai-phone-screen {
+                        height: min(460px, calc(100dvh - 100px));
+                    }
+                    .ai-chatbot-btn {
+                        width: 72px;
+                        min-height: 72px;
+                    }
+                    .ai-chatbot-btn img {
+                        width: 62px;
+                        height: 62px;
+                    }
+                }
+
+                /* ── Very small phones (≤380px) ── */
+                @media (max-width: 380px) {
+                    .ai-phone-frame {
+                        width: 230px;
+                        border-radius: 22px;
+                    }
+                    .ai-phone-screen {
+                        height: min(420px, calc(100dvh - 100px));
+                    }
+                }
+
+                @keyframes chatSlideUp {
+                    from { opacity: 0; transform: translateY(24px); }
+                    to   { opacity: 1; transform: translateY(0); }
+                }
+            `}</style>
+
+            <div className="ai-chatbot-root">
+
+                {/* ── Phone Frame ── */}
+                {isOpen && (
+                    <div className="ai-phone-frame">
+
+                        {/* Side buttons */}
+                        <span style={{
+                            position: 'absolute', right: '-9px', top: '80px',
+                            width: '5px', height: '32px',
+                            background: '#333', borderRadius: '3px', zIndex: 5,
+                        }} />
+                        <span style={{
+                            position: 'absolute', left: '-9px', top: '90px',
+                            width: '5px', height: '22px',
+                            background: '#333', borderRadius: '3px', zIndex: 5,
+                        }} />
+                        <span style={{
+                            position: 'absolute', left: '-9px', top: '124px',
+                            width: '5px', height: '34px',
+                            background: '#333', borderRadius: '3px', zIndex: 5,
+                        }} />
+
+                        {/* Screen */}
+                        <div className="ai-phone-screen" style={{ height: `${phoneHeight}px` }}>
+
+                            {/* Dynamic Island overlay */}
+                            <div style={{
+                                position: 'absolute',
+                                top: '8px', left: 0, right: 0,
+                                zIndex: 20,
+                                pointerEvents: 'none',
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}>
+                                <div style={{
+                                    background: '#000',
+                                    width: '90px', height: '26px',
+                                    borderRadius: '999px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '7px',
+                                    padding: '0 12px',
+                                    boxShadow: '0 1px 8px rgba(0,0,0,0.55)',
+                                }}>
+                                    <div style={{
+                                        width: '7px', height: '7px',
+                                        borderRadius: '50%',
+                                        background: '#1a1236',
+                                        border: '1.5px solid #2a2050',
+                                        boxShadow: 'inset 0 0 3px rgba(80,60,200,0.4)',
+                                    }} />
+                                    <div style={{
+                                        width: '9px', height: '9px',
+                                        borderRadius: '50%',
+                                        background: '#0d0d14',
+                                        border: '2px solid #1a1a2e',
+                                        boxShadow: '0 0 0 1px #333, inset 0 0 4px rgba(60,80,200,0.5)',
+                                    }} />
+                                </div>
+                            </div>
+
+                            {/* Chat area */}
+                            <div className="ai-chat-content">
+                                <ChatInterface isWidget={true} onClose={toggleChat} />
+                            </div>
+
+                        </div>
+                    </div>
+                )}
+
+                {/* ── Floating Button ── */}
+                <button
+                    className="ai-chatbot-btn"
+                    onClick={toggleChat}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    style={{
+                        filter: isHovered
+                            ? 'drop-shadow(0 8px 12px rgba(0,0,0,0.4))'
+                            : 'drop-shadow(0 4px 6px rgba(0,0,0,0.3))',
+                        transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease',
+                        transform: isOpen
+                            ? 'scale(0.9)'
+                            : isHovered ? 'scale(1.1)' : 'scale(1)',
+                    }}
+                >
+                    <img
+                        src={(isOpen || isHovered) ? chatbotActive : chatbotIdle}
+                        alt="Chat with AI Baba"
+                        draggable={false}
+                    />
+                    <span style={{
+                        display: 'inline-block',
+                        background: 'rgba(255,255,255,0.9)',
+                        color: '#800000',
+                        padding: '2px 8px',
+                        borderRadius: '12px',
+                        fontSize: '0.85rem',
+                        fontWeight: 'bold',
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+                        whiteSpace: 'nowrap',
+                        pointerEvents: 'none',
+                    }}>
+                        AI Baba
+                    </span>
+                </button>
+
+            </div>
+        </>
     );
 };
 
