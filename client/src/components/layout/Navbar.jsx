@@ -25,13 +25,7 @@ export default function Navbar() {
             <div className="header-top">
                 <div className="container header-top-content">
                     {/* Brand */}
-                    <Link to="/" className="logo-brand" onClick={() => setIsOpen(false)}>
-                        <img src={logo} alt="AstroBharat AI" className="header-logo" />
-                        <div className="brand-text-wrapper">
-                            <span className="brand-name">AstroBharat<span className="text-maroon">AI</span></span>
-                            <span className="brand-tagline">STARS ALIGN DESTINY DIVINE</span>
-                        </div>
-                    </Link>
+                    {/* Brand Removed */}
 
                     {/* Desktop Actions */}
                     <div className="header-actions">
