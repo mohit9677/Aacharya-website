@@ -17,7 +17,6 @@ import AuthPage from './pages/AuthPage'
 import HoroscopePage from './pages/HoroscopePage'
 import PanchangPage from './pages/PanchangPage'
 import NumerologyPage from './pages/NumerologyPage'
-import AstrologersPage from './pages/AstrologersPage'
 import AIAstrologersPage from './pages/AIAstrologersPage'
 import LearningPage from './pages/LearningPage'
 import MandirPage from './pages/MandirPage'
@@ -38,7 +37,6 @@ function App() {
                     <Route path="/horoscope/:type" element={<HoroscopePage />} />
                     <Route path="/panchang" element={<PanchangPage />} />
                     <Route path="/numerology" element={<NumerologyPage />} />
-                    <Route path="/astrologers" element={<AstrologersPage />} />
                     <Route path="/ai-astrologers" element={<AIAstrologersPage />} />
                     <Route path="/learning" element={<LearningPage />} />
                     <Route path="/mandir" element={<MandirPage />} />
