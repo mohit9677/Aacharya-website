@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import { FiInstagram, FiYoutube, FiTwitter, FiMail } from 'react-icons/fi'
-import EmojiRating from '../ui/EmojiRating'
 import logo from '../../assets/logo.svg'
 import './Footer.css'
 
@@ -9,14 +8,7 @@ export default function Footer() {
         <footer className="footer">
             <div className="container">
                 <div className="footer-content">
-                    <div className="footer-brand">
-                        <Link to="/" className="footer-logo">
-                            <img src={logo} alt="AstroBharat AI" className="footer-logo-img" />
-                        </Link>
-                        <p className="footer-tagline">
-                            Ancient Wisdom, Modern Insight.
-                        </p>
-                    </div>
+
 
                     <div className="footer-links">
                         <Link to="/about">About</Link>
@@ -33,12 +25,6 @@ export default function Footer() {
                     </div>
                 </div>
 
-                {/* Emoji Rating Section */}
-                <div className="footer-rating">
-                    <EmojiRating
-                        onChange={(val) => console.log('User rating:', val)}
-                    />
-                </div>
 
                 <div className="footer-bottom">
                     <p>&copy; {new Date().getFullYear()} AstroBharat AI. All rights reserved.</p>

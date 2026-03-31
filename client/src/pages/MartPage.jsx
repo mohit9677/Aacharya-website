@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 import rubyImg from '../assets/ruby_stone.webp';
 import rudrakshaImg from '../assets/rudraksha_mala.webp';
@@ -6,8 +6,11 @@ import pyramidImg from '../assets/crystal_pyramid.jpg';
 import sapphireImg from '../assets/blue_sapphire.jpg';
 import ganeshImg from '../assets/ganesh_idol.jpg';
 import incenseImg from '../assets/sandalwood_incense.webp';
+import ComingSoonModal from '../components/ui/ComingSoonModal';
 
 const MartPage = () => {
+    const [showComingSoon, setShowComingSoon] = useState(false);
+
     const products = [
         { id: 1, name: "Natural Ruby (Manik)", category: "Gemstone", price: "₹15,000", image: rubyImg },
         { id: 2, name: "5 Mukhi Rudraksha", category: "Rudraksha", price: "₹500", image: rudrakshaImg },
@@ -34,11 +37,13 @@ const MartPage = () => {
                             <h3>{product.name}</h3>
                             <p style={{ color: '#666', marginBottom: '0.5rem' }}>{product.category}</p>
                             <p className="text-gold" style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '1.5rem' }}>{product.price}</p>
-                            <button className="btn btn-secondary">Add to Cart</button>
+                            <button className="btn btn-secondary" onClick={() => setShowComingSoon(true)}>Add to Cart</button>
                         </div>
                     ))}
                 </div>
             </section>
+
+            <ComingSoonModal isOpen={showComingSoon} onClose={() => setShowComingSoon(false)} />
         </div>
     );
 };

@@ -49,15 +49,15 @@
 }
 
 .brand-name {
-    font-family: var(--font-heading);
-    font-size: 1.6rem;
-    /* More compact */
+    font-family: var(--font-body);
+    font-size: clamp(1.1rem, 1.6vw, 1.6rem);
+    /* More compact & fluid */
     font-weight: 800;
     color: #5D1916;
     line-height: 1;
     letter-spacing: -0.02em;
     white-space: nowrap;
-    /* Prevent wrapping */
+    /* Removed margin-right: auto to let space-between work evenly */
 }
 
 .text-maroon {
@@ -79,8 +79,8 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-    /* Significantly reduced from 2.5rem */
+    gap: clamp(0.5rem, 1.5vw, 1.5rem);
+    /* Fluid gap */
     flex-wrap: nowrap;
     /* Prevent wrapping */
 }
@@ -88,16 +88,16 @@
 .top-nav-items {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    /* Reduced from 2rem */
+    gap: clamp(0.5rem, 1.2vw, 1.25rem);
+    /* Fluid gap */
 }
 
 .nav-item {
     font-family: var(--font-body);
     font-weight: 600;
     color: #333;
-    font-size: 0.95rem;
-    /* Standard size */
+    font-size: clamp(0.75rem, 0.9vw, 0.95rem);
+    /* Fluid size */
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -120,10 +120,11 @@
 }
 
 .btn-pill {
-    padding: 0.5rem 1rem;
-    /* Standard padding */
+    padding: clamp(0.3rem, 0.6vw, 0.5rem) clamp(0.6rem, 1.2vw, 1rem);
+    /* Fluid padding */
     border-radius: 50px;
-    font-size: 0.9rem;
+    font-size: clamp(0.75rem, 0.85vw, 0.9rem);
+    /* Fluid text */
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -158,7 +159,14 @@
 .main-nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    justify-content: space-between;
+    gap: clamp(1rem, 2vw, 2rem);
+}
+
+.bottom-nav-center {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 2vw, 2rem);
 }
 
 .main-link {
@@ -166,16 +174,70 @@
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    font-size: 1rem;
+    font-size: clamp(0.85rem, 1vw, 1rem);
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: clamp(0.3rem, 0.5vw, 0.5rem);
     transition: color 0.3s;
+    white-space: nowrap;
 }
 
 .main-link:hover,
 .main-link.active {
     color: var(--gold-primary);
+}
+
+.book-puja-btn {
+    height: clamp(36px, 4vw, 42px);
+    padding: 0 clamp(1rem, 1.5vw, 1.5rem);
+    position: relative;
+    background-color: #FFFDD0; /* Creamy color before hover */
+    cursor: pointer;
+    border: 2px solid #FFFDD0;
+    overflow: hidden;
+    border-radius: 30px;
+    color: #5D1916 !important;
+    transition: all 0.5s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.book-puja-btn .btn-txt {
+    position: relative;
+    z-index: 1;
+    font-weight: 800;
+    letter-spacing: clamp(1px, 0.2vw, 2.5px);
+    text-transform: uppercase;
+    font-size: clamp(0.7rem, 0.8vw, 0.9rem);
+}
+
+.book-puja-btn.btn-type1::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: all 0.5s ease-in-out;
+    background-color: var(--gold-primary, #D4AF37); /* Hover golden color */
+    border-radius: 30px;
+    visibility: hidden;
+    height: 10px;
+    width: 10px;
+    z-index: 0;
+}
+
+.book-puja-btn:hover {
+    box-shadow: 1px 1px 200px var(--gold-primary, #D4AF37);
+    color: #5D1916 !important;
+    border-color: var(--gold-primary, #D4AF37);
+}
+
+.book-puja-btn.btn-type1:hover::after {
+    visibility: visible;
+    transform: scale(100) translateX(2px);
 }
 
 .home-icon {
@@ -189,12 +251,58 @@
     cursor: pointer;
 }
 
+/* Custom Alignment Grid for Headers */
+@media (min-width: 1200px) {
+    .header-layout-grid {
+        display: grid !important;
+        grid-template-columns: clamp(260px, 28vw, 360px) 1fr clamp(360px, 35vw, 520px);
+        align-items: center;
+        width: 100%;
+        gap: 0;
+    }
+    .grid-left {
+        display: flex;
+        justify-content: flex-start;
+        min-width: 0;
+    }
+    .grid-center {
+        display: flex;
+        justify-content: flex-start;
+        min-width: 0;
+    }
+    .grid-right {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        min-width: 0;
+    }
+    
+    /* Strict anchoring to visual elements on grid points */
+    .align-left-anchor {
+        justify-content: flex-start;
+        padding-left: clamp(1.5rem, 2vw, 2.2rem);
+    }
+    .align-center-anchor {
+        justify-content: flex-start;
+    }
+    .align-right-anchor {
+        justify-content: flex-end;
+        padding-right: clamp(0.5rem, 1vw, 1rem);
+    }
+}
+
 /* Mobile Responsive */
-@media (max-width: 991px) {
+@media (max-width: 1199px) {
 
     .header-actions,
+    .top-nav-items,
     .brand-tagline {
         display: none;
+    }
+
+    .brand-name {
+        font-size: 1.25rem;
+        white-space: normal;
     }
 
     .navbar-toggle {
@@ -224,8 +332,21 @@
         gap: 1.5rem;
     }
 
+    .bottom-nav-center {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
     .main-link {
         font-size: 1.25rem;
+    }
+
+    .book-puja-btn {
+        margin-left: 0;
+        margin-top: 1rem;
+        width: 100%;
     }
 }
 

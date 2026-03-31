@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../App.css';
 import vedicImg from '../assets/vedic_astrology_course.png';
 import nakshatraImg from '../assets/nakshatras_course.png';
@@ -6,8 +6,11 @@ import tarotImg from '../assets/tarot_course.png';
 import palmistryImg from '../assets/palmistry_course.png';
 import vastuImg from '../assets/vastu_course.webp';
 import numerologyImg from '../assets/numerology_course.jpg';
+import ComingSoonModal from '../components/ui/ComingSoonModal';
 
 const LearningPage = () => {
+    const [showComingSoon, setShowComingSoon] = useState(false);
+
     const courses = [
         { id: 1, title: "Introduction to Vedic Astrology", level: "Beginner", lessons: 12, students: 1540, image: vedicImg },
         { id: 2, title: "Mastering the Nakshatras", level: "Intermediate", lessons: 8, students: 850, image: nakshatraImg },
@@ -44,12 +47,14 @@ const LearningPage = () => {
                                     <span>{course.lessons} Lessons</span>
                                     <span>{course.students} Students</span>
                                 </div>
-                                <button className="btn btn-secondary" style={{ width: '100%' }}>Start Learning</button>
+                                <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => setShowComingSoon(true)}>Start Learning</button>
                             </div>
                         </div>
                     ))}
                 </div>
             </section>
+
+            <ComingSoonModal isOpen={showComingSoon} onClose={() => setShowComingSoon(false)} />
         </div>
     );
 };
