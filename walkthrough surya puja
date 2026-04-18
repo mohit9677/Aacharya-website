@@ -1,0 +1,169 @@
+# Surya Puja Page — Full Implementation Documentation
+
+## Overview
+This document describes every file created/modified to build the **Surya (Sun) Puja** individual page with a live booking system, time-slot locking, and a daily quota enforcement feature.
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Navbar Dropdown\nSurya Puja link] -->|slug routing| B[/puja/surya-puja]
+    B --> C[SuryaPujaPage.jsx]
+    C -->|GET availability| D[Express API]
+    C -->|POST booking| D
+    D --> E[PujaBooking Controller]
+    E --> F[MongoDB — PujaBooking Model]
+```
+
+---
+
+## Files Created
+
+### 1. Backend — Model
+**`server/models/PujaBooking.js`**
+
+A dedicated Mongoose schema (separate from the generic `Appointment` model) with:
+
+| Field | Type | Purpose |
+|---|---|---|
+| `pujaId` | String | Identifies puja type (e.g. `surya-puja`) |
+| `pujaName` | String | Display name |
+| `name / email / phone` | String | User details |
+| `address / gotra` | String | Optional devotee info |
+| `bookingDate` | String (`YYYY-MM-DD`) | Date of puja |
+| `startTime` | String (`HH:MM`) | Chosen start time |
+| `endTime` | String (`HH:MM`) | Auto-calculated (start + 5 hrs) |
+| `package` | Enum | `basic` / `standard` / `premium` |
+| `amount` | Number | Price paid in ₹ |
+| `status` | Enum | `pending` → `confirmed` → `completed` / `cancelled` |
+
+---
+
+### 2. Backend — Controller
+**`server/controllers/pujaBookingController.js`**
+
+Contains 4 exported functions:
+
+#### `getAvailability` — `GET /api/puja-bookings/availability`
+Query params: `?pujaId=surya-puja&date=2025-06-15`
+
+Returns:
+```json
+{
+  "date": "2025-06-15",
+  "totalSlots": 5,
+  "bookedCount": 2,
+  "remainingSlots": 3,
+  "available": true,
+  "bookedTimeWindows": [
+    { "start": "07:00", "end": "12:00" },
+    { "start": "14:00", "end": "19:00" }
+  ]
+}
+```
+
+The frontend uses `bookedTimeWindows` to warn the user if their chosen time falls inside a locked slot.
+
+#### `createBooking` — `POST /api/puja-bookings`
+
+**Business Rules (enforced server-side):**
+
+> [!IMPORTANT]
+> **Rule 1 — Daily Quota:** Max **5 pujas** per `pujaId` per day. If `bookings.length >= 5`, the API returns HTTP `409` with `code: DAILY_LIMIT_REACHED` and the message:
+> *"No puja slots available for today. Please choose another date."*
+
+> [!IMPORTANT]
+> **Rule 2 — 5-Hour Time Lock:** When a booking is created at `startTime`, the `endTime` is automatically set to `startTime + 5 hours`. No new booking can overlap this window. If conflict detected, API returns HTTP `409` with `code: TIME_SLOT_CONFLICT` and:
+> *"This time slot is locked until HH:MM. Please choose a different time."*
+
+**Lock window example:**
+```
+Booking A: 08:00 → locked until 13:00
+Booking B attempt at 10:00 → ❌ BLOCKED (10:00 is between 08:00 and 13:00)
+Booking B attempt at 13:00 → ✅ ALLOWED (no overlap)
+```
+
+#### `getAllBookings` — `GET /api/puja-bookings` *(Protected)*
+Admin endpoint. Filterable by `?pujaId=&date=&status=`.
+
+#### `updateStatus` — `PATCH /api/puja-bookings/:id/status` *(Protected)*
+Admin endpoint. Changes booking status.
+
+---
+
+### 3. Backend — Routes
+**`server/routes/pujaBookingRoutes.js`**
+
+| Method | Endpoint | Auth | Purpose |
+|---|---|---|---|
+| `GET` | `/api/puja-bookings/availability` | Public | Check date availability |
+| `POST` | `/api/puja-bookings` | Public | Create new booking |
+| `GET` | `/api/puja-bookings` | Protected | Admin: list all bookings |
+| `PATCH` | `/api/puja-bookings/:id/status` | Protected | Admin: update status |
+
+Registered in `server/index.js`:
+```js
+app.use('/api/puja-bookings', require('./routes/pujaBookingRoutes'));
+```
+
+---
+
+### 4. Frontend — Page Component
+**`client/src/pages/SuryaPujaPage.jsx`**
+
+**Sections:**
+
+| Section | Content |
+|---|---|
+| **Hero** | Full-viewport image with gradient overlay, title, description, "Book Your Puja" CTA |
+| **What is Surya Puja?** | 2-paragraph Vedic description with Sanskrit reference |
+| **Why Perform?** | 4 scenario cards (weak Sun, govt matters, health, career) |
+| **Benefits** | 6-card grid with `react-icons/gi` icons |
+| **Process** | 7-step vertical list with numbered gold badges |
+| **Packages & Pricing** | 3 clickable pricing cards (₹1100 / ₹2100 / ₹5100) |
+| **Booking Form** | Real-time integrated booking form |
+
+**Booking Form Smart Features:**
+- 📅 **Live availability check** — fetches slot data every time the date changes
+- ⚡ **Time conflict detection** — greys out warning if the chosen time is in a locked window (checked client-side against `bookedTimeWindows`)
+- 🟢 **Slot counter** — shows "3/5 slots remaining today" badge under the date picker
+- ✅ **Success screen** — after successful booking, replaces form with a confirmation card showing date, time, and locked window
+
+---
+
+### 5. Frontend — CSS
+**`client/src/pages/SuryaPujaPage.css`**
+
+Premium design matching the site's luxury branding:
+- Gold/maroon color palette (`#d4af37` gold, `#5D1916` maroon)
+- Cinematic hero with full-bleed image
+- Glassmorphism-inspired cards
+- Mobile-first responsive grid (collapses to 1-column on ≤768px)
+
+---
+
+### 6. Frontend — Routing
+**`client/src/App.jsx`** — New route added:
+```jsx
+<Route path="/puja/surya-puja" element={<SuryaPujaPage />} />
+```
+
+**`client/src/components/layout/Navbar.jsx`** — Two changes:
+1. Surya Puja entry now has `slug: "surya-puja"` in the `mockPujas` array
+2. The mega-dropdown `<Link>` now uses `to={puja.slug ? /puja/${puja.slug} : /book-puja}` — so once future pujas have slugs, they automatically get their own pages
+
+---
+
+## Future Extensibility
+
+> [!TIP]
+> To add more individual puja pages (e.g. Chandra Puja), simply:
+> 1. Create `ChandraPujaPage.jsx` + CSS
+> 2. Add route `<Route path="/puja/chandra-puja" .../>`
+> 3. Add `slug: "chandra-puja"` to the Chandra Puja entry in `Navbar.jsx mockPujas`. The dropdown link will automatically redirect!
+
+> [!NOTE]
+> **Payment Integration:** Currently the form collects the package & amount but does not process payment. To integrate Razorpay:  
+> Add a Razorpay order creation step after booking validation and before `PujaBooking.create()` in the controller.

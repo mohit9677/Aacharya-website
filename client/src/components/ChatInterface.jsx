@@ -1,10 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FiSend, FiX } from 'react-icons/fi';
+import { FiSend, FiX, FiRefreshCw } from 'react-icons/fi';
 import '../App.css';
+import chatbotBg from '../assets/chatbot_bg.webp';
 
 const ChatInterface = ({ isWidget = false, onClose }) => {
+    const initialWelcomeText = 'Namaste! I am AI Baba. How can I guide you today?';
+    const initialContext = { topic: 'general', mood: 'neutral' };
+    const brownGradient = 'linear-gradient(135deg, #8B5E3C 0%, #5D3A1A 100%)';
+
     const [messages, setMessages] = useState([
-        { id: 1, sender: 'ai', text: 'Namaste! I am AI Baba. How can I guide you today?' }
+        { id: 1, sender: 'ai', text: initialWelcomeText }
     ]);
     // ...
     {
@@ -28,7 +33,7 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
     }
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [context, setContext] = useState({ topic: 'general', mood: 'neutral' });
+    const [context, setContext] = useState(initialContext);
     const bottomRef = useRef(null);
 
     useEffect(() => {
@@ -166,12 +171,23 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
         }, 1200 + Math.random() * 1000);
     };
 
+    const startNewConversation = () => {
+        setMessages([{ id: Date.now(), sender: 'ai', text: initialWelcomeText }]);
+        setInput('');
+        setIsTyping(false);
+        setContext(initialContext);
+    };
+
     return (
         <div className={`chat-interface ${isWidget ? 'widget-mode' : 'full-mode'}`} style={{
             display: 'flex',
             flexDirection: 'column',
             height: '100%',
-            background: isWidget ? '#D7D7D7' : 'transparent'
+            backgroundColor: isWidget ? '#D7D7D7' : 'transparent',
+            backgroundImage: isWidget ? `url(${chatbotBg})` : 'none',
+            backgroundSize: isWidget ? 'cover' : 'auto',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
         }}>
             {isWidget && (
                 <div style={{
@@ -192,24 +208,29 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
                         borderRadius: '8px',
                         letterSpacing: '0.02em',
                         boxShadow: '0 2px 8px rgba(93,25,22,0.35)',
-                    }}>AI Vedic Astrologer</span>
+                    }}>AI Harshit</span>
 
-                    {/* Close button — coral accent */}
-                    <button onClick={onClose} style={{
-                        background: 'linear-gradient(135deg, #e05252, #c0392b)',
-                        border: 'none',
-                        color: '#fff',
-                        cursor: 'pointer',
-                        borderRadius: '50%',
-                        width: '28px',
-                        height: '28px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 6px rgba(192,57,43,0.45)',
-                        flexShrink: 0,
-                    }}>
-                        <FiX size={15} />
+                    {/* New conversation (aligned to the right) */}
+                    <button
+                        onClick={startNewConversation}
+                        type="button"
+                        style={{
+                            background: brownGradient,
+                            border: 'none',
+                            color: '#fff',
+                            cursor: 'pointer',
+                            borderRadius: '999px',
+                            padding: '6px 12px',
+                            fontWeight: 800,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            boxShadow: '0 3px 10px rgba(93,58,26,0.35)',
+                        }}
+                        aria-label="Start new conversation"
+                    >
+                        <FiRefreshCw size={16} />
+                        <span style={{ fontSize: '0.9rem' }}>New</span>
                     </button>
                 </div>
             )}
@@ -222,7 +243,7 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.85rem',
-                background: '#D7D7D7'
+                background: isWidget ? 'transparent' : '#D7D7D7'
             }}>
                 {messages.map(msg => (
                     <div key={msg.id} style={{
@@ -271,7 +292,7 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
                 borderTop: '1px solid rgba(0,0,0,0.1)',
                 display: 'flex',
                 gap: '0.5rem',
-                background: isWidget ? '#D7D7D7' : 'transparent',
+                background: 'transparent',
                 borderBottomLeftRadius: isWidget ? '12px' : '0',
                 borderBottomRightRadius: isWidget ? '12px' : '0'
             }}>
@@ -297,9 +318,9 @@ const ChatInterface = ({ isWidget = false, onClose }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: 0,
-                    background: 'linear-gradient(135deg, #D4AF37 0%, #B8860B 100%)',
+                    background: brownGradient,
                     border: 'none',
-                    boxShadow: '0 3px 10px rgba(212,175,55,0.5)',
+                    boxShadow: '0 3px 10px rgba(93,58,26,0.45)',
                     transition: 'transform 0.2s, box-shadow 0.2s',
                     cursor: 'pointer',
                     color: '#fff',

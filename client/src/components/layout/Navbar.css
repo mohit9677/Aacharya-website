@@ -108,7 +108,8 @@
     /* Key fix for 'Daily Panchang' */
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.nav-item.active {
     color: var(--gold-primary);
 }
 
@@ -251,6 +252,11 @@
     cursor: pointer;
 }
 
+/* Hidden by default (desktop) */
+.mobile-bottom-nav {
+    display: none;
+}
+
 /* Custom Alignment Grid for Headers */
 @media (min-width: 1200px) {
     .header-layout-grid {
@@ -348,6 +354,41 @@
         margin-top: 1rem;
         width: 100%;
     }
+
+    .mobile-bottom-nav {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        z-index: 1001;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+        padding: 10px 8px;
+        border-radius: 18px;
+        background: rgba(18, 18, 28, 0.9);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mobile-tab-link {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.2;
+        padding: 6px 4px;
+        border-radius: 10px;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .mobile-tab-link.active {
+        color: #F5E6C8;
+        background: rgba(212, 175, 55, 0.18);
+    }
 }
 
 /* ── Dropdown Menus ── */
@@ -355,6 +396,25 @@
     position: relative;
     display: inline-block;
     height: 100%;
+}
+
+/* Show dropdown on keyboard focus as well */
+.nav-dropdown-container:focus-within .nav-dropdown-menu {
+    display: block;
+}
+
+.nav-mega-trigger {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font-weight: bold;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .nav-dropdown-menu {
@@ -367,12 +427,34 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     z-index: 1001;
     border-radius: 4px;
-    padding: 0.5rem 0;
+    padding: 0;
     border: 1px solid var(--border-subtle);
     animation: fadeIn 0.2s ease-in-out;
+    max-height: 75vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Custom Webkit scrollbar for dropdown menu */
+.nav-dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+.nav-dropdown-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+.nav-dropdown-menu::-webkit-scrollbar-thumb {
+    background-color: rgba(93, 25, 22, 0.3);
+    border-radius: 10px;
+}
+.nav-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(93, 25, 22, 0.5);
 }
 
 .nav-dropdown-container:hover .nav-dropdown-menu {
+    display: block;
+}
+
+.nav-dropdown-container.is-open .nav-dropdown-menu {
     display: block;
 }
 
@@ -393,6 +475,103 @@
     /* Slight shift effect */
 }
 
+/* ── Mega Menu (Services / Horoscope) ── */
+.nav-mega-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    padding: 1.25rem;
+    width: 560px;
+    max-width: 90vw;
+}
+
+.nav-mega-item {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-radius: 0;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 55, 0.75);
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.nav-mega-img-wrap {
+    width: 100%;
+    height: 136px;
+    overflow: hidden;
+    background: rgba(212, 175, 55, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+}
+
+.nav-mega-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.nav-mega-text {
+    padding: 0 0.9rem 0.9rem;
+}
+
+.nav-mega-title {
+    font-weight: 800;
+    color: #5D1916;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.nav-mega-desc {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.nav-mega-item:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 175, 55, 0.95);
+    box-shadow:
+        inset 0 0 0 1px rgba(212, 175, 55, 0.5),
+        0 12px 35px rgba(93, 25, 22, 0.15);
+}
+
+.nav-mega-item:hover .nav-mega-img {
+    transform: scale(1.02);
+}
+
+.nav-mega-grid--services {
+    /* 5 items look best with slightly wider menu */
+    width: 620px;
+}
+
+.nav-mega-grid--services .nav-mega-img {
+    object-fit: cover;
+}
+
+.nav-mega-grid--horoscope {
+    width: 560px;
+}
+
+.nav-mega-grid--horoscope .nav-mega-img {
+    object-fit: cover;
+    object-position: top center;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -403,4 +582,165 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* ── Book Puja Mega Dropdown ── */
+.pu-dropdown-override {
+    right: 0 !important;
+    left: auto !important;
+    top: calc(100% + 15px);
+    width: 800px;
+    max-width: 95vw;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.puja-mega-dropdown {
+    display: flex;
+    width: 100%;
+    min-height: 400px;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Left Sidebar: Categories */
+.puja-mega-sidebar {
+    width: 250px;
+    background: rgba(255, 255, 255, 0.65);
+    border-right: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.puja-mega-cat-btn {
+    padding: 0.85rem 1.5rem;
+    text-align: left;
+    background: transparent;
+    border: none;
+    font-weight: 600;
+    color: #444;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    border-left: 4px solid transparent;
+}
+
+.puja-mega-cat-btn:hover {
+    background: rgba(255,255,255,0.5);
+    color: #5D1916;
+}
+
+.puja-mega-cat-btn.active {
+    background: rgba(255,255,255,0.9);
+    color: #5D1916;
+    border-left: 4px solid var(--gold-primary);
+    font-weight: 800;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.02) inset;
+}
+
+/* Right Area: Content & Search */
+.puja-mega-content {
+    flex-grow: 1;
+    padding: 1.5rem 2rem;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+}
+
+.puja-mega-search {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    backdrop-filter: blur(4px);
+}
+
+.puja-mega-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    margin-left: 0.8rem;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.puja-mega-grid-items {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.puja-mega-grid-items::-webkit-scrollbar {
+    width: 6px;
+}
+.puja-mega-grid-items::-webkit-scrollbar-track {
+    background: transparent;
+}
+.puja-mega-grid-items::-webkit-scrollbar-thumb {
+    background-color: rgba(93, 25, 22, 0.2);
+    border-radius: 10px;
+}
+.puja-mega-grid-items::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(93, 25, 22, 0.4);
+}
+
+.puja-mega-item-card {
+    text-decoration: none;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 8px;
+    color: #333;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(5px);
+}
+
+.puja-mega-item-card:hover {
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+}
+
+.puja-mega-item-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.puja-mega-item-details h4 {
+    margin: 0 0 0.3rem 0;
+    color: #5D1916;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.puja-mega-item-details p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }

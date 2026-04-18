@@ -1,260 +1,238 @@
-import toast from 'react-hot-toast'
-import API from '../api/axios'
-import useFormValidation from '../hooks/useFormValidation'
+import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { FiArrowRight, FiStar, FiShield, FiUsers, FiCheckCircle } from 'react-icons/fi'
+import reportsHeroBg from '../assets/reportshero.webp'
+import harshitSirBgr from '../assets/harshitsirbgr.webp'
+import ReportIcon from '../components/reports/ReportIcon'
+import { REPORTS_CATALOG, HERO_FLOATING_IDS, getReportById } from '../data/reportsCatalog'
 import './ReportsPage.css'
 
-const reportTypes = [
-    'Life Journey',
-    'Career Forecast',
-    'Marriage Compatibility',
-    'Annual Prediction',
-    'Gemstone Recommendation',
-    'Kundli Analysis',
+const heroFloatingReports = HERO_FLOATING_IDS.map((id) => getReportById(id)).filter(Boolean)
+const reportsGrid = REPORTS_CATALOG
+
+const whyChoose = [
+    { title: 'Accurate Vedic Calculations', icon: <FiCheckCircle /> },
+    { title: 'Personalized Insights', icon: <FiStar /> },
+    { title: 'Trusted by 10K+ Clients', icon: <FiUsers /> },
+    { title: 'Expert Guidance Included', icon: <FiShield /> },
 ]
 
 export default function ReportsPage() {
-    const {
-        values,
-        errors,
-        isSubmitting,
-        setIsSubmitting,
-        handleChange,
-        validate,
-        resetForm,
-    } = useFormValidation(
-        {
-            name: '',
-            email: '',
-            phone: '',
-            reportType: '',
-            dateOfBirth: '',
-            birthTime: '',
-            birthPlace: '',
-            partnerDOB: '',
-            partnerBirthTime: '',
-            partnerBirthPlace: '',
-            additionalInfo: '',
-        },
-        {
-            name: { required: true, requiredMsg: 'Please enter your name' },
-            email: { required: true, email: true },
-            reportType: { required: true, requiredMsg: 'Please select a report type' },
-            dateOfBirth: { required: true, requiredMsg: 'Please provide your date of birth' },
-            birthTime: { required: true, requiredMsg: 'Please provide your birth time' },
-            birthPlace: { required: true, requiredMsg: 'Please provide your birth place' },
-        }
-    )
+    const gridRef = useRef(null)
+    const [activeReport, setActiveReport] = useState(null)
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!validate()) return
-
-        setIsSubmitting(true)
-        try {
-            // Prepare payload matching backend expectations
-            const payload = {
-                name: values.name,
-                email: values.email,
-                phone: values.phone,
-                reportType: values.reportType,
-                dateOfBirth: values.dateOfBirth,
-                birthTime: values.birthTime,
-                birthPlace: values.birthPlace,
-                partnerDOB: values.partnerDOB || undefined,
-                partnerBirthTime: values.partnerBirthTime || undefined,
-                partnerBirthPlace: values.partnerBirthPlace || undefined,
-                additionalInfo: values.additionalInfo,
-            }
-
-            await API.post('/reports', payload)
-            toast.success('Report request submitted! You will receive it within 3-5 business days.')
-            resetForm()
-        } catch (err) {
-            const errorMessage =
-                err?.response?.data?.error ||
-                err?.response?.data?.errors?.[0]?.message ||
-                'Failed to submit report request. Please try again.'
-            toast.error(errorMessage)
-        } finally {
-            setIsSubmitting(false)
-        }
+    const handleExplore = () => {
+        gridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
+    const closeReportModal = () => setActiveReport(null)
+
+    useEffect(() => {
+        if (!activeReport) return undefined
+
+        const previousOverflow = document.body.style.overflow
+        document.body.style.overflow = 'hidden'
+
+        const handleEsc = (event) => {
+            if (event.key === 'Escape') closeReportModal()
+        }
+
+        window.addEventListener('keydown', handleEsc)
+        return () => {
+            window.removeEventListener('keydown', handleEsc)
+            document.body.style.overflow = previousOverflow
+        }
+    }, [activeReport])
 
     return (
-        <div className="reports-page page-wrapper">
-            <div className="page-header">
-                <h1>Personalized <span className="gold-text">Life Reports</span></h1>
-                <p>Request in-depth Vedic astrology reports tailored to your journey.</p>
-            </div>
-
-            <section className="section">
-                <div className="container reports-container">
-                    <form className="glass-card reports-form" onSubmit={handleSubmit}>
-                        <h2>Your Details</h2>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label className="form-label">Full Name *</label>
-                                <input
-                                    className="form-input"
-                                    name="name"
-                                    value={values.name}
-                                    onChange={handleChange}
-                                    placeholder="Enter your full name"
-                                />
-                                {errors.name && <p className="form-error">{errors.name}</p>}
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Email Address *</label>
-                                <input
-                                    className="form-input"
-                                    name="email"
-                                    type="email"
-                                    value={values.email}
-                                    onChange={handleChange}
-                                    placeholder="your@email.com"
-                                />
-                                {errors.email && <p className="form-error">{errors.email}</p>}
-                            </div>
-                        </div>
-
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label className="form-label">Phone Number (optional)</label>
-                                <input
-                                    className="form-input"
-                                    name="phone"
-                                    value={values.phone}
-                                    onChange={handleChange}
-                                    placeholder="+91 98765 43210"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Report Type *</label>
-                                <select
-                                    className="form-select"
-                                    name="reportType"
-                                    value={values.reportType}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Choose a report...</option>
-                                    {reportTypes.map(r => (
-                                        <option key={r} value={r}>{r}</option>
-                                    ))}
-                                </select>
-                                {errors.reportType && <p className="form-error">{errors.reportType}</p>}
-                            </div>
-                        </div>
-
-                        <h3>Birth Details</h3>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label className="form-label">Date of Birth *</label>
-                                <input
-                                    className="form-input"
-                                    name="dateOfBirth"
-                                    type="date"
-                                    value={values.dateOfBirth}
-                                    onChange={handleChange}
-                                />
-                                {errors.dateOfBirth && <p className="form-error">{errors.dateOfBirth}</p>}
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Time of Birth *</label>
-                                <input
-                                    className="form-input"
-                                    name="birthTime"
-                                    type="time"
-                                    value={values.birthTime}
-                                    onChange={handleChange}
-                                />
-                                {errors.birthTime && <p className="form-error">{errors.birthTime}</p>}
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Place of Birth *</label>
-                            <input
-                                className="form-input"
-                                name="birthPlace"
-                                value={values.birthPlace}
-                                onChange={handleChange}
-                                placeholder="City, Country"
-                            />
-                            {errors.birthPlace && <p className="form-error">{errors.birthPlace}</p>}
-                        </div>
-
-                        <h3>Partner Details (for compatibility reports)</h3>
-                        <div className="form-row">
-                            <div className="form-group">
-                                <label className="form-label">Partner Date of Birth</label>
-                                <input
-                                    className="form-input"
-                                    name="partnerDOB"
-                                    type="date"
-                                    value={values.partnerDOB}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Partner Time of Birth</label>
-                                <input
-                                    className="form-input"
-                                    name="partnerBirthTime"
-                                    type="time"
-                                    value={values.partnerBirthTime}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Partner Place of Birth</label>
-                            <input
-                                className="form-input"
-                                name="partnerBirthPlace"
-                                value={values.partnerBirthPlace}
-                                onChange={handleChange}
-                                placeholder="City, Country"
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label className="form-label">Additional Information</label>
-                            <textarea
-                                className="form-textarea"
-                                name="additionalInfo"
-                                value={values.additionalInfo}
-                                onChange={handleChange}
-                                placeholder="Share any specific questions, focus areas, or background you'd like us to consider..."
-                                rows="4"
-                            />
-                        </div>
-
-                        <button
-                            type="submit"
-                            className="btn btn-primary reports-submit"
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? 'Submitting...' : 'Request Report'}
-                        </button>
-                    </form>
-
-                    <div className="reports-info">
-                        <div className="glass-card info-card">
-                            <h3>What you will receive</h3>
-                            <ul className="reports-list">
-                                <li>Detailed PDF report prepared by experienced astrologers</li>
-                                <li>Practical remedies and guidance tailored to your chart</li>
-                                <li>Timeline of key life events and planetary periods</li>
-                                <li>Follow-up email support for report clarifications</li>
-                            </ul>
-                        </div>
-                        <div className="glass-card info-card">
-                            <h3>Delivery timeline</h3>
-                            <p>Most reports are delivered within <strong>3–5 business days</strong>. Complex compatibility and life-journey reports may take up to 7 days.</p>
+        <div className="reports-page">
+            <section
+                className="section rp-hero"
+                style={{
+                    '--rp-hero-bg': `url(${reportsHeroBg})`,
+                    '--rp-hero-person': `url(${harshitSirBgr})`,
+                }}
+            >
+                <div className="container rp-hero__inner">
+                    <div className="rp-hero__left">
+                        <p className="rp-kicker">Premium Vedic Reports</p>
+                        <h1>Discover Your Personalized Astrology Reports</h1>
+                        <p className="rp-hero__sub">
+                            Accurate insights for love, career, finance, and life guidance
+                        </p>
+                        <div className="rp-hero__actions">
+                            <button type="button" className="rp-btn rp-btn--primary" onClick={handleExplore}>
+                                Explore Reports <FiArrowRight />
+                            </button>
+                            <Link to="/contact" className="rp-btn rp-btn--secondary">
+                                Talk to Expert
+                            </Link>
                         </div>
                     </div>
+                    <div className="rp-hero__right">
+                        {heroFloatingReports.map((item, i) => (
+                            <article key={item.id} className="rp-float-card" style={{ '--fi': i }}>
+                                <div className="rp-float-card__media">
+                                    <img src={item.image} alt={item.title} className="rp-float-card__img" />
+                                    <span className="rp-float-card__icon">
+                                        <ReportIcon iconKey={item.iconKey} />
+                                    </span>
+                                </div>
+                                <h3>{item.shortTitle || item.title}</h3>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="section" ref={gridRef}>
+                <div className="container">
+                    <div className="rp-section-head">
+                        <h2>Premium Astrology Reports</h2>
+                        <p>Choose the report that best matches your present questions and future goals.</p>
+                    </div>
+                    <div className="rp-grid">
+                        {reportsGrid.map((report) => (
+                            <article
+                                key={report.id}
+                                className="rp-report-card"
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setActiveReport(report)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault()
+                                        setActiveReport(report)
+                                    }
+                                }}
+                            >
+                                <div className="rp-report-card__media">
+                                    <img src={report.image} alt={report.title} className="rp-report-card__img" />
+                                    <span className="rp-report-card__badge">
+                                        <ReportIcon iconKey={report.iconKey} />
+                                    </span>
+                                </div>
+                                <h3>{report.title}</h3>
+                                <p>{report.desc}</p>
+                                <div className="rp-report-card__foot">
+                                    <span className="rp-price">{report.price}</span>
+                                    <button
+                                        type="button"
+                                        className="rp-small-btn"
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            setActiveReport(report)
+                                        }}
+                                    >
+                                        Buy Now
+                                    </button>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {activeReport && (
+                <div
+                    className="rp-report-modal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="rp-report-modal-title"
+                >
+                    <button
+                        type="button"
+                        className="rp-report-modal__backdrop"
+                        aria-label="Close report details"
+                        onClick={closeReportModal}
+                    />
+                    <div className="rp-report-modal__panel">
+                        <button
+                            type="button"
+                            className="rp-report-modal__close"
+                            aria-label="Close"
+                            onClick={closeReportModal}
+                        >
+                            ×
+                        </button>
+                        <div className="rp-report-modal__media">
+                            <img src={activeReport.image} alt={activeReport.title} className="rp-report-modal__img" />
+                            <span className="rp-report-modal__badge">
+                                <ReportIcon iconKey={activeReport.iconKey} />
+                            </span>
+                        </div>
+                        <h3 id="rp-report-modal-title">{activeReport.title}</h3>
+                        <p>{activeReport.desc}</p>
+                        <ul className="rp-report-modal__points">
+                            <li>Personalized chart analysis by experienced astrologers</li>
+                            <li>Actionable remedies and practical timeline guidance</li>
+                            <li>Delivered in clear, easy-to-understand format</li>
+                        </ul>
+                        <div className="rp-report-modal__foot">
+                            <span className="rp-price">{activeReport.price}</span>
+                            <Link
+                                to={`/reports/order/${activeReport.id}`}
+                                className="rp-btn rp-btn--primary"
+                                onClick={closeReportModal}
+                            >
+                                Buy Now <FiArrowRight />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <section className="section rp-carousel-wrap">
+                <div className="container">
+                    <div className="rp-section-head rp-carousel-head">
+                        <h2>Famous Reports</h2>
+                    </div>
+                    <div className="rp-carousel">
+                        <div className="rp-carousel__track">
+                            {[...reportsGrid, ...reportsGrid].map((item, i) => (
+                                <article key={`${item.id}-${i}`} className="rp-carousel-card">
+                                    <div className="rp-carousel-card__media">
+                                        <img src={item.image} alt={item.title} className="rp-carousel-card__img" />
+                                        <span className="rp-carousel-card__badge">
+                                            <ReportIcon iconKey={item.iconKey} />
+                                        </span>
+                                    </div>
+                                    <h4>{item.title}</h4>
+                                    <div className="rp-carousel-card__foot">
+                                        <span className="rp-price">{item.price}</span>
+                                        <Link to={`/reports/order/${item.id}`} className="rp-small-btn">
+                                            Buy Now
+                                        </Link>
+                                    </div>
+                                </article>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="section">
+                <div className="container">
+                    <div className="rp-section-head">
+                        <h2>Why Choose Our Reports</h2>
+                        <p>Designed to be spiritually grounded, practical, and personally relevant.</p>
+                    </div>
+                    <div className="rp-features">
+                        {whyChoose.map((f) => (
+                            <article key={f.title} className="rp-feature">
+                                <span className="rp-feature__icon">{f.icon}</span>
+                                <h3>{f.title}</h3>
+                            </article>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="section rp-cta">
+                <div className="container rp-cta__inner">
+                    <h2>Unlock Your Future Today</h2>
+                    <Link to="/contact" className="rp-btn rp-btn--cta">
+                        Get Your Report Now <FiArrowRight />
+                    </Link>
                 </div>
             </section>
         </div>
