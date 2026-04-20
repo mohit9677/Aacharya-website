@@ -138,10 +138,7 @@ export default function MangalPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Mangal (Mars) Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Mars is the warrior planet — fierce, energetic, and unstoppable. Mangal Puja is a blazing ritual that channels the red fire of Mars to ignite your courage, smash your fears, defeat your enemies, and fuel your ambitions with the power of a thousand warriors!</p>
-                                <p className="sp-hindi"><em>मंगल योद्धा ग्रह है — उग्र, ऊर्जावान और अजेय। मंगल पूजा एक ज्वलंत अनुष्ठान है जो मंगल की लाल अग्नि को चैनल करता है, आपके साहस को प्रज्वलित करता है, आपके भय को कुचलता है, दुश्मनों को हराता है और हज़ार योद्धाओं की शक्ति से आपकी महत्वाकांक्षाओं को ऊर्जा देता है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function MangalPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

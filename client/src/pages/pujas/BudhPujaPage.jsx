@@ -138,10 +138,7 @@ export default function BudhPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Budh (Mercury) Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Mercury is the prince of intellect — witty, quick, and brilliantly sharp. Budh Puja is a transformative ritual that supercharges your communication skills, analytical intelligence, and business acumen, making you the sharpest and most articulate person in any room!</p>
-                                <p className="sp-hindi"><em>बुध बुद्धि का राजकुमार है — चतुर, तेज और अद्भुत रूप से तीक्ष्ण। बुध पूजा एक परिवर्तनकारी अनुष्ठान है जो आपके संचार कौशल, विश्लेषणात्मक बुद्धि और व्यावसायिक कुशाग्रता को सुपरचार्ज करता है, आपको किसी भी कमरे में सबसे तेज और वाक्पटु व्यक्ति बनाता है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function BudhPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

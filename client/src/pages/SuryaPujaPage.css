@@ -61,8 +61,8 @@
 }
 
 /* Styling for Hindi text specifically */
-.sp-hindi {
-    color: #8B2520; /* distinct matching maroon color */
+p.sp-hindi {
+    color: #8B2520 !important; /* distinct matching maroon color */
     font-size: 1.08rem;
     line-height: 1.7;
 }

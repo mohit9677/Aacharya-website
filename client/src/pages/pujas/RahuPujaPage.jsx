@@ -138,10 +138,7 @@ export default function RahuPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Rahu Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Rahu is the dragon's head — mysterious, powerful, and obsessive. Rahu Puja is a daring ritual that tames this enigmatic shadow planet, transforming its chaotic, unpredictable energy into meteoric rise, extraordinary ambition, and unstoppable worldly success!</p>
-                                <p className="sp-hindi"><em>राहु अजगर का सिर है — रहस्यमय, शक्तिशाली और जुनूनी। राहु पूजा एक साहसी अनुष्ठान है जो इस रहस्यमय छाया ग्रह को वश में करता है, इसकी अराजक, अप्रत्याशित ऊर्जा को उल्का जैसे उत्थान, असाधारण महत्वाकांक्षा और अजेय सांसारिक सफलता में बदलता है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function RahuPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

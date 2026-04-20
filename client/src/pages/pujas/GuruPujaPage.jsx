@@ -138,10 +138,7 @@ export default function GuruPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Guru (Jupiter) Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Jupiter is the greatest benefic in the cosmos — wise, generous, and infinitely abundant. Guru Puja is a divine ritual that opens the celestial treasury of wisdom, prosperity, and blessings, inviting divine grace to rain down upon every corner of your life!</p>
-                                <p className="sp-hindi"><em>बृहस्पति ब्रह्मांड में सबसे बड़े शुभकर्ता हैं — ज्ञानी, उदार और अनंत रूप से प्रचुर। गुरु पूजा एक दिव्य अनुष्ठान है जो ज्ञान, समृद्धि और आशीर्वाद का स्वर्गीय खजाना खोलता है, आपके जीवन के हर कोने पर दिव्य कृपा की वर्षा आमंत्रित करता है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function GuruPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

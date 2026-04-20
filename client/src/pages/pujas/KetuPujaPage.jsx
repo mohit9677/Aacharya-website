@@ -138,10 +138,7 @@ export default function KetuPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Ketu Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Ketu is the dragon's tail — the planet of liberation, detachment, and otherworldly wisdom. Ketu Puja is a mystical gateway ritual that severs karmic chains, awakens hidden psychic powers, and propels the soul toward the ultimate destination: spiritual liberation and moksha!</p>
-                                <p className="sp-hindi"><em>केतु अजगर की पूंछ है — मुक्ति, वैराग्य और अलौकिक ज्ञान का ग्रह। केतु पूजा एक रहस्यमय प्रवेश द्वार अनुष्ठान है जो कर्म की जंजीरों को काटता है, छिपी हुई मानसिक शक्तियों को जागृत करता है और आत्मा को अंतिम गंतव्य की ओर प्रेरित करता है: आध्यात्मिक मुक्ति और मोक्ष!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function KetuPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

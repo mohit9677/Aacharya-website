@@ -138,10 +138,7 @@ export default function ChandraPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Chandra (Moon) Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>The Moon rules the mind, emotions, and the subconscious. Chandra Puja is a mystical lunar ritual that invites the calming silver light of Chandra Dev into your life — washing away anxiety, restoring peace, and awakening your deepest intuition.</p>
-                                <p className="sp-hindi"><em>चंद्रमा मन, भावनाओं और अवचेतन का स्वामी है। चंद्र पूजा एक रहस्यमय चंद्र अनुष्ठान है जो चंद्र देव के शांत रजत प्रकाश को आपके जीवन में आमंत्रित करता है — चिंता को दूर करता है, शांति को पुनर्स्थापित करता है और आपकी गहरी अंतर्ज्ञान को जागृत करता है।</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function ChandraPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

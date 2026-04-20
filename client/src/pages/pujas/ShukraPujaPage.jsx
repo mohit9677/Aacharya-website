@@ -138,10 +138,7 @@ export default function ShukraPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Shukra (Venus) Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Venus is the planet of love, beauty, and divine luxury. Shukra Puja is an enchanting ritual that awakens the Goddess of Beauty within your life — magnetizing love, attracting wealth, and surrounding you with art, romance, and the exquisite pleasures of existence!</p>
-                                <p className="sp-hindi"><em>शुक्र प्रेम, सौंदर्य और दिव्य विलासिता का ग्रह है। शुक्र पूजा एक मोहक अनुष्ठान है जो आपके जीवन में सौंदर्य की देवी को जागृत करती है — प्रेम को चुंबकीय बनाती है, धन को आकर्षित करती है और आपको कला, रोमांस और अस्तित्व की उत्कृष्ट खुशियों से घेर देती है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function ShukraPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

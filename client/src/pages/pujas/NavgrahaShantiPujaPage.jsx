@@ -138,10 +138,7 @@ export default function NavgrahaShantiPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Navgraha Shanti Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Nine planets. One supreme ritual. Navgraha Shanti Puja is the most powerful cosmic ceremony that simultaneously pacifies all nine celestial rulers — Sun, Moon, Mars, Mercury, Jupiter, Venus, Saturn, Rahu, and Ketu — aligning your entire horoscope with the flow of divine grace!</p>
-                                <p className="sp-hindi"><em>नौ ग्रह। एक सर्वोच्च अनुष्ठान। नवग्रह शांति पूजा सबसे शक्तिशाली ब्रह्मांडीय समारोह है जो एक साथ सभी नौ आकाशीय शासकों को शांत करता है — सूर्य, चंद्रमा, मंगल, बुध, बृहस्पति, शुक्र, शनि, राहु और केतु — आपकी पूरी कुंडली को दिव्य कृपा के प्रवाह के साथ संरेखित करता है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -236,7 +233,14 @@ export default function NavgrahaShantiPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>

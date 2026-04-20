@@ -138,10 +138,7 @@ export default function ShaniPujaPage() {
                 <div className="sp-hero-overlay">
                     <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
                     <h1>Shani (Saturn) Puja</h1>
-                    <div className="sp-translation-wrapper">
                     <p>Saturn is the cosmic judge — the strict but fair dispenser of karma. Shani Puja is a profound ritual of surrender and discipline that transforms Saturn's harsh lessons into extraordinary life wisdom, turning obstacles into stepping stones and trials into triumphant destiny!</p>
-                                <p className="sp-hindi"><em>शनि ब्रह्मांडीय न्यायाधीश है — कर्म का सख्त लेकिन उचित वितरक। शनि पूजा समर्पण और अनुशासन का एक गहन अनुष्ठान है जो शनि के कठोर पाठों को असाधारण जीवन ज्ञान में बदलता है, बाधाओं को सीढ़ियों में और परीक्षाओं को विजयी भाग्य में बदलता है!</em></p>
-                    </div>
                     <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
                 </div>
             </section>
@@ -233,7 +230,14 @@ export default function ShaniPujaPage() {
                             <div key={i} className="sp-benefit-card">
                                 <div className="sp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                <p>{b.desc}</p>
+                                {b.desc.includes('|') ? (
+                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
+                                        <p>{b.desc.split('|')[0].trim()}</p>
+                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
+                                    </div>
+                                ) : (
+                                    <p>{b.desc}</p>
+                                )}
                             </div>
                         ))}
                     </div>
