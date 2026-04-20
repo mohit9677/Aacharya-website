@@ -15,3 +15,12 @@ server/.env
 dist/
 client/dist/
 
+# Embedded / cloned repos (not part of this project)
+.temp_repo/
+Dr-Kunwar-Harshit-Rajveer/
+
+# Misc temp files
+merge_status.txt
+merge_status2.txt
+zodiac_hashes.txt
+client/build_error.log
