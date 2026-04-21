@@ -254,16 +254,16 @@ export default function NavgrahaShantiPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Choose an auspicious day (Sunday is ideal) and consult a Vedic priest for the most favorable muhurta (auspicious time).' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Purify the space with Ganga jal (holy water) and set up nine separate altars representing each of the nine planets.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Place the Navgraha Yantra at the center of the ceremony and arrange nine colored cloths (red, white, red, green, yellow, white/cream, black, dark blue, and grey) for each planet.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Prepare nine separate sets of offerings — each planet receives its specific flowers, grains, fruits, and symbolic items.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Begin with a Ganesh Puja and Kalash Sthapana to create a pure, protected, and divinely charged ritual space.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'The chief priest performs Navgraha Avahan (invocation of all nine planetary deities) with individual Beej Mantras chanted for each.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Conduct individual Havan (sacred fire rituals) for each of the nine planets with their respective specific havan samagri offerings.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Chant each planet\'s Beej Mantra 108 times in sequence: Surya, Chandra, Mangal, Budh, Guru, Shukra, Shani, Rahu, Ketu.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Perform grand collective aarti for all nine planets simultaneously, offering flowers and bowing to the entire cosmic assembly.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude with Navgraha Stotra recitation, donation of nine specific items to nine different people, and a shared prasad feast.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Choose an auspicious day (Sunday is ideal) and consult a Vedic priest for the most favorable muhurta (auspicious time).' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Purify the space with Ganga jal (holy water) and set up nine separate altars representing each of the nine planets.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Place the Navgraha Yantra at the center of the ceremony and arrange nine colored cloths (red, white, red, green, yellow, white/cream, black, dark blue, and grey) for each planet.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Prepare nine separate sets of offerings — each planet receives its specific flowers, grains, fruits, and symbolic items.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Begin with a Ganesh Puja and Kalash Sthapana to create a pure, protected, and divinely charged ritual space.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'The chief priest performs Navgraha Avahan (invocation of all nine planetary deities) with individual Beej Mantras chanted for each.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Conduct individual Havan (sacred fire rituals) for each of the nine planets with their respective specific havan samagri offerings.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Chant each planet\'s Beej Mantra 108 times in sequence: Surya, Chandra, Mangal, Budh, Guru, Shukra, Shani, Rahu, Ketu.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Perform grand collective aarti for all nine planets simultaneously, offering flowers and bowing to the entire cosmic assembly.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude with Navgraha Stotra recitation, donation of nine specific items to nine different people, and a shared prasad feast.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

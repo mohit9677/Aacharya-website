@@ -251,16 +251,16 @@ export default function ShaniPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Wake up early on Saturday (Shanivar), bathe before sunrise, and wear black, dark blue, or navy clothes for the ritual.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Shani Dev under a peepal tree or in your home temple.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Light a sesame oil lamp (til ka diya) — NOT a ghee lamp — and dark incense such as loban or guggul.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Offer black sesame seeds, black flowers (black roses or blue flowers), iron articles, mustard oil, and black urad dal.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Chant the Shani Beej Mantra — "Om Praam Preem Praum Sah Shanaischaraay Namah" — 108 times with a black sesame or iron rosary.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Recite the Shani Stotram, Shani Chalisa, or the powerful Shani Kavach with deep humility and sincere devotion.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Perform aarti by circling a sesame oil lamp seven times before Shani Dev with complete reverence and surrender.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Donate black items — black blankets, black sesame, iron utensils, or black clothes — to the poor and needy.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Distribute black til ladoo or sesame sweets as prasad among family members with gratitude.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude by feeding black crows or birds — an ancient act of Shani seva — and bow with absolute humility.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Wake up early on Saturday (Shanivar), bathe before sunrise, and wear black, dark blue, or navy clothes for the ritual.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Shani Dev under a peepal tree or in your home temple.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Light a sesame oil lamp (til ka diya) — NOT a ghee lamp — and dark incense such as loban or guggul.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Offer black sesame seeds, black flowers (black roses or blue flowers), iron articles, mustard oil, and black urad dal.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Chant the Shani Beej Mantra — "Om Praam Preem Praum Sah Shanaischaraay Namah" — 108 times with a black sesame or iron rosary.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Recite the Shani Stotram, Shani Chalisa, or the powerful Shani Kavach with deep humility and sincere devotion.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Perform aarti by circling a sesame oil lamp seven times before Shani Dev with complete reverence and surrender.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Donate black items — black blankets, black sesame, iron utensils, or black clothes — to the poor and needy.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Distribute black til ladoo or sesame sweets as prasad among family members with gratitude.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude by feeding black crows or birds — an ancient act of Shani seva — and bow with absolute humility.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

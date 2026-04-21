@@ -1,8 +1,27 @@
 import { useState, useEffect } from 'react'
-import { GiSunrise, GiFlame, GiHealing, GiCoins, GiShield, GiScrollUnfurled } from 'react-icons/gi'
-import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/all_puja_bg.webp';
-import './GenericPujaPage.css'
+import {
+    FiUser,
+    FiPhone,
+    FiMail,
+    FiMapPin,
+    FiCalendar,
+    FiClock,
+    FiMessageSquare,
+    FiCheck,
+    FiAlertCircle,
+    FiLoader,
+    FiStar,
+    FiShield,
+    FiTrendingUp,
+    FiHome,
+    FiBriefcase,
+    FiAward,
+} from 'react-icons/fi'
+import { GiSparkles, GiFlame, GiLotus, GiReceiveMoney, GiDiamonds } from 'react-icons/gi'
+import heroImage from '../../assets/puja/hero-diya.png'
+import pujaImage from '../../assets/puja/pandit-aarti.png'
+import mandalaImage from '../../assets/puja/mangal-yantra.png'
+import './LakshmiPraptiStyle.css'
 
 const PUJA_ID = 'lakshmi-prapti-puja'
 const PUJA_NAME = 'Lakshmi Prapti Puja'
@@ -11,35 +30,35 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 const PACKAGES = [
     {
         id: 'basic',
-        name: 'Sadharan Puja',
-        price: 1100,
-        duration: '45 min',
-        features: ['Surya Arghya ritual', 'Aditya Hridayam recitation', 'Personal Sankalp', 'Prasad dispatch'],
+        name: 'Saral Lakshmi Puja',
+        price: 2100,
+        duration: '1.5 hours',
+        features: ['Sankalp & Ganesh Pujan', 'Lakshmi Ashtottara (108 names)', 'Aarti & Prasad Distribution', 'Online live streaming'],
     },
     {
         id: 'standard',
-        name: 'Vishesh Puja',
-        price: 2100,
-        duration: '90 min',
-        features: ['All Basic features', 'Surya Namaskar Mantra (108x)', 'Havan with Surya Ahuti', 'Rudraksha energisation', 'Video recording'],
+        name: 'Shree Lakshmi Anushthan',
+        price: 5100,
+        duration: '3 hours',
+        features: ['Everything in Saral Puja', 'Shree Suktam - 11 paath', 'Kanakdhara Stotra recitation', 'Havan with 108 ahutis', 'Yantra & blessed prasad couriered'],
         popular: true,
     },
     {
         id: 'premium',
-        name: 'Maha Surya Puja',
-        price: 5100,
-        duration: '3 hours',
-        features: ['All Standard features', 'Navgraha Shanti', 'Surya Yantra energisation', 'Individual online participation', 'Kundli-specific remedies', 'Post-puja consultation'],
+        name: 'Mahalakshmi Maha Yagna',
+        price: 11100,
+        duration: '5-6 hours',
+        features: ['Full Vedic Mahalakshmi Yagna', 'Shree Suktam - 1008 paath', 'Kuber Pujan + Kanakdhara Havan', 'Silver Lakshmi coin & energised yantra', 'Personal sankalp on your name & gotra'],
     },
 ]
 
 const BENEFITS = [
-    { icon: <GiFlame />, title: 'Health & Vitality', desc: 'Surya Puja strengthens the immune system, eyesight, and overall physical vitality. It protects against chronic illness.' },
-    { icon: <GiCoins />, title: 'Career & Success', desc: 'Worshipping the Sun blesses devotees with leadership qualities, government favour, and professional recognition.' },
-    { icon: <GiShield />, title: 'Removes Obstacles', desc: 'Neutralises malefic Sun placements in the horoscope, removes delays in work, legal matters, and reputation issues.' },
-    { icon: <GiHealing />, title: 'Mental Clarity', desc: 'Brings confidence, willpower, self-respect, and clarity of thought. Removes depression and lack of direction.' },
-    { icon: <GiScrollUnfurled />, title: 'Spiritual Growth', desc: 'The Sun represents the Atma (soul). Surya Puja accelerates self-realisation and connects the devotee to divine light.' },
-    { icon: <GiSunrise />, title: 'Family Harmony', desc: 'Improves father–child relationships and brings blessings of elders, ancestors, and authority figures in life.' },
+    { icon: <GiReceiveMoney />, title: 'Wealth & Prosperity', desc: 'Invites steady inflow of money and financial abundance.' },
+    { icon: <FiShield />, title: 'Removes Debts', desc: 'Helps clear financial obstacles, loans and money stagnation.' },
+    { icon: <FiHome />, title: 'Harmony at Home', desc: 'Brings peace, positivity and Lakshmi grace into the household.' },
+    { icon: <FiBriefcase />, title: 'Business Growth', desc: 'Boosts career, business expansion and new opportunities.' },
+    { icon: <GiSparkles />, title: 'Spiritual Upliftment', desc: 'Purifies aura and aligns you with abundance vibrations.' },
+    { icon: <FiAward />, title: 'Good Fortune', desc: 'Strengthens luck, success and overall well-being.' },
 ]
 
 export default function LakshmiPraptiPujaPage() {
@@ -120,112 +139,116 @@ export default function LakshmiPraptiPujaPage() {
     const today = new Date().toISOString().split('T')[0]
 
     return (
-        <div className="sp-page">
-
-            {/* ── Hero ── */}
-            <section
-                className="sp-hero"
-                style={{ '--sp-hero-image': `url(${heroImage})` }}
-                aria-label="Surya Puja — pandit offering arghya at sunrise by the river"
-            >
-                <div className="sp-hero-overlay">
-                    <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
-                    <h1>Lakshmi Prapti Puja</h1>
-                    <p>[Hero description for Lakshmi Prapti Puja will go here. This provides the primary benefits and calling.]</p>
-                    <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
-                </div>
-            </section>
-
-            {/* ── What is Surya Puja ── */}
-            <section className="sp-section sp-about">
-                <div className="sp-container">
-                    <div className="sp-label">Ancient Vedic Ritual</div>
-                    <h2>What is Lakshmi Prapti Puja?</h2>
-                    <p>[Detailed description of what Lakshmi Prapti Puja is, its Vedic significance, and the main deity or cosmic energy involved. Add specific context here later.]</p>
-                    <p>[Secondary paragraph detailing when it is traditionally performed and the historical references.]</p>
-                    <p>Surya Puja is traditionally performed at sunrise, facing east, on Sundays — the day governed by the Sun. It is particularly powerful during solar festivals like Chhath Puja, Makar Sankranti, and Ratha Saptami.</p>
-                </div>
-            </section>
-
-            {/* ── Why Perform ── */}
-            <section className="sp-section sp-why">
-                <div className="sp-container">
-                    <div className="sp-label">Purpose & Significance</div>
-                    <h2>Why Do People Perform Lakshmi Prapti Puja?</h2>
-                    <div className="sp-why-grid">
-                        <div className="sp-why-card">
-                            <h4>🔴 [Reason 1]</h4>
-                            <p>[Specific astrologial or life problem addressed by this puja.]</p>
+        <div className="lp-page">
+            <section className="lp-hero" id="top">
+                <div className="lp-bg-gradient" />
+                <img src={mandalaImage} alt="" className="lp-mandala lp-mandala-right" />
+                <img src={mandalaImage} alt="" className="lp-mandala lp-mandala-left" />
+                <div className="lp-container lp-hero-grid">
+                    <div className="lp-hero-content">
+                        <span className="lp-pill"><GiSparkles /> Vedic Wealth Ritual</span>
+                        <h1>Lakshmi Prapti <span>Puja</span></h1>
+                        <p className="lp-mantra">om shreem hreem shreem kamale kamalalaye praseed praseed om shreem hreem shreem mahalakshmyai namah</p>
+                        <p className="lp-subtitle">
+                            Invite Goddess Mahalakshmi into your life through an authentic Vedic ritual
+                            performed by experienced pandits for prosperity, abundance and peace.
+                        </p>
+                        <div className="lp-cta-row">
+                            <a href="#booking" className="lp-btn lp-btn-primary">Book Your Puja</a>
+                            <a href="#packages" className="lp-btn lp-btn-outline">View Packages</a>
                         </div>
-                        <div className="sp-why-card">
-                            <h4>🏛️ [Reason 2]</h4>
-                            <p>[Another significant reason devotees seek this specific cosmic intervention.]</p>
+                        <div className="lp-proof-row">
+                            <div><FiCheck /> 5000+ Pujas Done</div>
+                            <div><FiCheck /> Verified Pandits</div>
+                            <div><FiCheck /> Live Streaming</div>
                         </div>
-                        <div className="sp-why-card">
-                            <h4>👁️ [Reason 3]</h4>
-                            <p>[Health, mental, or physical conditions targeted by the ritual.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>💼 [Reason 4]</h4>
-                            <p>[Career, business, or prosperity-related obstacles removed.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👨‍👧 [Reason 5]</h4>
-                            <p>[Relationship, family, or ancestral benefits granted.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>⚡ [Reason 6]</h4>
-                            <p>[Dasha, transit or timing-specific amplifications of the puja's effects.]</p>
+                    </div>
+                    <div className="lp-hero-art">
+                        <div className="lp-glow" />
+                        <img src={heroImage} alt="Lakshmi Prapti Puja" />
+                        <div className="lp-floating-card">
+                            <GiFlame />
+                            <div>
+                                <p>Next Auspicious Date</p>
+                                <strong>Friday - Pushya Nakshatra</strong>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* ── Benefits ── */}
-            <section className="sp-section sp-benefits">
-                <div className="sp-container">
-                    <div className="sp-label">Divine Blessings</div>
-                    <h2>Benefits of Lakshmi Prapti Puja</h2>
-                    <div className="sp-benefits-grid">
+            <section className="lp-section lp-about">
+                <div className="lp-container lp-about-grid">
+                    <div className="lp-about-image-wrap">
+                        <img src={pujaImage} alt="Lakshmi Puja setup" className="lp-about-image" />
+                        <div className="lp-about-badge">Authentic Vedic Vidhi</div>
+                    </div>
+                    <div className="lp-about-copy">
+                        <p className="lp-label">What is this puja?</p>
+                        <h2>The Sacred Ritual of <span>Abundance</span></h2>
+                        <p>Lakshmi Prapti Puja is one of the most powerful rituals in Sanatan Dharma performed to please Goddess Mahalakshmi, the giver of wealth, fortune and prosperity.</p>
+                        <p>Through Shree Suktam chanting, Kanakdhara Stotra and sacred havan offerings, this puja removes financial obstacles and attracts long-term abundance.</p>
+                        <div className="lp-about-stats">
+                            <div><strong>5000+</strong><span>Devotees Blessed</span></div>
+                            <div><strong>15+ yrs</strong><span>Pandit Experience</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="lp-section lp-reasons">
+                <div className="lp-container">
+                    <p className="lp-label center">Why perform it</p>
+                    <h2 className="lp-title center">The Reason Behind the Ritual</h2>
+                    <div className="lp-reason-grid">
+                        {[
+                            'Overcome long-standing money problems and debts',
+                            'Begin a new business or expand existing ventures',
+                            'Attract new opportunities and career growth',
+                            'Bring peace, harmony and positive energy at home',
+                            'Fulfil long-pending wishes and material desires',
+                            'Counter Vastu defects and negative planetary periods',
+                        ].map((reason) => (
+                            <div className="lp-reason-card" key={reason}><GiLotus /> {reason}</div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="lp-section">
+                <div className="lp-container">
+                    <p className="lp-label center">Divine Benefits</p>
+                    <h2 className="lp-title center">Blessings You Receive</h2>
+                    <div className="lp-benefit-grid">
                         {BENEFITS.map((b, i) => (
-                            <div key={i} className="sp-benefit-card">
-                                <div className="sp-benefit-icon">{b.icon}</div>
+                            <div key={i} className="lp-benefit-card">
+                                <div className="lp-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                {b.desc.includes('|') ? (
-                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
-                                        <p>{b.desc.split('|')[0].trim()}</p>
-                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
-                                    </div>
-                                ) : (
-                                    <p>{b.desc}</p>
-                                )}
+                                <p>{b.desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* ── Process ── */}
-            <section className="sp-section sp-process">
-                <div className="sp-container">
-                    <div className="sp-label">How It Works</div>
-                    <h2>Puja Process</h2>
-                    <div className="sp-stairs">
+            <section className="lp-section lp-process">
+                <div className="lp-container">
+                    <p className="lp-label center">Sacred Vidhi</p>
+                    <h2 className="lp-title center">The Puja Process</h2>
+                    <div className="lp-steps-grid">
                         {[
-                            { num: 1, icon: '🧘', title: 'Sankalp',          sub: 'Setting the sacred intention & devotee details' },
-                            { num: 2, icon: '🙏', title: 'Avahana',          sub: 'Invocation of Lord Surya with Vedic mantras' },
-                            { num: 3, icon: '🌸', title: 'Shodashopachar',   sub: '16 sacred offerings — flowers, dhoop, diya & more' },
-                            { num: 4, icon: '📖', title: 'Aditya Hridayam',  sub: 'Chanting of the powerful Surya hymn from Ramayana' },
-                            { num: 5, icon: '🔥', title: 'Havan / Ahuti',    sub: 'Sacred fire ritual with Surya-specific oblations' },
-                            { num: 6, icon: '💧', title: 'Surya Arghya',     sub: 'Offering water to the rising Sun (Arghya ritual)' },
-                            { num: 7, icon: '🎁', title: 'Aarti & Prasad',   sub: 'Divine blessings, aarti & prasad dispatched to you' },
+                            { num: '01', title: 'Sankalp', sub: 'The devotee takes sacred vow with name, gotra & wish.' },
+                            { num: '02', title: 'Ganesh & Kalash Pujan', sub: 'Lord Ganesha is invoked to remove all obstacles.' },
+                            { num: '03', title: 'Lakshmi Avahan', sub: 'Goddess Lakshmi is invoked with Vedic mantras.' },
+                            { num: '04', title: 'Shree Suktam Paath', sub: 'Powerful Vedic hymns are chanted for abundance.' },
+                            { num: '05', title: 'Havan', sub: 'Sacred fire ritual with ghee, herbs & lotus seed offerings.' },
+                            { num: '06', title: 'Aarti & Prasad', sub: 'Final blessings and prasad for the devotee.' },
                         ].map((s, i) => (
-                            <div key={s.num} className="sp-stair" style={{ '--i': i }}>
-                                <div className="sp-stair-num">{s.num}</div>
-                                <div className="sp-stair-icon">{s.icon}</div>
-                                <div className="sp-stair-text">
-                                    <span className="sp-stair-title">{s.title}</span>
-                                    <span className="sp-stair-sub">{s.sub}</span>
+                            <div key={s.num} className="lp-step-card" style={{ '--i': i }}>
+                                <div className="lp-step-num">{s.num}</div>
+                                <div>
+                                    <h4>{s.title}</h4>
+                                    <p>{s.sub}</p>
                                 </div>
                             </div>
                         ))}
@@ -233,29 +256,28 @@ export default function LakshmiPraptiPujaPage() {
                 </div>
             </section>
 
-            {/* ── Pricing ── */}
-            <section className="sp-section sp-pricing" id="booking">
-                <div className="sp-container">
-                    <div className="sp-label">Choose Your Package</div>
-                    <h2>Puja Packages & Pricing</h2>
-                    <div className="sp-packages">
+            <section className="lp-section" id="packages">
+                <div className="lp-container">
+                    <p className="lp-label center">Puja Packages</p>
+                    <h2 className="lp-title center">Choose Your Anushthan</h2>
+                    <div className="lp-packages">
                         {PACKAGES.map(pkg => (
                             <div
                                 key={pkg.id}
-                                className={`sp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
+                                className={`lp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
                                 onClick={() => setSelectedPkg(pkg.id)}
                             >
-                                {pkg.popular && <div className="sp-popular-badge">Most Popular</div>}
+                                {pkg.popular && <div className="lp-popular-badge">Most Popular</div>}
                                 <h3>{pkg.name}</h3>
-                                <div className="sp-price">
-                                    <span className="sp-price-currency">₹</span>
-                                    <span className="sp-price-amount">{pkg.price.toLocaleString('en-IN')}</span>
+                                <div className="lp-price">
+                                    <span className="lp-price-currency">₹</span>
+                                    <span className="lp-price-amount">{pkg.price.toLocaleString('en-IN')}</span>
                                 </div>
-                                <div className="sp-duration">⏱ {pkg.duration}</div>
-                                <ul className="sp-features">
+                                <div className="lp-duration"><FiClock /> {pkg.duration}</div>
+                                <ul className="lp-features">
                                     {pkg.features.map((f, i) => <li key={i}><FiCheck /> {f}</li>)}
                                 </ul>
-                                <div className={`sp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
+                                <div className={`lp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
                                     {selectedPkg === pkg.id ? '✓ Selected' : 'Select Package'}
                                 </div>
                             </div>
@@ -264,94 +286,99 @@ export default function LakshmiPraptiPujaPage() {
                 </div>
             </section>
 
-            {/* ── Booking Form ── */}
-            <section className="sp-section sp-booking-section">
-                <div className="sp-container">
-                    <div className="sp-label">Book Your Slot</div>
-                    <h2>Fill Booking Details</h2>
+            <section className="lp-section lp-booking" id="booking">
+                <div className="lp-container">
+                    <p className="lp-label center">Book Your Puja</p>
+                    <h2 className="lp-title center">Begin Your Journey to Prosperity</h2>
 
                     {status === 'success' ? (
-                        <div className="sp-success-card">
-                            <div className="sp-success-icon"><FiCheck /></div>
+                        <div className="lp-success-card">
+                            <div className="lp-success-icon"><FiCheck /></div>
                             <h3>Puja Booked Successfully! 🙏</h3>
                             <p>{statusMsg}</p>
                             {bookedInfo && (
-                                <div className="sp-booking-summary">
+                                <div className="lp-booking-summary">
                                     <p><strong>Date:</strong> {bookedInfo.bookingDate}</p>
                                     <p><strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime} (slot locked)</p>
                                     <p><strong>Status:</strong> {bookedInfo.status}</p>
                                 </div>
                             )}
-                            <p className="sp-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
+                            <p className="lp-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
                         </div>
                     ) : (
-                        <form className="sp-form" onSubmit={handleSubmit}>
-                            <div className="sp-form-grid">
-                                <div className="sp-form-group">
+                        <form className="lp-form" onSubmit={handleSubmit}>
+                            <div className="lp-form-grid">
+                                <div className="lp-form-group">
                                     <label><FiUser /> Full Name *</label>
                                     <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="lp-form-group">
                                     <label><FiMail /> Email Address *</label>
                                     <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="lp-form-group">
                                     <label><FiPhone /> Phone Number *</label>
                                     <input name="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} required />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="lp-form-group">
                                     <label><FiMapPin /> Address / City</label>
                                     <input name="address" placeholder="Your city or full address" value={form.address} onChange={handleChange} />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="lp-form-group">
                                     <label>Gotra (Family Lineage)</label>
                                     <input name="gotra" placeholder="e.g. Kashyap, Bharadwaj (optional)" value={form.gotra} onChange={handleChange} />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="lp-form-group">
                                     <label><FiCalendar /> Puja Date *</label>
                                     <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
                                     {availability && (
-                                        <div className={`sp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
+                                        <div className={`lp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
                                             {availability.available
                                                 ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
                                                 : `No slots available for this date`}
                                         </div>
                                     )}
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="lp-form-group">
                                     <label><FiClock /> Preferred Start Time *</label>
                                     <input name="time" type="time" value={form.time} onChange={handleChange} required
                                         min="05:00" max="19:00" step="1800" />
                                     {hint && (
-                                        <div className={`sp-hint ${hint.type}`}>
+                                        <div className={`lp-hint ${hint.type}`}>
                                             {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
                                         </div>
                                     )}
-                                    <p className="sp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
+                                    <p className="lp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
                                 </div>
-                                <div className="sp-form-group sp-full-width">
+                                <div className="lp-form-group lp-full-width">
                                     <label><FiMessageSquare /> Special Message / Wishes</label>
                                     <textarea name="message" rows={3} placeholder="Any specific wish, health issue, or prayer intention..." value={form.message} onChange={handleChange} />
                                 </div>
                             </div>
 
-                            <div className="sp-form-summary">
+                            <div className="lp-form-summary">
                                 <span>Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong></span>
                                 <span>Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></span>
                             </div>
 
                             {status === 'error' && (
-                                <div className="sp-error-msg"><FiAlertCircle /> {statusMsg}</div>
+                                <div className="lp-error-msg"><FiAlertCircle /> {statusMsg}</div>
                             )}
 
-                            <button type="submit" className="sp-submit-btn" disabled={status === 'loading'}>
-                                {status === 'loading' ? <><FiLoader className="sp-spin" /> Processing...</> : '🙏 Confirm Puja Booking'}
+                            <button type="submit" className="lp-submit-btn" disabled={status === 'loading'}>
+                                {status === 'loading' ? <><FiLoader className="lp-spin" /> Processing...</> : '🪔 Confirm Puja Booking'}
                             </button>
                         </form>
                     )}
                 </div>
             </section>
-
+            <footer className="lp-footer">
+                <div className="lp-container">
+                    <div className="lp-footer-brand"><GiDiamonds /> Divya Anushthan</div>
+                    <p>Om Shree Mahalakshmyai Namah</p>
+                    <small>© {new Date().getFullYear()} Divya Anushthan - Authentic Vedic Pujas Worldwide</small>
+                </div>
+            </footer>
         </div>
     )
 }

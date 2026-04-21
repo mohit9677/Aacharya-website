@@ -254,16 +254,16 @@ export default function KetuPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Perform Ketu Puja on Tuesday or Saturday, ideally at twilight or dusk — the mystical in-between time.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Take a purifying bath and wear dark grey, brown, or saffron clothes — colors that honor Ketu\'s ethereal nature.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Set up an altar with Ketu\'s symbol — a headless figure, a grey stone, or an image of Lord Ganesha (Ketu\'s deity).' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Light incense made of loban, camphor, or dhoop — creating a thick, purifying, protective smoke.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Offer multicolored or grey flowers, sesame seeds, coconut, grey cloth, and lead or copper articles.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Ketu Beej Mantra — "Om Straam Streem Straum Sah Ketave Namah" — 108 times with a grey or cat\'s eye rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Ketu Stotram, Ketu Kavach, or meditate on the Ganesha mantra with deep inner silence.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti with a camphor lamp seven times, focusing your mind on liberation, detachment, and spiritual light.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Feed stray dogs (Ketu\'s animal) and donate grey blankets or food to the needy as a form of Ketu-seva.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude by sitting in 20-minute silent meditation, visualizing silvery light dissolving all karmic bonds and ego.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Perform Ketu Puja on Tuesday or Saturday, ideally at twilight or dusk — the mystical in-between time.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Take a purifying bath and wear dark grey, brown, or saffron clothes — colors that honor Ketu\'s ethereal nature.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Set up an altar with Ketu\'s symbol — a headless figure, a grey stone, or an image of Lord Ganesha (Ketu\'s deity).' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Light incense made of loban, camphor, or dhoop — creating a thick, purifying, protective smoke.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Offer multicolored or grey flowers, sesame seeds, coconut, grey cloth, and lead or copper articles.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Ketu Beej Mantra — "Om Straam Streem Straum Sah Ketave Namah" — 108 times with a grey or cat\'s eye rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Ketu Stotram, Ketu Kavach, or meditate on the Ganesha mantra with deep inner silence.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti with a camphor lamp seven times, focusing your mind on liberation, detachment, and spiritual light.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Feed stray dogs (Ketu\'s animal) and donate grey blankets or food to the needy as a form of Ketu-seva.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude by sitting in 20-minute silent meditation, visualizing silvery light dissolving all karmic bonds and ego.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

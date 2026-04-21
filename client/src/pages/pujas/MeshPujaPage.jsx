@@ -1,357 +1,446 @@
-import { useState, useEffect } from 'react'
-import { GiSunrise, GiFlame, GiHealing, GiCoins, GiShield, GiScrollUnfurled } from 'react-icons/gi'
-import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/all_puja_bg.webp';
-import './GenericPujaPage.css'
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, Briefcase, Users, Shield, Sparkles, Flame, Check, Loader2, AlertCircle } from 'lucide-react';
 
-const PUJA_ID = 'mesh-puja'
-const PUJA_NAME = 'Mesh (Aries) Puja'
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+import heroImg   from '../../assets/puja/hero-diya.png';
+import yantraImg from '../../assets/puja/mangal-yantra.png';
+import havanImg  from '../../assets/puja/havan-kund.png';
+import './MeshPujaStyle.css';
 
-const PACKAGES = [
-    {
-        id: 'basic',
-        name: 'Sadharan Puja',
-        price: 1100,
-        duration: '45 min',
-        features: ['Surya Arghya ritual', 'Aditya Hridayam recitation', 'Personal Sankalp', 'Prasad dispatch'],
-    },
-    {
-        id: 'standard',
-        name: 'Vishesh Puja',
-        price: 2100,
-        duration: '90 min',
-        features: ['All Basic features', 'Surya Namaskar Mantra (108x)', 'Havan with Surya Ahuti', 'Rudraksha energisation', 'Video recording'],
-        popular: true,
-    },
-    {
-        id: 'premium',
-        name: 'Maha Surya Puja',
-        price: 5100,
-        duration: '3 hours',
-        features: ['All Standard features', 'Navgraha Shanti', 'Surya Yantra energisation', 'Individual online participation', 'Kundli-specific remedies', 'Post-puja consultation'],
-    },
-]
+const PUJA_ID   = 'mesh-puja';
+const PUJA_NAME = 'Mesh (Aries) Puja';
+const API_BASE  = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const BENEFITS = [
-    { icon: <GiFlame />, title: 'Health & Vitality', desc: 'Surya Puja strengthens the immune system, eyesight, and overall physical vitality. It protects against chronic illness.' },
-    { icon: <GiCoins />, title: 'Career & Success', desc: 'Worshipping the Sun blesses devotees with leadership qualities, government favour, and professional recognition.' },
-    { icon: <GiShield />, title: 'Removes Obstacles', desc: 'Neutralises malefic Sun placements in the horoscope, removes delays in work, legal matters, and reputation issues.' },
-    { icon: <GiHealing />, title: 'Mental Clarity', desc: 'Brings confidence, willpower, self-respect, and clarity of thought. Removes depression and lack of direction.' },
-    { icon: <GiScrollUnfurled />, title: 'Spiritual Growth', desc: 'The Sun represents the Atma (soul). Surya Puja accelerates self-realisation and connects the devotee to divine light.' },
-    { icon: <GiSunrise />, title: 'Family Harmony', desc: 'Improves father–child relationships and brings blessings of elders, ancestors, and authority figures in life.' },
-]
+/* ─── Data ──────────────────────────────────────────────────────────── */
+const pkgList = [
+  {
+    id:        'saral',
+    name:      'Saral',
+    subtitle:  'Essential Aries Puja',
+    priceText: '₹ 5,100',
+    price:     5100,
+    pandits:   1,
+    japa:      '11,000 mantras',
+    duration:  '3 hours',
+    features:  [
+      '1 Vedic pandit at Ujjain',
+      '11,000 Mangal Beej Mantra japa',
+      'Sankalpa in your name & gotra',
+      'Havan with red sandalwood samidha',
+      'Live video recording sent to you',
+      'Prasad couriered within 7 days',
+    ],
+    featured: false,
+  },
+  {
+    id:        'vishesh',
+    name:      'Vishesh',
+    subtitle:  'Recommended for Manglik Dosha',
+    priceText: '₹ 11,100',
+    price:     11100,
+    pandits:   3,
+    japa:      '51,000 mantras',
+    duration:  'Full day (8 hours)',
+    features:  [
+      '3 senior Vedic pandits at Trimbakeshwar',
+      '51,000 mantra japa with japa-mala',
+      'Mangal Kavach paath & Mangal Stotram',
+      'Extended havan with 11 samagri offerings',
+      'Live HD streaming on private link',
+      'Energised Mangal Yantra & red coral mala',
+      'Prasad, kumkum & abhishek jal couriered',
+    ],
+    featured: true,
+  },
+  {
+    id:        'maharaja',
+    name:      'Maharaja',
+    subtitle:  'Complete Mangal Shanti Anushthan',
+    priceText: '₹ 25,100',
+    price:     25100,
+    pandits:   5,
+    japa:      '1,25,000 mantras',
+    duration:  '3-day anushthan',
+    features:  [
+      '5 senior pandits across 3 days at Varanasi',
+      '1,25,000 mantra japa over 3 days',
+      'Daily Rudrabhishek with Mangal mantras',
+      'Poorna-ahuti havan with 21 samagris',
+      'Navagraha shanti & Kumara puja included',
+      '1080p multi-camera live broadcast',
+      'Energised gold-plated Mangal Yantra',
+      'Red coral ring (jyotish ratna), prasad hamper',
+      '30-min personal jyotish consultation',
+    ],
+    featured: false,
+  },
+];
 
+const benefits = [
+  { Icon: Shield,   title: 'Pacifies Mangal Dosha',    desc: 'Neutralises the malefic effects of Mars in the 1st, 4th, 7th, 8th, and 12th houses, easing manglik afflictions.' },
+  { Icon: Heart,    title: 'Removes Marital Delays',   desc: 'Clears karmic obstructions that delay marriage and brings harmony into existing relationships.' },
+  { Icon: Briefcase,title: 'Career & Courage',         desc: 'Awakens initiative, leadership, and the warrior-spirit needed to break stagnation in profession and business.' },
+  { Icon: Users,    title: 'Restores Family Peace',    desc: 'Calms the fire of unwarranted anger, sibling discord, and disputes within the household.' },
+  { Icon: Flame,    title: 'Health & Vitality',        desc: 'Soothes Mars-governed ailments — blood disorders, inflammation, accidents, and chronic fatigue.' },
+  { Icon: Sparkles, title: 'Spiritual Protection',     desc: 'Forms a kavach of divine grace that shields you from negative influences and untimely setbacks.' },
+];
+
+const steps = [
+  { n: '01', title: 'Sankalpa',              desc: 'The pandit-ji takes your gotra, name, and intention before the deity, formally consecrating the puja in your name.' },
+  { n: '02', title: 'Kalash Sthapana',       desc: 'A sacred copper kalash filled with holy water, mango leaves, coconut, and red flowers is established as the seat of divinity.' },
+  { n: '03', title: 'Ganesh & Navagraha',    desc: 'Lord Ganesha is invoked first to remove obstacles, followed by veneration of all nine planets to balance their cosmic energies.' },
+  { n: '04', title: 'Mangal Mantra Japa',    desc: '10,000 – 1,00,000 repetitions of the Mangal Beej Mantra and Mangal Stotram, chanted with japa-mala by trained Vedic priests.' },
+  { n: '05', title: 'Havan',                 desc: 'Sacred fire is consecrated; offerings of khadira samidha, red sandalwood, ghee, and masoor dal are made with each mantra.' },
+  { n: '06', title: 'Aarti & Pushpanjali',   desc: 'Camphor aarti and floral offerings are presented to Lord Mangal as the rite reaches its devotional crescendo.' },
+  { n: '07', title: 'Prasad & Daan',         desc: 'Blessed prasad, red coral mala, and yantra are couriered to your doorstep along with the sankalpa video recording.' },
+];
+
+const fadeUp  = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } };
+const fadeLeft= { hidden: { opacity: 0, x: -30 }, show: { opacity: 1, x: 0 } };
+const fadeRight={ hidden: { opacity: 0, x: 24  }, show: { opacity: 1, x: 0 } };
+
+/* ─── Main Component ────────────────────────────────────────────────── */
 export default function MeshPujaPage() {
-    const [selectedPkg, setSelectedPkg] = useState('standard')
-    const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
-    const [availability, setAvailability] = useState(null)
-    const [status, setStatus] = useState('idle') // idle | loading | success | error
-    const [statusMsg, setStatusMsg] = useState('')
-    const [bookedInfo, setBookedInfo] = useState(null)
+  const [selectedPkg, setSelectedPkg] = useState('vishesh');
+  const [form, setForm]               = useState({ name:'', email:'', phone:'', address:'', gotra:'', date:'', time:'', message:'' });
+  const [availability, setAvail]      = useState(null);
+  const [status, setStatus]           = useState('idle'); // idle | loading | success | error
+  const [statusMsg, setMsg]           = useState('');
+  const [bookedInfo, setBooked]       = useState(null);
 
-    // Fetch availability whenever date changes
-    useEffect(() => {
-        if (!form.date) { setAvailability(null); return }
-        fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
-            .then(r => r.json())
-            .then(data => setAvailability(data))
-            .catch(() => setAvailability(null))
-    }, [form.date])
+  useEffect(() => {
+    if (!form.date) { setAvail(null); return; }
+    fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
+      .then(r => r.json()).then(setAvail).catch(() => setAvail(null));
+  }, [form.date]);
 
-    const handleChange = e => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-        if (status !== 'idle') { setStatus('idle'); setStatusMsg('') }
+  const handleChange = e => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    if (status !== 'idle') { setStatus('idle'); setMsg(''); }
+  };
+
+  const isConflict = time => {
+    if (!availability || !time) return false;
+    const toMin = t => { const [h,m]=t.split(':').map(Number); return h*60+m; };
+    return availability.bookedTimeWindows?.some(({start,end}) => {
+      const c = toMin(time);
+      return c >= toMin(start) && c < toMin(end);
+    });
+  };
+
+  const timeHint = () => {
+    if (!availability) return null;
+    if (!availability.available) return { ok:false, msg:'No slots available for this date.' };
+    if (form.time && isConflict(form.time)) return { ok:false, msg:'Time conflicts with a locked slot.' };
+    return { ok:true, msg:`${availability.remainingSlots} slot(s) remaining today.` };
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    if (!form.name||!form.email||!form.phone||!form.date||!form.time) {
+      setStatus('error'); setMsg('Please fill all required fields.'); return;
     }
-
-    const isTimeConflict = (time) => {
-        if (!availability || !time) return false
-        return availability.bookedTimeWindows?.some(({ start, end }) => {
-            const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
-            const chosen = toMin(time)
-            return chosen >= toMin(start) && chosen < toMin(end)
-        })
+    if (isConflict(form.time)) {
+      setStatus('error'); setMsg('Your time conflicts with an existing booking.'); return;
     }
+    const pkg = pkgList.find(p => p.id===selectedPkg);
+    setStatus('loading');
+    try {
+      const res  = await fetch(`${API_BASE}/api/puja-bookings`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({
+          pujaId:PUJA_ID, pujaName:PUJA_NAME,
+          name:form.name, email:form.email, phone:form.phone,
+          address:form.address, gotra:form.gotra,
+          bookingDate:form.date, startTime:form.time,
+          package:selectedPkg, amount:pkg.price,
+          message:form.message,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error||'Booking failed.');
+      setStatus('success'); setMsg(data.message); setBooked(data.booking);
+    } catch(err) { setStatus('error'); setMsg(err.message); }
+  };
 
-    const getTimeHint = () => {
-        if (!availability) return null
-        if (!availability.available) return { type: 'error', msg: 'No puja slots available for this date. Please choose another date.' }
-        if (form.time && isTimeConflict(form.time)) return { type: 'error', msg: `This time is within a locked slot. Please choose a time outside locked windows.` }
-        return { type: 'ok', msg: `${availability.remainingSlots} slot(s) remaining today.` }
-    }
+  const today = new Date().toISOString().split('T')[0];
+  const hint  = timeHint();
+  const scroll = id => document.getElementById(id)?.scrollIntoView({ behavior:'smooth' });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!form.name || !form.email || !form.phone || !form.date || !form.time) {
-            setStatus('error'); setStatusMsg('Please fill all required fields.'); return
-        }
-        if (isTimeConflict(form.time)) {
-            setStatus('error'); setStatusMsg('Your chosen time conflicts with an existing booking. Please pick another slot.'); return
-        }
-        const pkg = PACKAGES.find(p => p.id === selectedPkg)
+  return (
+    <div className="mesh-puja-theme">
 
-        setStatus('loading')
-        try {
-            const res = await fetch(`${API_BASE}/api/puja-bookings`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pujaId: PUJA_ID,
-                    pujaName: PUJA_NAME,
-                    name: form.name, email: form.email, phone: form.phone,
-                    address: form.address, gotra: form.gotra,
-                    bookingDate: form.date, startTime: form.time,
-                    package: selectedPkg, amount: pkg.price,
-                    message: form.message,
-                }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Booking failed.')
-            setStatus('success')
-            setStatusMsg(data.message)
-            setBookedInfo(data.booking)
-        } catch (err) {
-            setStatus('error')
-            setStatusMsg(err.message)
-        }
-    }
-
-    const hint = getTimeHint()
-    const today = new Date().toISOString().split('T')[0]
-
-    return (
-        <div className="sp-page">
-
-            {/* ── Hero ── */}
-            <section
-                className="sp-hero"
-                style={{ '--sp-hero-image': `url(${heroImage})` }}
-                aria-label="Surya Puja — pandit offering arghya at sunrise by the river"
-            >
-                <div className="sp-hero-overlay">
-                    <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
-                    <h1>Mesh (Aries) Puja</h1>
-                    <p>Attain courage, physical vitality, and triumph over enemies and invite divine blessings into your life. Mangal (Mars) governs Aries; balancing its energy unlocks profound cosmic benefits.</p>
-                    <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
-                </div>
-            </section>
-
-            {/* ── What is Surya Puja ── */}
-            <section className="sp-section sp-about">
-                <div className="sp-container">
-                    <div className="sp-label">Ancient Vedic Ritual</div>
-                    <h2>What is Mesh (Aries) Puja?</h2>
-                    <p>Mesh (Aries) Puja is a powerful Vedic ritual dedicated to Lord Hanuman and Mangal Dev and Mangal (Mars). As the sign of Aries, it perfectly channels the energy of courage, physical vitality, and triumph over enemies.</p>
-                    <p>When Mangal (Mars) is weak or afflicted in your horoscope, it can cause significant obstacles. This tailored ritual pacifies these malefic placements.</p>
-                    <p>The puja is traditionally performed to invoke purely auspicious energies, featuring specific Mangal (Mars) Beej Mantras and sacred offerings to clear karmic blockages.</p>
-                </div>
-            </section>
-
-            {/* ── Why Perform ── */}
-            <section className="sp-section sp-why">
-                <div className="sp-container">
-                    <div className="sp-label">Purpose & Significance</div>
-                    <h2>Why Do People Perform Mesh (Aries) Puja?</h2>
-                    <div className="sp-why-grid">
-                        <div className="sp-why-card">
-                            <h4>💫 Astrological Alignment</h4>
-                            <p>Corrects doshas and negative transits directly impacting the Aries moon sign or ascendant.</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>🎯 Career Breakthroughs</h4>
-                            <p>Removes unseen obstacles severely blocking your professional and financial courage, physical vitality, and triumph over enemies.</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>🧘 Inner Peace</h4>
-                            <p>Resolves mental unrest and brings deeply rooted emotional stability and clarity.</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>❤️ Relationship Harmony</h4>
-                            <p>Heals familial disputes and paves the way for loving, supportive partnerships.</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>🛡️ Health Protection</h4>
-                            <p>Activates a cosmic shield to protect your physical vitality and holistic wellbeing.</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>✨ Karmic Cleansing</h4>
-                            <p>Accelerates the process of overcoming past life karmic debts blocking your success.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Benefits ── */}
-            <section className="sp-section sp-benefits">
-                <div className="sp-container">
-                    <div className="sp-label">Divine Blessings</div>
-                    <h2>Benefits of Mesh (Aries) Puja</h2>
-                    <div className="sp-benefits-grid">
-                        {BENEFITS.map((b, i) => (
-                            <div key={i} className="sp-benefit-card">
-                                <div className="sp-benefit-icon">{b.icon}</div>
-                                <h4>{b.title}</h4>
-                                {b.desc.includes('|') ? (
-                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
-                                        <p>{b.desc.split('|')[0].trim()}</p>
-                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
-                                    </div>
-                                ) : (
-                                    <p>{b.desc}</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Process ── */}
-            <section className="sp-section sp-process">
-                <div className="sp-container">
-                    <div className="sp-label">How It Works</div>
-                    <h2>Puja Process</h2>
-                    <div className="sp-stairs">
-                        {[
-                            { num: 1, icon: '🧘', title: 'Sankalp', sub: 'Setting your personalized intention with name & gotra' },
-                            { num: 2, icon: '🙏', title: 'Avahana', sub: 'Invoking Lord Hanuman and Mangal Dev with ancient Vedic mantras' },
-                            { num: 3, icon: '🌸', title: 'Shodashopachar', sub: 'Offering red flowers and sindoor and sacred items' },
-                            { num: 4, icon: '📖', title: 'Mantra Japa', sub: 'Chanting Om Kram Krim Kraum Sah Bhaumaya Namah' },
-                            { num: 5, icon: '🔥', title: 'Sacred Havan', sub: 'Fire ritual with specific red oblations' },
-                            { num: 6, icon: '💧', title: 'Shanti Path', sub: 'Vedic prayers to stabilize the fiery energy' },
-                            { num: 7, icon: '🎁', title: 'Aarti & Prasad', sub: 'Sending you energized copper/coral and divine blessings' },
-                        ].map((s, i) => (
-                            <div key={s.num} className="sp-stair" style={{ '--i': i }}>
-                                <div className="sp-stair-num">{s.num}</div>
-                                <div className="sp-stair-icon">{s.icon}</div>
-                                <div className="sp-stair-text">
-                                    <span className="sp-stair-title">{s.title}</span>
-                                    <span className="sp-stair-sub">{s.sub}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Pricing ── */}
-            <section className="sp-section sp-pricing" id="booking">
-                <div className="sp-container">
-                    <div className="sp-label">Choose Your Package</div>
-                    <h2>Puja Packages & Pricing</h2>
-                    <div className="sp-packages">
-                        {PACKAGES.map(pkg => (
-                            <div
-                                key={pkg.id}
-                                className={`sp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
-                                onClick={() => setSelectedPkg(pkg.id)}
-                            >
-                                {pkg.popular && <div className="sp-popular-badge">Most Popular</div>}
-                                <h3>{pkg.name}</h3>
-                                <div className="sp-price">
-                                    <span className="sp-price-currency">₹</span>
-                                    <span className="sp-price-amount">{pkg.price.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div className="sp-duration">⏱ {pkg.duration}</div>
-                                <ul className="sp-features">
-                                    {pkg.features.map((f, i) => <li key={i}><FiCheck /> {f}</li>)}
-                                </ul>
-                                <div className={`sp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
-                                    {selectedPkg === pkg.id ? '✓ Selected' : 'Select Package'}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Booking Form ── */}
-            <section className="sp-section sp-booking-section">
-                <div className="sp-container">
-                    <div className="sp-label">Book Your Slot</div>
-                    <h2>Fill Booking Details</h2>
-
-                    {status === 'success' ? (
-                        <div className="sp-success-card">
-                            <div className="sp-success-icon"><FiCheck /></div>
-                            <h3>Puja Booked Successfully! 🙏</h3>
-                            <p>{statusMsg}</p>
-                            {bookedInfo && (
-                                <div className="sp-booking-summary">
-                                    <p><strong>Date:</strong> {bookedInfo.bookingDate}</p>
-                                    <p><strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime} (slot locked)</p>
-                                    <p><strong>Status:</strong> {bookedInfo.status}</p>
-                                </div>
-                            )}
-                            <p className="sp-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
-                        </div>
-                    ) : (
-                        <form className="sp-form" onSubmit={handleSubmit}>
-                            <div className="sp-form-grid">
-                                <div className="sp-form-group">
-                                    <label><FiUser /> Full Name *</label>
-                                    <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiMail /> Email Address *</label>
-                                    <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiPhone /> Phone Number *</label>
-                                    <input name="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiMapPin /> Address / City</label>
-                                    <input name="address" placeholder="Your city or full address" value={form.address} onChange={handleChange} />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label>Gotra (Family Lineage)</label>
-                                    <input name="gotra" placeholder="e.g. Kashyap, Bharadwaj (optional)" value={form.gotra} onChange={handleChange} />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiCalendar /> Puja Date *</label>
-                                    <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
-                                    {availability && (
-                                        <div className={`sp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
-                                            {availability.available
-                                                ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
-                                                : `No slots available for this date`}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiClock /> Preferred Start Time *</label>
-                                    <input name="time" type="time" value={form.time} onChange={handleChange} required
-                                        min="05:00" max="19:00" step="1800" />
-                                    {hint && (
-                                        <div className={`sp-hint ${hint.type}`}>
-                                            {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
-                                        </div>
-                                    )}
-                                    <p className="sp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
-                                </div>
-                                <div className="sp-form-group sp-full-width">
-                                    <label><FiMessageSquare /> Special Message / Wishes</label>
-                                    <textarea name="message" rows={3} placeholder="Any specific wish, health issue, or prayer intention..." value={form.message} onChange={handleChange} />
-                                </div>
-                            </div>
-
-                            <div className="sp-form-summary">
-                                <span>Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong></span>
-                                <span>Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></span>
-                            </div>
-
-                            {status === 'error' && (
-                                <div className="sp-error-msg"><FiAlertCircle /> {statusMsg}</div>
-                            )}
-
-                            <button type="submit" className="sp-submit-btn" disabled={status === 'loading'}>
-                                {status === 'loading' ? <><FiLoader className="sp-spin" /> Processing...</> : '🙏 Confirm Puja Booking'}
-                            </button>
-                        </form>
-                    )}
-                </div>
-            </section>
-
+      {/* ══════════ HERO ══════════ */}
+      <section className="mp-hero">
+        <div className="mp-hero__bg">
+          <img src={heroImg} alt="Brass diya with marigolds" />
+          <div className="mp-hero__overlay-l" />
+          <div className="mp-hero__overlay-b" />
         </div>
-    )
+        <div className="mp-hero__content">
+          <div className="mp-hero__inner">
+            <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ duration:0.8 }}>
+              <div className="mp-hero__badge">Authentic Vedic Rituals</div>
+              <h1 className="mp-serif mp-hero__title">
+                Awaken Courage.<br />
+                <span className="mp-hero__title-accent">Pacify Mars.</span>
+              </h1>
+              <p className="mp-hero__desc mp-sans">
+                A sacred, scripture-aligned Aries Puja performed by traditional Vedic priests for natives of Mesha Rashi. Resolve Mangal Dosha, overcome career blocks, and invite harmony.
+              </p>
+              <div className="mp-hero__btns">
+                <button className="mp-btn mp-btn--primary" onClick={() => scroll('book')}>Book Your Puja</button>
+                <button className="mp-btn mp-btn--outline" onClick={() => scroll('about')}>Understand the Ritual</button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════ ABOUT ══════════ */}
+      <section id="about" className="mp-section" style={{ background:'hsl(40,40%,98%)' }}>
+        <div className="mp-container">
+          <div className="mp-about__grid">
+            <motion.div variants={fadeLeft} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.8 }} className="mp-about__img-wrap">
+              <div className="mp-about__img-glow" />
+              <img src={yantraImg} alt="Mangal Yantra" className="mp-about__img" />
+            </motion.div>
+            <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.8, delay:0.1 }}>
+              <span className="mp-eyebrow">The Sacred Sankalpa</span>
+              <h2 className="mp-section-title">
+                What is the<br /><span style={{ fontStyle:'italic' }}>Aries Puja?</span>
+              </h2>
+              <p className="mp-about__sanskrit">ॐ अं अंगारकाय नमः</p>
+              <p className="mp-about__transliteration">Om Aṁ Aṅgārakāya Namaḥ — Salutations to Lord Mangal</p>
+              <div className="mp-about__body mp-sans">
+                <p>The Aries Puja is a sacred Vedic ritual performed for natives born under <span className="mp-hl">Mesha Rashi (Aries moon sign)</span> and for those whose birth chart shows affliction of <span className="mp-hl">Mangal (Mars)</span>, the ruling planet of Aries.</p>
+                <p>Conducted by traditional pandits at the holiest sites — Ujjain, Trimbakeshwar, and Varanasi — this puja invokes <span className="mp-hl">Lord Mangal</span>, <span className="mp-hl">Lord Kartikeya</span>, and <span className="mp-hl">Lord Ram</span> through prescribed mantras, havan, and offerings of red sandalwood, masoor dal, and red flowers.</p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════ BENEFITS ══════════ */}
+      <section id="benefits" className="mp-section mp-section--muted" style={{ position:'relative' }}>
+        <div className="mp-dot-bg" />
+        <div className="mp-container" style={{ position:'relative' }}>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7 }} className="mp-text-center mp-max-2xl mp-mb-16">
+            <span className="mp-eyebrow">Why Devotees Perform It</span>
+            <h2 className="mp-section-title">Blessings the Puja Bestows</h2>
+            <p className="mp-section-sub">Performed with shraddha and shastric precision, the Aries Puja transforms hardship into harmony — across body, mind, household, and destiny.</p>
+          </motion.div>
+          <div className="mp-benefits__grid">
+            {benefits.map(({ Icon, title, desc }, i) => (
+              <motion.div key={title} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.6, delay:i*0.08 }} className="mp-benefit-card">
+                <div className="mp-benefit-icon"><Icon size={28} strokeWidth={1.5} /></div>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════ PROCESS ══════════ */}
+      <section id="process" className="mp-section" style={{ background:'hsl(40,40%,98%)' }}>
+        <div className="mp-container">
+          <div className="mp-process__grid">
+            <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7 }} className="mp-process__sticky">
+              <span className="mp-eyebrow">The Ritual</span>
+              <h2 className="mp-section-title">Seven Steps of<br /><span style={{ fontStyle:'italic' }}>Devotion</span></h2>
+              <p className="mp-section-sub" style={{ marginBottom:'2rem' }}>
+                Every Aries Puja we conduct strictly follows the Brihat Parashara Hora and Mangal Kavach paddhatis — without abridgement, without shortcuts.
+              </p>
+              <div className="mp-process__havan">
+                <img src={havanImg} alt="Havan kund with rising flames" />
+              </div>
+            </motion.div>
+            <div className="mp-step-list">
+              {steps.map((s, i) => (
+                <motion.div key={s.n} variants={fadeRight} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.6, delay:i*0.06 }} className="mp-step">
+                  <div className="mp-step__num">{s.n}</div>
+                  <div>
+                    <h3>{s.title}</h3>
+                    <p>{s.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════ PACKAGES ══════════ */}
+      <section id="packages" className="mp-section mp-section--muted">
+        <div className="mp-container">
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7 }} className="mp-text-center mp-max-2xl mp-mb-16">
+            <span className="mp-eyebrow">Puja Packages</span>
+            <h2 className="mp-section-title">Choose Your Anushthan</h2>
+            <p className="mp-section-sub">Every package is conducted with full shastric authenticity. Choose the depth of sankalpa that aligns with your circumstance.</p>
+          </motion.div>
+          <div className="mp-pkg-grid">
+            {pkgList.map((p, i) => (
+              <motion.div key={p.id} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.6, delay:i*0.1 }} className={`mp-pkg-card${p.featured?' mp-pkg-card--featured':''}`}>
+                {p.featured && <div className="mp-pkg-badge">Most Chosen</div>}
+                <div className="mp-pkg-name mp-serif">{p.name}</div>
+                <div className="mp-pkg-subtitle">{p.subtitle}</div>
+                <div className="mp-pkg-price-block">
+                  <div className="mp-pkg-price mp-serif">{p.priceText}</div>
+                  <div className="mp-pkg-meta">
+                    <span>{p.pandits} pandit{p.pandits>1?'s':''}</span><span>·</span>
+                    <span>{p.japa}</span><span>·</span><span>{p.duration}</span>
+                  </div>
+                </div>
+                <ul className="mp-pkg-features">
+                  {p.features.map(f => (
+                    <li key={f}><Check size={14} strokeWidth={2.5} /> <span>{f}</span></li>
+                  ))}
+                </ul>
+                <button
+                  className={`mp-btn mp-btn--full ${p.featured?'mp-btn--primary':'mp-btn--accent'}`}
+                  onClick={() => { setSelectedPkg(p.id); scroll('book'); }}
+                >
+                  Book {p.name} Puja
+                </button>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════ BOOKING FORM ══════════ */}
+      <section id="book" className="mp-section" style={{ background:'hsl(40,40%,98%)', position:'relative' }}>
+        <div className="mp-glow-blob" />
+        <div className="mp-container" style={{ position:'relative' }}>
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7 }} className="mp-text-center mp-max-2xl mp-mb-16">
+            <span className="mp-eyebrow">Book Your Puja</span>
+            <h2 className="mp-section-title">Begin Your Sankalpa</h2>
+            <p className="mp-section-sub">Share your details below. Our pandit-ji will confirm your slot and finalize the muhurat within 24 hours.</p>
+          </motion.div>
+
+          <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7, delay:0.1 }}>
+            <div className="mp-booking-card">
+              <AnimatePresence mode="wait">
+                {status === 'success' ? (
+                  <motion.div key="success" initial={{ opacity:0, scale:0.95 }} animate={{ opacity:1, scale:1 }} exit={{ opacity:0 }} className="mp-success">
+                    <motion.div initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:200, delay:0.1 }} className="mp-success__icon">
+                      <Check size={40} strokeWidth={3} />
+                    </motion.div>
+                    <h3 className="mp-success__title mp-serif">Puja Booked Successfully!</h3>
+                    <p className="mp-section-sub">{statusMsg}</p>
+                    {bookedInfo && (
+                      <div className="mp-success__summary mp-sans">
+                        <p><strong>Date:</strong> {bookedInfo.bookingDate}</p>
+                        <p><strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime}</p>
+                        <p><strong>Status:</strong> {bookedInfo.status}</p>
+                      </div>
+                    )}
+                    <p className="mp-success__shubh">शुभं भवतु</p>
+                    <button className="mp-btn mp-btn--outline" style={{ marginTop:'2rem' }}
+                      onClick={() => { setForm({ name:'',email:'',phone:'',address:'',gotra:'',date:'',time:'',message:'' }); setStatus('idle'); }}>
+                      Make Another Booking
+                    </button>
+                  </motion.div>
+                ) : (
+                  <motion.form key="form" onSubmit={handleSubmit} initial={{ opacity:1 }} exit={{ opacity:0 }} className="mp-form">
+                    
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="name">Full Name *</label>
+                        <input className="mp-input" id="name" name="name" value={form.name} onChange={handleChange} required placeholder="As per your janma kundali" />
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="phone">Phone Number *</label>
+                        <input className="mp-input" id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} required placeholder="+91 98XXXXXXXX" />
+                      </div>
+                    </div>
+
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="email">Email Address *</label>
+                        <input className="mp-input" id="email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="you@example.com" />
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="gotra">Gotra <span style={{ fontWeight:400, color:'hsl(10,20%,40%)' }}>(optional)</span></label>
+                        <input className="mp-input" id="gotra" name="gotra" value={form.gotra} onChange={handleChange} placeholder="Kashyap, Bharadwaj, etc." />
+                      </div>
+                    </div>
+
+                    <div className="mp-form-group">
+                      <label className="mp-label" htmlFor="address">Address / City</label>
+                      <input className="mp-input" id="address" name="address" value={form.address} onChange={handleChange} placeholder="City, State" />
+                    </div>
+
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="date">Puja Date *</label>
+                        <input className="mp-input" id="date" name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
+                        {availability && (
+                          <p className={`mp-avail ${availability.available?'mp-avail--ok':'mp-avail--full'}`}>
+                            {availability.available
+                              ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
+                              : 'No slots available on this date'}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="time">Start Time *</label>
+                        <input className="mp-input" id="time" name="time" type="time" min="05:00" max="19:00" step="1800" value={form.time} onChange={handleChange} required />
+                        {hint && (
+                          <p className={`mp-hint ${hint.ok?'mp-hint--ok':'mp-hint--err'}`}>
+                            {hint.ok ? <Check size={12}/> : <AlertCircle size={12}/>} {hint.msg}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="mp-form-group">
+                      <label className="mp-label">Selected Package</label>
+                      <div className="mp-pkg-picker">
+                        {pkgList.map(p => (
+                          <button type="button" key={p.id}
+                            onClick={() => setSelectedPkg(p.id)}
+                            className={`mp-pkg-pick-btn${selectedPkg===p.id?' mp-pkg-pick-btn--active':''}`}>
+                            <div className="mp-pkg-pick-name mp-serif">{p.name}</div>
+                            <div className="mp-pkg-pick-price">{p.priceText}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mp-form-group">
+                      <label className="mp-label" htmlFor="message">
+                        Your Sankalpa / Message <span style={{ fontWeight:400, color:'hsl(10,20%,40%)' }}>(optional)</span>
+                      </label>
+                      <textarea className="mp-textarea" id="message" name="message" rows={3} value={form.message} onChange={handleChange}
+                        placeholder="Share the specific intention of your puja — career, marriage, health, family peace..." />
+                    </div>
+
+                    {status==='error' && (
+                      <div className="mp-error-banner">
+                        <AlertCircle size={16} style={{ flexShrink:0, marginTop:2 }} />
+                        <span>{statusMsg}</span>
+                      </div>
+                    )}
+
+                    <button type="submit" disabled={status==='loading'} className="mp-btn mp-btn--primary mp-btn--full" style={{ paddingTop:'1rem', paddingBottom:'1rem', fontSize:'1.05rem' }}>
+                      {status==='loading'
+                        ? <><Loader2 size={18} className="mp-spin" style={{ marginRight:8 }} /> Processing...</>
+                        : '🙏 Confirm Puja Booking'}
+                    </button>
+                    <p className="mp-note">
+                      By booking, you agree to our pandit-ji contacting you to confirm muhurat. Each booking locks a 5-hour window. Max 5 pujas per day.
+                    </p>
+
+                  </motion.form>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+    </div>
+  );
 }

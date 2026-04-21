@@ -254,16 +254,16 @@ export default function BudhPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Wake up early on Wednesday (Budhvar) and take a purifying bath, wearing green or yellow clothes.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Budh Dev on a bright green cloth.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Light a ghee lamp and sandalwood incense to create a sacred, intellectually charged atmosphere.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Offer green flowers, green mung dal, green fruits (banana, green grapes), and green-colored sweets to the deity.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Place a copper or gold coin beside the idol; keep an emerald stone nearby for energization if available.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Budh Beej Mantra — "Om Braam Breem Braum Sah Budhay Namah" — 108 times with a green glass rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Budh Stotram or Budh Kavach with full mental focus and sparkling intellectual clarity.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame seven times before Budh Dev with a sharp, focused mind.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Donate green vegetables, mung dal, or green clothes to the needy as an act of Budh-seva.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'End by meditating for 10 minutes, visualizing emerald green light filling your mind with boundless wisdom.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Wake up early on Wednesday (Budhvar) and take a purifying bath, wearing green or yellow clothes.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Budh Dev on a bright green cloth.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Light a ghee lamp and sandalwood incense to create a sacred, intellectually charged atmosphere.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Offer green flowers, green mung dal, green fruits (banana, green grapes), and green-colored sweets to the deity.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Place a copper or gold coin beside the idol; keep an emerald stone nearby for energization if available.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Budh Beej Mantra — "Om Braam Breem Braum Sah Budhay Namah" — 108 times with a green glass rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Budh Stotram or Budh Kavach with full mental focus and sparkling intellectual clarity.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame seven times before Budh Dev with a sharp, focused mind.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Donate green vegetables, mung dal, or green clothes to the needy as an act of Budh-seva.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'End by meditating for 10 minutes, visualizing emerald green light filling your mind with boundless wisdom.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

@@ -254,16 +254,16 @@ export default function RahuPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Perform Rahu Puja ideally on Wednesday or Saturday during Rahu Kaal (the 90-minute inauspicious Rahu period).' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Take a purifying bath and wear dark blue, black, or smoky grey clothes for the ritual.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Set up a dark altar with an idol or symbol of Rahu — typically a dark stone or iron serpent image.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Light a camphor lamp and loban or gugal incense, creating a powerful, purifying, and protective atmosphere.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Offer blue or black flowers, coconut, blue cloth, til (sesame), lead or iron articles, and dark-colored fruits.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Rahu Beej Mantra — "Om Bhraam Bhreem Bhraum Sah Rahave Namah" — 108 times with a dark crystal rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Rahu Stotram, Rahu Kavach, or the Durga Saptashati chapter associated with shadow planet pacification.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti using a camphor flame seven times before Rahu\'s idol with complete reverence and fearless focus.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Donate blue or black clothes, sesame, blankets, or coal to the needy as an act of karmic cleansing.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude by lighting camphor outdoors at a crossing (chauraha) as a symbolic offering to Rahu\'s cosmic shadow energy.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Perform Rahu Puja ideally on Wednesday or Saturday during Rahu Kaal (the 90-minute inauspicious Rahu period).' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Take a purifying bath and wear dark blue, black, or smoky grey clothes for the ritual.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Set up a dark altar with an idol or symbol of Rahu — typically a dark stone or iron serpent image.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Light a camphor lamp and loban or gugal incense, creating a powerful, purifying, and protective atmosphere.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Offer blue or black flowers, coconut, blue cloth, til (sesame), lead or iron articles, and dark-colored fruits.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Rahu Beej Mantra — "Om Bhraam Bhreem Bhraum Sah Rahave Namah" — 108 times with a dark crystal rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Rahu Stotram, Rahu Kavach, or the Durga Saptashati chapter associated with shadow planet pacification.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti using a camphor flame seven times before Rahu\'s idol with complete reverence and fearless focus.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Donate blue or black clothes, sesame, blankets, or coal to the needy as an act of karmic cleansing.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude by lighting camphor outdoors at a crossing (chauraha) as a symbolic offering to Rahu\'s cosmic shadow energy.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

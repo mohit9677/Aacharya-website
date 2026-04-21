@@ -254,16 +254,16 @@ export default function MangalPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Wake up early on Tuesday (Mangalvar) and bathe, wearing red or orange clothes for the ritual.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Mangal Dev or Lord Hanuman (Mars\'s presiding deity) on a red cloth.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Light a ghee lamp and red sandalwood incense, filling the space with powerful, energizing warrior vibrations.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Offer red flowers (red roses, hibiscus), red lentils (masoor dal), red sweets, and kumkum to the deity.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Place a copper vessel filled with water and a red coral stone near the idol for activation.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Mangal Beej Mantra — "Om Kraam Kreem Kraum Sah Bhaumay Namah" — 108 times with a red coral rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Mangal Stotram or Hanuman Chalisa with intense devotion, courage, and full concentration.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame clockwise before the deity seven times with warrior\'s conviction.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Distribute red sweets (motichoor ladoo) as prasad and donate red lentils to the needy as seva.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude with a silent vow of courage — affirm your warrior spirit and express heartfelt gratitude to Mangal Dev.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Wake up early on Tuesday (Mangalvar) and bathe, wearing red or orange clothes for the ritual.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Mangal Dev or Lord Hanuman (Mars\'s presiding deity) on a red cloth.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Light a ghee lamp and red sandalwood incense, filling the space with powerful, energizing warrior vibrations.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Offer red flowers (red roses, hibiscus), red lentils (masoor dal), red sweets, and kumkum to the deity.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Place a copper vessel filled with water and a red coral stone near the idol for activation.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Mangal Beej Mantra — "Om Kraam Kreem Kraum Sah Bhaumay Namah" — 108 times with a red coral rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Mangal Stotram or Hanuman Chalisa with intense devotion, courage, and full concentration.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame clockwise before the deity seven times with warrior\'s conviction.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Distribute red sweets (motichoor ladoo) as prasad and donate red lentils to the needy as seva.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude with a silent vow of courage — affirm your warrior spirit and express heartfelt gratitude to Mangal Dev.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

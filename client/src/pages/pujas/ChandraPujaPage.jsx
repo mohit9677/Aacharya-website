@@ -254,16 +254,16 @@ export default function ChandraPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Wake before sunrise on Monday or Purnima and take a purifying bath to cleanse body and aura.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Wear white clothes and set up a clean altar with a silver idol or image of Chandra Dev on a white cloth.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Light a ghee lamp and white sandalwood incense to consecrate and energize the sacred space.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Offer white flowers (jasmine, white rose), kheer, milk, raw rice, and white sweets to the deity.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Apply sandalwood paste (chandan) and white tilak on the idol, focusing completely on Chandra Dev.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Beej Mantra — "Om Shraam Shreem Shraum Sah Chandramasay Namah" — 108 times with a crystal rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Chandra Stotram or Chandra Kavach with pure devotion and one-pointed concentration.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame clockwise before Chandra Dev seven times with gratitude.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Distribute kheer or white sweets as prasad among family members and seek their loving blessings.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude by meditating under moonlight, absorbing its silver, healing, divine energy deep into your being.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Wake before sunrise on Monday or Purnima and take a purifying bath to cleanse body and aura.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Wear white clothes and set up a clean altar with a silver idol or image of Chandra Dev on a white cloth.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Light a ghee lamp and white sandalwood incense to consecrate and energize the sacred space.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Offer white flowers (jasmine, white rose), kheer, milk, raw rice, and white sweets to the deity.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Apply sandalwood paste (chandan) and white tilak on the idol, focusing completely on Chandra Dev.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Beej Mantra — "Om Shraam Shreem Shraum Sah Chandramasay Namah" — 108 times with a crystal rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Chandra Stotram or Chandra Kavach with pure devotion and one-pointed concentration.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame clockwise before Chandra Dev seven times with gratitude.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Distribute kheer or white sweets as prasad among family members and seek their loving blessings.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude by meditating under moonlight, absorbing its silver, healing, divine energy deep into your being.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

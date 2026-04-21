@@ -254,16 +254,16 @@ export default function ShukraPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Wake up on Friday (Shukravar), take a fragrant bath using rose water or sandalwood soap, and wear white or cream clothes.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Set up a beautiful altar with an idol or image of Shukra Dev on a white silk cloth decorated with flowers.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Light a white ghee lamp and rose or jasmine incense, filling the space with intoxicating, romantic fragrance.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Offer white flowers (white rose, jasmine, white lotus), perfume, silver ornaments, white sweets, milk, and saffron.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Place a natural diamond or white zircon near the idol to enhance Venus\'s divine loving energies.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Shukra Beej Mantra — "Om Draam Dreem Draum Sah Shukraay Namah" — 108 times with a white crystal rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Shukra Stotram or Shukra Kavach with deep love, beauty, and heartfelt devotion.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti by gracefully circling a camphor flame seven times before Shukra Dev.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Distribute white sweets (milk barfi, mishri) as prasad and donate white clothes or perfume to women.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude by wearing perfume, embracing beauty, and offering silent gratitude for love and abundance in your life.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Wake up on Friday (Shukravar), take a fragrant bath using rose water or sandalwood soap, and wear white or cream clothes.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Set up a beautiful altar with an idol or image of Shukra Dev on a white silk cloth decorated with flowers.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Light a white ghee lamp and rose or jasmine incense, filling the space with intoxicating, romantic fragrance.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Offer white flowers (white rose, jasmine, white lotus), perfume, silver ornaments, white sweets, milk, and saffron.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Place a natural diamond or white zircon near the idol to enhance Venus\'s divine loving energies.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Shukra Beej Mantra — "Om Draam Dreem Draum Sah Shukraay Namah" — 108 times with a white crystal rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Shukra Stotram or Shukra Kavach with deep love, beauty, and heartfelt devotion.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti by gracefully circling a camphor flame seven times before Shukra Dev.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Distribute white sweets (milk barfi, mishri) as prasad and donate white clothes or perfume to women.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude by wearing perfume, embracing beauty, and offering silent gratitude for love and abundance in your life.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>

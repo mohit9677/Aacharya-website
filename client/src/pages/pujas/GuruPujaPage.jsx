@@ -254,16 +254,16 @@ export default function GuruPujaPage() {
                     <h2>Puja Process</h2>
                     <div className="sp-stairs">
                         {[
-                            { num: 1, icon: '🕉️', title: 'Step 1', sub: 'Wake up early on Thursday (Guruvaar) and take a purifying bath, wearing yellow clothes as an offering to Guru Dev.' },
-                            { num: 2, icon: '🕉️', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Brihaspati Dev or Lord Vishnu on a yellow silk cloth.' },
-                            { num: 3, icon: '🕉️', title: 'Step 3', sub: 'Light a ghee lamp and sandalwood or jasmine incense, filling the space with sacred, expansive energy.' },
-                            { num: 4, icon: '🕉️', title: 'Step 4', sub: 'Offer yellow flowers (marigold, yellow rose), chana dal, banana, yellow sweets, turmeric, and saffron.' },
-                            { num: 5, icon: '🕉️', title: 'Step 5', sub: 'Place a yellow sapphire or topaz stone near the idol for energization and activation of Jupiter\'s energy.' },
-                            { num: 6, icon: '🕉️', title: 'Step 6', sub: 'Chant the Guru Beej Mantra — "Om Graam Greem Graum Sah Guruve Namah" — 108 times with a yellow sandalwood rosary.' },
-                            { num: 7, icon: '🕉️', title: 'Step 7', sub: 'Recite the Brihaspati Stotram, Guru Kavach, or Vishnu Sahasranama with heartfelt devotion and gratitude.' },
-                            { num: 8, icon: '🕉️', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame seven times before Guru Dev with complete reverence.' },
-                            { num: 9, icon: '🕉️', title: 'Step 9', sub: 'Distribute yellow sweets (besan ladoo) as prasad and donate chana dal or yellow clothes to Brahmins.' },
-                            { num: 10, icon: '🕉️', title: 'Step 10', sub: 'Conclude by seeking the blessings of your own Guru or teacher, honoring the sacred Guru-Shishya tradition.' }
+                            { num: 1, icon: '🌅', title: 'Step 1', sub: 'Wake up early on Thursday (Guruvaar) and take a purifying bath, wearing yellow clothes as an offering to Guru Dev.' },
+                            { num: 2, icon: '🛕', title: 'Step 2', sub: 'Set up a clean altar with an idol or image of Brihaspati Dev or Lord Vishnu on a yellow silk cloth.' },
+                            { num: 3, icon: '🪔', title: 'Step 3', sub: 'Light a ghee lamp and sandalwood or jasmine incense, filling the space with sacred, expansive energy.' },
+                            { num: 4, icon: '🌺', title: 'Step 4', sub: 'Offer yellow flowers (marigold, yellow rose), chana dal, banana, yellow sweets, turmeric, and saffron.' },
+                            { num: 5, icon: '✨', title: 'Step 5', sub: 'Place a yellow sapphire or topaz stone near the idol for energization and activation of Jupiter\'s energy.' },
+                            { num: 6, icon: '📿', title: 'Step 6', sub: 'Chant the Guru Beej Mantra — "Om Graam Greem Graum Sah Guruve Namah" — 108 times with a yellow sandalwood rosary.' },
+                            { num: 7, icon: '📖', title: 'Step 7', sub: 'Recite the Brihaspati Stotram, Guru Kavach, or Vishnu Sahasranama with heartfelt devotion and gratitude.' },
+                            { num: 8, icon: '🔔', title: 'Step 8', sub: 'Perform aarti by circling a camphor flame seven times before Guru Dev with complete reverence.' },
+                            { num: 9, icon: '🤲', title: 'Step 9', sub: 'Distribute yellow sweets (besan ladoo) as prasad and donate chana dal or yellow clothes to Brahmins.' },
+                            { num: 10, icon: '🙏', title: 'Step 10', sub: 'Conclude by seeking the blessings of your own Guru or teacher, honoring the sacred Guru-Shishya tradition.' }
                         ].map((s, i) => (
                             <div key={s.num} className="sp-stair" style={{ '--i': i }}>
                                 <div className="sp-stair-num">{s.num}</div>
