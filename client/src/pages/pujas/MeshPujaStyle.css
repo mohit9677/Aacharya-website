@@ -14,6 +14,8 @@
   --mp-card-border: hsl(43, 45%, 80%);
   --mp-border:      hsl(43, 45%, 80%);
   --mp-destructive: hsl(0, 84%, 55%);
+  --mp-page-max:    min(1700px, 100%);
+  --mp-page-pad:    clamp(16px, 3.2vw, 56px);
 
   background-color: var(--mp-bg);
   color:            var(--mp-fg);
@@ -28,10 +30,10 @@
 /* ─── HERO ───────────────────────────────────────────────────────────── */
 .mp-hero {
   position: relative;
-  min-height: 90vh;
+  min-height: clamp(620px, 92vh, 900px);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   overflow: hidden;
 }
 .mp-hero__bg {
@@ -42,24 +44,39 @@
 .mp-hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
 .mp-hero__overlay-l {
   position: absolute; inset: 0;
-  background: linear-gradient(to right, var(--mp-bg) 0%, color-mix(in srgb, var(--mp-bg) 80%, transparent) 60%, transparent 100%);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--mp-bg) 86%, white) 0%,
+    color-mix(in srgb, var(--mp-bg) 68%, transparent) 44%,
+    color-mix(in srgb, var(--mp-bg) 20%, transparent) 68%,
+    transparent 100%
+  );
 }
 .mp-hero__overlay-b {
   position: absolute; inset: 0;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--mp-bg) 30%, transparent) 0%, transparent 50%, var(--mp-bg) 100%);
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--mp-bg) 18%, transparent) 0%,
+    transparent 42%,
+    color-mix(in srgb, var(--mp-bg) 72%, transparent) 86%,
+    var(--mp-bg) 100%
+  );
 }
 .mp-hero__content {
   position: relative; z-index: 10;
-  max-width: 72rem; margin: 0 auto;
-  padding: 0 1.5rem; width: 100%;
+  max-width: var(--mp-page-max); margin: 0 auto;
+  padding: 0 var(--mp-page-pad); width: 100%;
 }
-.mp-hero__inner { max-width: 48rem; }
+.mp-hero__inner {
+  max-width: 42rem;
+  padding-top: clamp(24px, 4vh, 48px);
+}
 .mp-hero__badge {
   display: inline-block;
   border: 1px solid color-mix(in srgb, var(--mp-primary) 30%, transparent);
   border-radius: 9999px;
   padding: 0.375rem 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   background: color-mix(in srgb, var(--mp-primary) 5%, transparent);
   backdrop-filter: blur(4px);
   color: var(--mp-primary);
@@ -70,19 +87,19 @@
 }
 .mp-hero__title {
   font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-size: clamp(2.7rem, 6.2vw, 4.25rem);
   font-weight: 700;
   color: var(--mp-fg);
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
+  line-height: 1.06;
+  margin-bottom: 1.15rem;
 }
 .mp-hero__title-accent { color: var(--mp-accent); font-style: italic; }
 .mp-hero__desc {
-  font-size: 1.125rem;
+  font-size: clamp(1.1rem, 1.35vw, 1.3rem);
   color: color-mix(in srgb, var(--mp-fg) 80%, transparent);
-  margin-bottom: 2.5rem;
-  max-width: 42rem;
-  line-height: 1.75;
+  margin-bottom: 2.1rem;
+  max-width: 38rem;
+  line-height: 1.62;
 }
 .mp-hero__btns { display: flex; flex-wrap: wrap; gap: 1rem; }
 
@@ -93,7 +110,7 @@
   justify-content: center;
   gap: 0.5rem;
   border-radius: 9999px;
-  padding: 0.875rem 2rem;
+  padding: 0.92rem 2.05rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -113,6 +130,23 @@
   border: 1.5px solid color-mix(in srgb, var(--mp-accent) 20%, transparent);
 }
 .mp-btn--outline:hover { background: color-mix(in srgb, var(--mp-accent) 5%, transparent); }
+
+@media (max-width: 768px) {
+  .mp-hero {
+    min-height: 82vh;
+    align-items: flex-end;
+  }
+
+  .mp-hero__inner {
+    max-width: 100%;
+    padding-top: 0;
+    padding-bottom: 2.2rem;
+  }
+
+  .mp-hero__title {
+    font-size: clamp(2.2rem, 10vw, 3.1rem);
+  }
+}
 .mp-btn--accent {
   background: var(--mp-accent);
   color: var(--mp-accent-fg);
@@ -127,9 +161,9 @@
 }
 .mp-section--muted { background: var(--mp-muted-bg); }
 .mp-container {
-  max-width: 72rem;
+  max-width: var(--mp-page-max);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--mp-page-pad);
 }
 .mp-eyebrow {
   display: inline-block;
