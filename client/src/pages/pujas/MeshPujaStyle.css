@@ -66,10 +66,13 @@
   position: relative; z-index: 10;
   max-width: var(--mp-page-max); margin: 0 auto;
   padding: 0 var(--mp-page-pad); width: 100%;
+  /* Your navbar is fixed; keep hero content below it */
+  padding-top: clamp(92px, 10vh, 140px);
+  padding-bottom: clamp(18px, 4vh, 56px);
 }
 .mp-hero__inner {
   max-width: 42rem;
-  padding-top: clamp(24px, 4vh, 48px);
+  padding-top: 0;
 }
 .mp-hero__badge {
   display: inline-block;

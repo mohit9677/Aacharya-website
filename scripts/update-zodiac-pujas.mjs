@@ -1,4 +1,266 @@
-import React, { useState, useEffect } from 'react';
+import fs from 'node:fs'
+import path from 'node:path'
+
+const ROOT = 'D:/AstroBharatAI/AstroBharatAI aacharya website'
+const TARGET_DIR = path.join(ROOT, 'client/src/pages/pujas')
+const PDF_TXT = path.join(ROOT, '.tmp_zodiac_sign_data.txt')
+
+const targets = [
+  { file: 'VrishabhPujaPage.jsx', component: 'VrishabhPujaPage', pujaId: 'vrishabh-puja', pdfKey: 'Vrishabha' },
+  { file: 'MithunPujaPage.jsx', component: 'MithunPujaPage', pujaId: 'mithun-puja', pdfKey: 'Mithuna' },
+  { file: 'KarkPujaPage.jsx', component: 'KarkPujaPage', pujaId: 'kark-puja', pdfKey: 'Karka' },
+  { file: 'SinghPujaPage.jsx', component: 'SinghPujaPage', pujaId: 'singh-puja', pdfKey: 'Simha' },
+  { file: 'KanyaPujaPage.jsx', component: 'KanyaPujaPage', pujaId: 'kanya-puja', pdfKey: 'Kanya' },
+  { file: 'TulaPujaPage.jsx', component: 'TulaPujaPage', pujaId: 'tula-puja', pdfKey: 'Tula' },
+  { file: 'VrishchikPujaPage.jsx', component: 'VrishchikPujaPage', pujaId: 'vrishchik-puja', pdfKey: 'Vrishchika' },
+  { file: 'DhanuPujaPage.jsx', component: 'DhanuPujaPage', pujaId: 'dhanu-puja', pdfKey: 'Dhanu' },
+  { file: 'MakarPujaPage.jsx', component: 'MakarPujaPage', pujaId: 'makar-puja', pdfKey: 'Makara' },
+  { file: 'KumbhPujaPage.jsx', component: 'KumbhPujaPage', pujaId: 'kumbh-puja', pdfKey: 'Kumbha' },
+  { file: 'MeenPujaPage.jsx', component: 'MeenPujaPage', pujaId: 'meen-puja', pdfKey: 'Meena' },
+]
+
+function normalizeSpaces(s) {
+  return (s ?? '').replace(/\s+/g, ' ').trim()
+}
+
+function hasDevanagari(s) {
+  return /[\u0900-\u097F]/.test(s ?? '')
+}
+
+function stripBulletPrefix(line) {
+  // PDF extraction sometimes uses replacement chars for bullets ("�.") or other glyphs.
+  // Remove any leading non-letters/digits/punctuation before the first ASCII letter/number.
+  const l = (line ?? '').trim()
+  const m = l.match(/[A-Za-z0-9].*$/)
+  return m ? m[0].trim() : l
+}
+
+function readLines() {
+  if (!fs.existsSync(PDF_TXT)) throw new Error(`Missing extracted PDF text at ${PDF_TXT}`)
+  return fs
+    .readFileSync(PDF_TXT, 'utf8')
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+}
+
+function isSignStart(line) {
+  return /^[A-Z][a-zA-Z]+\s+Rashi Puja is\b/.test(line)
+}
+
+function blockFor(lines, key) {
+  const start = lines.findIndex((l) => l.startsWith(`${key} Rashi Puja is`))
+  if (start === -1) return null
+  let end = lines.length
+  for (let i = start + 1; i < lines.length; i++) {
+    const m = lines[i].match(/^([A-Z][a-zA-Z]+)\s+Rashi Puja is\b/)
+    if (m && m[1] && m[1] !== key) {
+      end = i
+      break
+    }
+  }
+  return lines.slice(start, end)
+}
+
+function firstEnglishParagraph(block) {
+  // gather English sentences until first Hindi line or bullet list
+  const out = []
+  for (const l of block) {
+    if (hasDevanagari(l)) break
+    // stop when we hit bullet-style text
+    const s = stripBulletPrefix(l)
+    if (/^(People perform|This puja|Individuals|Businesspeople|Students|Artists|Those|When)\b/.test(s)) break
+    out.push(l)
+    if (out.join(' ').length > 900) break
+  }
+  return normalizeSpaces(out.join(' '))
+}
+
+function longEnglishDescription(block, key) {
+  // Prefer the second paragraph that usually starts again with "<Key> Rashi Puja is a sacred..."
+  const idx = block.findIndex((l) => l.startsWith(`${key} Rashi Puja is a sacred`) || l.startsWith(`${key} Rashi Puja is an`))
+  if (idx === -1) return firstEnglishParagraph(block)
+  const out = []
+  for (let i = idx; i < block.length; i++) {
+    const l = block[i]
+    if (hasDevanagari(l)) break
+    const s = stripBulletPrefix(l)
+    if (/^(People perform|This puja|Individuals|Businesspeople|Students|Artists|Those|When)\b/.test(s)) break
+    out.push(l)
+    if (out.join(' ').length > 1400) break
+  }
+  return normalizeSpaces(out.join(' '))
+}
+
+function takeEnglishBullets(block, startAt, predicate) {
+  const bullets = []
+  let i = startAt
+  let cur = ''
+
+  const isImperativeProcessLine = (l) =>
+    /^(Rise|Begin|Wake|For\b|Place|Offer|Ignite|Chant|Donate|Observe|Stand|Wear|Apply|Prepare|Close|Wave|Leave|Mix|Write|Read|Go|Massage|Pour|Recite|Illuminate|Lay|Gift|Complete)\b/.test(
+      l
+    )
+
+  for (; i < block.length; i++) {
+    const raw = block[i]
+    if (isSignStart(raw)) break
+
+    if (hasDevanagari(raw)) {
+      // Hindi block: end current English bullet block once we started.
+      if (cur) {
+        bullets.push(normalizeSpaces(cur))
+        cur = ''
+      }
+      if (bullets.length) {
+        // allow Hindi bullets in between; keep scanning until we hit the next English bullet start
+        continue
+      }
+      continue
+    }
+
+    if (/^--\s*\d+ of \d+\s*--$/.test(raw)) continue
+
+    const l = stripBulletPrefix(raw)
+    const isStart = predicate(l)
+
+    if (isStart) {
+      if (cur) bullets.push(normalizeSpaces(cur))
+      cur = l
+      continue
+    }
+
+    // Continuation line (wrapped bullet): append if we are inside a bullet and this isn't the process section starting.
+    if (cur) {
+      if (isImperativeProcessLine(l)) break
+      cur += ' ' + l
+      continue
+    }
+
+    // If we already captured bullets and we're out of them, stop.
+    if (bullets.length) break
+  }
+
+  if (cur) bullets.push(normalizeSpaces(cur))
+  return { bullets, nextIndex: i }
+}
+
+function extractWhyBenefitsProcess(block, key) {
+  // Find "Why" bullets: we match by English lead phrases, not by bullet glyph.
+  const whyStart = block.findIndex((l) => {
+    if (hasDevanagari(l)) return false
+    const s = stripBulletPrefix(l)
+    return /^(People perform|This puja is performed|This puja helps|Those seeking|Individuals|Businesspeople|Students|Writers|Artists|Politicians|Hardworking|Technologists|Activists|New mothers|Spiritual seekers|People seeking)\b/.test(
+      s
+    )
+  })
+
+  const whyGroup =
+    whyStart === -1
+      ? { bullets: [], nextIndex: 0 }
+      : takeEnglishBullets(block, whyStart, (l) =>
+          /^(People perform|This puja|Those|Individuals|Businesspeople|Students|Writers|Artists|Politicians|Hardworking|Technologists|Activists|New mothers|Spiritual seekers|People seeking|When)\b/.test(
+            l
+          )
+        )
+
+  // Benefits group: next English bullet group after the Hindi bullets block.
+  const benefitStart = block.findIndex((l, idx) => {
+    if (idx < whyGroup.nextIndex) return false
+    if (hasDevanagari(l)) return false
+    const s = stripBulletPrefix(l)
+    return /^(Blesses|Enhances|Boosts|Improves|Calms|Accelerates|Brings|Ensures|Attracts|Heals|Removes|Provides|Opens|Triggers|Activates|Supports|Builds)\b/.test(
+      s
+    )
+  })
+
+  const benGroup =
+    benefitStart === -1
+      ? { bullets: [], nextIndex: whyGroup.nextIndex }
+      : takeEnglishBullets(block, benefitStart, (l) =>
+          /^(Blesses|Enhances|Boosts|Improves|Calms|Accelerates|Brings|Ensures|Attracts|Heals|Removes|Provides|Opens|Triggers|Activates|Supports|Builds)\b/.test(
+            l
+          )
+        )
+
+  // Process lines: collect imperative instructions after benefits, stopping at next sign.
+  const steps = []
+  for (let i = benGroup.nextIndex; i < block.length; i++) {
+    const l = block[i]
+    if (isSignStart(l)) break
+    if (hasDevanagari(l)) continue
+    if (/^--\s*\d+ of \d+\s*--$/.test(l)) continue
+    // keep sentence-like lines
+    if (/[A-Za-z].*[.!?]$/.test(l) && l.length >= 18) steps.push(normalizeSpaces(l))
+  }
+
+  return {
+    why: whyGroup.bullets.slice(0, 6),
+    benefits: benGroup.bullets.slice(0, 6),
+    process: steps.slice(0, 9),
+  }
+}
+
+function sentenceTitle(sentence, fallback) {
+  const s = normalizeSpaces(sentence)
+  const cut = s.replace(/^For\s+/i, '').split(' — ')[0].split(' - ')[0]
+  const words = cut.split(' ').slice(0, 6).join(' ')
+  return words.length >= 8 ? words : fallback
+}
+
+function titleFromBullet(text, fallback) {
+  const t = normalizeSpaces(text).replace(/^[^A-Za-z]+/, '')
+  // Take up to first comma/dash to make a short heading
+  const head = t.split(' — ')[0].split(' - ')[0].split(',')[0].trim()
+  const words = head.split(' ').slice(0, 6).join(' ')
+  return words.length >= 8 ? words : fallback
+}
+
+function buildBenefits(benefitLines) {
+  return benefitLines.map((text, idx) => ({
+    title: titleFromBullet(text, `Key Benefit ${idx + 1}`),
+    desc: text,
+  }))
+}
+
+function buildSteps(processLines) {
+  return processLines.map((text, idx) => ({
+    n: String(idx + 1).padStart(2, '0'),
+    title: sentenceTitle(text, `Step ${idx + 1}`),
+    desc: text,
+  }))
+}
+
+function heroLines(pujaName, about) {
+  // Create two short hero lines from name + first sentence vibe.
+  const base = pujaName.replace(/\s+Puja$/i, '')
+  const first = base.includes('(') ? base.split('(')[0].trim() : base
+  const accent = base.includes('(') ? base.split('(')[1]?.replace(')', '').trim() : 'Rashi'
+  const line1 = `Awaken ${accent}.`
+  const line2 = `Align ${first}.`
+  const desc = about.length > 260 ? about.slice(0, 260) + '…' : about
+  return { line1, line2, desc }
+}
+
+function pageSource(cfg) {
+  const benefits = cfg.benefits
+  const steps = cfg.steps
+
+  // Map benefit index to icon component name in the generated file.
+  const iconExpr = (i) =>
+    i === 0
+      ? 'Shield'
+      : i === 1
+        ? 'Heart'
+        : i === 2
+          ? 'Briefcase'
+          : i === 3
+            ? 'Users'
+            : i === 4
+              ? 'Flame'
+              : 'Sparkles'
+
+  return `import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Briefcase, Users, Shield, Sparkles, Flame, Check, Loader2, AlertCircle } from 'lucide-react';
 
@@ -7,15 +269,15 @@ import yantraImg from '../../assets/puja/mangal-yantra.png';
 import havanImg from '../../assets/puja/havan-kund.png';
 import './MeshPujaStyle.css';
 
-const PUJA_ID   = 'vrishchik-puja';
-const PUJA_NAME = 'Vrishchik (Scorpio) Puja';
+const PUJA_ID   = '${cfg.pujaId}';
+const PUJA_NAME = '${cfg.pujaName}';
 const API_BASE  = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const pkgList = [
   {
     id:        'saral',
     name:      'Saral',
-    subtitle:  'Essential Vrishchik Puja',
+    subtitle:  'Essential ${cfg.shortName} Puja',
     priceText: '₹ 5,100',
     price:     5100,
     pandits:   1,
@@ -68,90 +330,30 @@ const pkgList = [
   },
 ];
 
-const benefits = [
-  {
-    "icon": Shield,
-    "title": "Provides powerful divine protection against enemies",
-    "desc": "Provides powerful divine protection against enemies, black magic, evil eye, negative energies, and all forms of occult interference in the native's life."
-  },
-  {
-    "icon": Heart,
-    "title": "Triggers profound psychological transformation",
-    "desc": "Triggers profound psychological transformation, releasing deep trauma, obsessive patterns, and lifetimes of unresolved emotional wounds from the subconscious."
-  },
-  {
-    "icon": Briefcase,
-    "title": "Activates extraordinary occult",
-    "desc": "Activates extraordinary occult, psychic, and investigative powers, making the native a gifted mystic, healer, or metaphysical researcher."
-  },
-  {
-    "icon": Users,
-    "title": "Heals reproductive health",
-    "desc": "Heals reproductive health, urinary disorders, and blood-related conditions through Mars's ﬁerce divine healing and regenerative energy. Eliminates Mangal Dosha and its damaging eﬀects on marriage, health, and career, restoring harmony and forward momentum. Awakens the kundalini energy, accelerating deep spiritual evolution and granting access to the highest states of cosmic consciousness."
-  }
-]
+const benefits = ${JSON.stringify(
+    benefits.map((b, i) => ({
+      icon: iconExpr(i),
+      title: b.title,
+      desc: b.desc,
+    })),
+    null,
+    2
+  ).replaceAll('"Shield"', 'Shield')
+    .replaceAll('"Heart"', 'Heart')
+    .replaceAll('"Briefcase"', 'Briefcase')
+    .replaceAll('"Users"', 'Users')
+    .replaceAll('"Flame"', 'Flame')
+    .replaceAll('"Sparkles"', 'Sparkles')}
 ;
 
-const steps = [
-  {
-    "n": "01",
-    "title": "signal to the cosmos you are",
-    "desc": "signal to the cosmos you are ready for total transformation."
-  },
-  {
-    "n": "02",
-    "title": "surround with red hibiscus ﬂowers in",
-    "desc": "surround with red hibiscus ﬂowers in abundance."
-  },
-  {
-    "n": "03",
-    "title": "warrior energy responds powerfully to red",
-    "desc": "warrior energy responds powerfully to red oﬀerings."
-  },
-  {
-    "n": "04",
-    "title": "repelling all negative forces that dare",
-    "desc": "repelling all negative forces that dare approach."
-  },
-  {
-    "n": "05",
-    "title": "verse, you will feel Bajrangbali's invincible",
-    "desc": "verse, you will feel Bajrangbali's invincible protection wrapping around you like ﬁre."
-  },
-  {
-    "n": "06",
-    "title": "every atom of your being with",
-    "desc": "every atom of your being with unbreakable courage and ﬁerce divine power."
-  },
-  {
-    "n": "07",
-    "title": "and every shadow blocking your ascent",
-    "desc": "and every shadow blocking your ascent to your highest destiny."
-  },
-  {
-    "n": "08",
-    "title": "removing all negative karmic imprints instantly.",
-    "desc": "removing all negative karmic imprints instantly."
-  },
-  {
-    "n": "09",
-    "title": "honoring donations with multiplied blessings of",
-    "desc": "honoring donations with multiplied blessings of protection."
-  }
-];
-const whyPoints = [
-  "People perform Vrishchika Rashi Puja for divine protection against hidden enemies, black magic, evil eye, and occult attacks that silently destroy health, wealth, and relationships.",
-  "This puja helps Scorpio natives release deep-seated anger, obsessive patterns, unresolved trauma, and emotional wounds that have been buried in the subconscious for years or lifetimes.",
-  "Those seeking mastery in occult sciences, astrology, tantra, healing arts, and metaphysical investigation perform this puja to activate their latent psychic and esoteric powers. People suﬀering from reproductive health issues, urinary problems, or sexual dysfunction — areas governed by Scorpio and Mars — perform this puja to receive complete divine healing.",
-  "Individuals trapped in toxic relationships, power struggles, or self-destructive cycles perform this puja to invoke Goddess Kali's ﬁerce energy to cut through all bondage and liberate the soul.",
-  "When Mars is aﬄicted in the birth chart causing accidents, anger issues, or blood disorders, this puja is performed to pacify Mars and eliminate the Mangal Dosha completely."
-];
+const steps = ${JSON.stringify(steps, null, 2)};
+const whyPoints = ${JSON.stringify(cfg.whyBullets ?? [], null, 2)};
 
 const fadeUp  = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } };
 const fadeLeft= { hidden: { opacity: 0, x: -30 }, show: { opacity: 1, x: 0 } };
 const fadeRight={ hidden: { opacity: 0, x: 24  }, show: { opacity: 1, x: 0 } };
 
-export default function VrishchikPujaPage() {
+export default function ${cfg.component}() {
   const [selectedPkg, setSelectedPkg] = useState('vishesh');
   const [form, setForm]               = useState({ name:'', email:'', phone:'', address:'', gotra:'', date:'', time:'', message:'' });
   const [availability, setAvail]      = useState(null);
@@ -161,7 +363,7 @@ export default function VrishchikPujaPage() {
 
   useEffect(() => {
     if (!form.date) { setAvail(null); return; }
-    fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
+    fetch(\`\${API_BASE}/api/puja-bookings/availability?pujaId=\${PUJA_ID}&date=\${form.date}\`)
       .then(r => r.json()).then(setAvail).catch(() => setAvail(null));
   }, [form.date]);
 
@@ -183,7 +385,7 @@ export default function VrishchikPujaPage() {
     if (!availability) return null;
     if (!availability.available) return { ok:false, msg:'No slots available for this date.' };
     if (form.time && isConflict(form.time)) return { ok:false, msg:'Time conflicts with a locked slot.' };
-    return { ok:true, msg:`${availability.remainingSlots} slot(s) remaining today.` };
+    return { ok:true, msg:\`\${availability.remainingSlots} slot(s) remaining today.\` };
   };
 
   const handleSubmit = async e => {
@@ -197,7 +399,7 @@ export default function VrishchikPujaPage() {
     const pkg = pkgList.find(p => p.id===selectedPkg);
     setStatus('loading');
     try {
-      const res  = await fetch(`${API_BASE}/api/puja-bookings`, {
+      const res  = await fetch(\`\${API_BASE}/api/puja-bookings\`, {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           pujaId:PUJA_ID, pujaName:PUJA_NAME,
@@ -222,7 +424,7 @@ export default function VrishchikPujaPage() {
     <div className="mesh-puja-theme">
       <section className="mp-hero">
         <div className="mp-hero__bg">
-          <img src={heroImg} alt="Vrishchik (Scorpio) Puja hero" />
+          <img src={heroImg} alt="${cfg.pujaName} hero" />
           <div className="mp-hero__overlay-l" />
           <div className="mp-hero__overlay-b" />
         </div>
@@ -231,11 +433,11 @@ export default function VrishchikPujaPage() {
             <motion.div variants={fadeUp} initial="hidden" animate="show" transition={{ duration:0.8 }}>
               <div className="mp-hero__badge">Authentic Vedic Rituals</div>
               <h1 className="mp-serif mp-hero__title">
-                Awaken Scorpio.<br />
-                <span className="mp-hero__title-accent">Align Vrishchik.</span>
+                ${cfg.heroLine1}<br />
+                <span className="mp-hero__title-accent">${cfg.heroLine2}</span>
               </h1>
               <p className="mp-hero__desc mp-sans">
-                Vrishchika Rashi Puja is a deeply transformative and intensely powerful V edic ritual for those born under the Scorpio zodiac sign. Governed by the ﬁerce warrior planet Mars (Mangal), this puja invokes Lord Hanuman and Goddess Kali, granting the native unbreak…
+                ${cfg.heroDesc}
               </p>
               <div className="mp-hero__btns">
                 <button className="mp-btn mp-btn--primary" onClick={() => scroll('book')}>Book Your Puja</button>
@@ -256,11 +458,10 @@ export default function VrishchikPujaPage() {
             <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.8, delay:0.1 }}>
               <span className="mp-eyebrow">The Sacred Sankalpa</span>
               <h2 className="mp-section-title">
-                What is the<br /><span style={{ fontStyle:'italic' }}>Vrishchik Puja?</span>
+                What is the<br /><span style={{ fontStyle:'italic' }}>${cfg.shortName} Puja?</span>
               </h2>
               <div className="mp-about__body mp-sans">
-                <p>Vrishchika Rashi Puja is a deeply transformative and intensely powerful V edic ritual for those born under the Scorpio zodiac sign. Governed by the ﬁerce warrior planet Mars (Mangal), this puja invokes Lord Hanuman and Goddess Kali, granting the native unbreakable courage, protection from hidden enemies, mastery over the occult, and the phoenix-like power of total spiritual transformation.</p>
-                <p>Vrishchika Rashi Puja is an intensely powerful V edic ritual designed to channel and strengthen the ﬁerce, penetrating energy of Mars (Mangal) for those born under the Scorpio zodiac sign — the most mysterious, powerful, and transformative sign of the entire zodiac. In V edic astrology, Scorpio is a water sign ruled by the warrior planet Mars, which here expresses itself through depth, intensity, secrecy, occult knowledge, sexuality, transformation, death, and the most hidden layers of existence. Scorpio natives are incredibly perceptive, magnetically intense, psychically gifted, and possess an unmatched ability to see through people and situations to their very core. They are the shamans, the investigators, the mystics, and the transformers of the zodiac. However, they often battle with jealousy, obsession, vengefulness, power struggles, and a destructive tendency to hold onto pain. The Vrishchika Rashi Puja invokes the divine warrior energy of Lord Hanuman and the transformative cosmic power of Goddess Kali to dissolve Scorpio's shadow and activate its highest, most luminous potential. Performed on Tuesdays with red ﬂowers, red coral items, sindoor, and sesame oﬀerings, this ritual destroys enemies, removes black magic, activates occult powers, heals sexual and reproductive health, and ignites the native's latent spiritual power into a blazing, unstoppable ﬂame of cosmic transformation.</p>
+                ${cfg.aboutParas.map((p) => `<p>${p}</p>`).join('\n                ')}
               </div>
             </motion.div>
           </div>
@@ -273,7 +474,7 @@ export default function VrishchikPujaPage() {
           <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7 }} className="mp-text-center mp-max-2xl mp-mb-16">
             <span className="mp-eyebrow">Why Devotees Perform It</span>
             <h2 className="mp-section-title">Blessings the Puja Bestows</h2>
-            <p className="mp-section-sub">People perform Vrishchika Rashi Puja for divine protection against hidden enemies, black magic, evil eye, and occult attacks that silently destroy health, wealth, and relationships.</p>
+            <p className="mp-section-sub">${cfg.whySummary}</p>
           </motion.div>
 
           {whyPoints.length > 0 && (
@@ -305,7 +506,7 @@ export default function VrishchikPujaPage() {
             <motion.div variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.7 }} className="mp-process__sticky">
               <span className="mp-eyebrow">The Ritual</span>
               <h2 className="mp-section-title">Steps of<br /><span style={{ fontStyle:'italic' }}>Devotion</span></h2>
-              <p className="mp-section-sub" style={{ marginBottom:'2rem' }}>signal to the cosmos you are ready for total transformation.</p>
+              <p className="mp-section-sub" style={{ marginBottom:'2rem' }}>${cfg.processSummary}</p>
               <div className="mp-process__havan">
                 <img src={havanImg} alt="Havan kund" />
               </div>
@@ -334,7 +535,7 @@ export default function VrishchikPujaPage() {
           </motion.div>
           <div className="mp-pkg-grid">
             {pkgList.map((p, i) => (
-              <motion.div key={p.id} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.6, delay:i*0.1 }} className={`mp-pkg-card${p.featured?' mp-pkg-card--featured':''}`}>
+              <motion.div key={p.id} variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once:true }} transition={{ duration:0.6, delay:i*0.1 }} className={\`mp-pkg-card\${p.featured?' mp-pkg-card--featured':''}\`}>
                 {p.featured && <div className="mp-pkg-badge">Most Chosen</div>}
                 <div className="mp-pkg-name mp-serif">{p.name}</div>
                 <div className="mp-pkg-subtitle">{p.subtitle}</div>
@@ -350,7 +551,7 @@ export default function VrishchikPujaPage() {
                     <li key={f}><Check size={14} strokeWidth={2.5} /> <span>{f}</span></li>
                   ))}
                 </ul>
-                <button className={`mp-btn mp-btn--full ${p.featured?'mp-btn--primary':'mp-btn--accent'}`} onClick={() => { setSelectedPkg(p.id); scroll('book'); }}>
+                <button className={\`mp-btn mp-btn--full \${p.featured?'mp-btn--primary':'mp-btn--accent'}\`} onClick={() => { setSelectedPkg(p.id); scroll('book'); }}>
                   Book {p.name} Puja
                 </button>
               </motion.div>
@@ -424,8 +625,8 @@ export default function VrishchikPujaPage() {
                         <label className="mp-label" htmlFor="date">Puja Date *</label>
                         <input className="mp-input" id="date" name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
                         {availability && (
-                          <p className={`mp-avail ${availability.available?'mp-avail--ok':'mp-avail--full'}`}>
-                            {availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available on this date'}
+                          <p className={\`mp-avail \${availability.available?'mp-avail--ok':'mp-avail--full'}\`}>
+                            {availability.available ? \`\${availability.remainingSlots}/\${availability.totalSlots} slots available\` : 'No slots available on this date'}
                           </p>
                         )}
                       </div>
@@ -433,7 +634,7 @@ export default function VrishchikPujaPage() {
                         <label className="mp-label" htmlFor="time">Start Time *</label>
                         <input className="mp-input" id="time" name="time" type="time" min="05:00" max="19:00" step="1800" value={form.time} onChange={handleChange} required />
                         {hint && (
-                          <p className={`mp-hint ${hint.ok?'mp-hint--ok':'mp-hint--err'}`}>
+                          <p className={\`mp-hint \${hint.ok?'mp-hint--ok':'mp-hint--err'}\`}>
                             {hint.ok ? <Check size={12}/> : <AlertCircle size={12}/>} {hint.msg}
                           </p>
                         )}
@@ -444,7 +645,7 @@ export default function VrishchikPujaPage() {
                       <label className="mp-label">Selected Package</label>
                       <div className="mp-pkg-picker">
                         {pkgList.map(p => (
-                          <button type="button" key={p.id} onClick={() => setSelectedPkg(p.id)} className={`mp-pkg-pick-btn${selectedPkg===p.id?' mp-pkg-pick-btn--active':''}`}>
+                          <button type="button" key={p.id} onClick={() => setSelectedPkg(p.id)} className={\`mp-pkg-pick-btn\${selectedPkg===p.id?' mp-pkg-pick-btn--active':''}\`}>
                             <div className="mp-pkg-pick-name mp-serif">{p.name}</div>
                             <div className="mp-pkg-pick-price">{p.priceText}</div>
                           </button>
@@ -478,3 +679,69 @@ export default function VrishchikPujaPage() {
     </div>
   );
 }
+`
+}
+
+const lines = readLines()
+
+for (const t of targets) {
+  const block = blockFor(lines, t.pdfKey)
+  if (!block) throw new Error(`Could not find ${t.pdfKey} section in PDF text`)
+
+  const pujaName = `${t.pdfKey} (Zodiac) Puja`.includes('Simha') ? 'Singh (Leo) Puja' : `${t.pdfKey} Puja`
+  // Better: use the known naming from navbar slugs
+  const nameMap = {
+    Vrishabha: 'Vrishabh (Taurus) Puja',
+    Mithuna: 'Mithun (Gemini) Puja',
+    Karka: 'Kark (Cancer) Puja',
+    Simha: 'Singh (Leo) Puja',
+    Kanya: 'Kanya (Virgo) Puja',
+    Tula: 'Tula (Libra) Puja',
+    Vrishchika: 'Vrishchik (Scorpio) Puja',
+    Dhanu: 'Dhanu (Sagittarius) Puja',
+    Makara: 'Makar (Capricorn) Puja',
+    Kumbha: 'Kumbh (Aquarius) Puja',
+    Meena: 'Meen (Pisces) Puja',
+  }
+
+  const aboutShort = firstEnglishParagraph(block)
+  const aboutLong = longEnglishDescription(block, t.pdfKey)
+  const extracted = extractWhyBenefitsProcess(block, t.pdfKey)
+
+  const benefitsSource =
+    extracted.benefits.length
+      ? extracted.benefits
+      : extracted.why.length
+        ? extracted.why
+        : []
+
+  const benefits = buildBenefits(benefitsSource.length ? benefitsSource : [aboutShort || aboutLong].filter(Boolean))
+  const steps = buildSteps(extracted.process.length ? extracted.process : [aboutLong || aboutShort].filter(Boolean))
+  const hero = heroLines(nameMap[t.pdfKey] ?? pujaName, aboutShort || aboutLong)
+
+  // About paragraphs: keep both short + long when they differ.
+  const aboutParas = []
+  if (aboutShort) aboutParas.push(aboutShort)
+  if (aboutLong && aboutLong !== aboutShort) aboutParas.push(aboutLong)
+  if (!aboutParas.length) aboutParas.push('This puja is performed as per Vedic vidhi by experienced pandits, with sankalp, mantra-japa, and sacred offerings.')
+
+  const cfg = {
+    ...t,
+    pujaName: nameMap[t.pdfKey] ?? pujaName,
+    shortName: (nameMap[t.pdfKey] ?? pujaName).split(' ')[0],
+    aboutParas,
+    heroLine1: hero.line1,
+    heroLine2: hero.line2,
+    heroDesc: hero.desc || aboutShort || aboutLong,
+    whySummary: extracted.why[0] ? extracted.why[0] : 'A shastric ritual performed to align your sign’s ruling energies and remove obstacles.',
+    processSummary: extracted.process[0] ? extracted.process[0] : 'A traditional Vedic sequence performed with mantra, offerings, and sankalp.',
+    whyBullets: extracted.why.slice(0, 6),
+    benefits,
+    steps,
+  }
+
+  const outPath = path.join(TARGET_DIR, t.file)
+  fs.writeFileSync(outPath, pageSource(cfg), 'utf8')
+  console.log(`updated ${t.file} from zodiac sign data.pdf`)
+}
+

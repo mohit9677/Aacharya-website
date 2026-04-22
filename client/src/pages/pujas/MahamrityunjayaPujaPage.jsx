@@ -1,8 +1,26 @@
-import { useState, useEffect } from 'react'
-import { GiSunrise, GiFlame, GiHealing, GiCoins, GiShield, GiScrollUnfurled } from 'react-icons/gi'
-import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/all_puja_bg.webp';
-import './GenericPujaPage.css'
+import { useEffect, useState } from 'react'
+import {
+    FiAlertCircle,
+    FiBookOpen,
+    FiCalendar,
+    FiCheck,
+    FiClock,
+    FiHeart,
+    FiLoader,
+    FiMail,
+    FiMapPin,
+    FiMessageSquare,
+    FiPhone,
+    FiShield,
+    FiStar,
+    FiSun,
+    FiUser,
+    FiUsers,
+} from 'react-icons/fi'
+import heroImage from '../../assets/all_puja_bg.webp'
+import shivaImage from '../../assets/puja/temple-gopuram.png'
+import havanImage from '../../assets/puja/havan-kund.png'
+import './MahamrityunjayaPujaStyle.css'
 
 const PUJA_ID = 'mahamrityunjaya-puja'
 const PUJA_NAME = 'Mahamrityunjaya Puja'
@@ -10,40 +28,67 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 const PACKAGES = [
     {
-        id: 'basic',
-        name: 'Sadharan Puja',
-        price: 1100,
-        duration: '45 min',
-        features: ['Surya Arghya ritual', 'Aditya Hridayam recitation', 'Personal Sankalp', 'Prasad dispatch'],
+        id: 'saral',
+        name: 'Saral Puja',
+        sanskrit: 'सरल पूजा',
+        price: 5100,
+        duration: '3 Hours',
+        pandits: '2 Pandits',
+        chants: '11,000 Mantras',
+        features: ['Basic Rudrabhishek', 'Mahamrityunjaya Japa', 'Small Havan', 'Live video of puja', 'Prasad sent to home'],
     },
     {
-        id: 'standard',
+        id: 'vishesh',
+        sanskrit: 'विशेष पूजा',
         name: 'Vishesh Puja',
-        price: 2100,
-        duration: '90 min',
-        features: ['All Basic features', 'Surya Namaskar Mantra (108x)', 'Havan with Surya Ahuti', 'Rudraksha energisation', 'Video recording'],
+        price: 11100,
+        duration: '6 Hours',
+        pandits: '4 Pandits',
+        chants: '51,000 Mantras',
+        features: ['Full Rudrabhishek with Panchamrit', 'Sankalp in your name & gotra', 'Detailed Havan with Bilva', 'Live HD video', 'Prasad + Rudraksha + Sacred ash', 'Personal phone consultation'],
         popular: true,
     },
     {
-        id: 'premium',
-        name: 'Maha Surya Puja',
-        price: 5100,
-        duration: '3 hours',
-        features: ['All Standard features', 'Navgraha Shanti', 'Surya Yantra energisation', 'Individual online participation', 'Kundli-specific remedies', 'Post-puja consultation'],
+        id: 'maha',
+        name: 'Maha Puja',
+        sanskrit: 'महा पूजा',
+        price: 25100,
+        duration: 'Full Day',
+        pandits: '8 Pandits',
+        chants: '1,25,000 Mantras',
+        features: ['Sava Lakh Mantra Anushthan', 'Ekadash Rudrabhishek', 'Grand Havan with 108 Bilva', 'Full ceremony recording', 'Premium prasad hamper', 'Energised Rudraksha mala', '30-day pandit guidance'],
     },
 ]
 
 const BENEFITS = [
-    { icon: <GiFlame />, title: 'Health & Vitality', desc: 'Surya Puja strengthens the immune system, eyesight, and overall physical vitality. It protects against chronic illness.' },
-    { icon: <GiCoins />, title: 'Career & Success', desc: 'Worshipping the Sun blesses devotees with leadership qualities, government favour, and professional recognition.' },
-    { icon: <GiShield />, title: 'Removes Obstacles', desc: 'Neutralises malefic Sun placements in the horoscope, removes delays in work, legal matters, and reputation issues.' },
-    { icon: <GiHealing />, title: 'Mental Clarity', desc: 'Brings confidence, willpower, self-respect, and clarity of thought. Removes depression and lack of direction.' },
-    { icon: <GiScrollUnfurled />, title: 'Spiritual Growth', desc: 'The Sun represents the Atma (soul). Surya Puja accelerates self-realisation and connects the devotee to divine light.' },
-    { icon: <GiSunrise />, title: 'Family Harmony', desc: 'Improves father–child relationships and brings blessings of elders, ancestors, and authority figures in life.' },
+    { icon: <FiHeart />, title: 'Healing & Recovery', desc: 'Aids recovery from chronic illness, surgery, and prolonged ailments.' },
+    { icon: <FiShield />, title: 'Protection from Harm', desc: 'Shields you and your loved ones from accidents, fear, and untimely danger.' },
+    { icon: <FiSun />, title: 'Long, Healthy Life', desc: 'Blesses life with vitality, mental peace, and longevity (Ayushya).' },
+    { icon: <FiStar />, title: 'Removes Negativity', desc: 'Dissolves doshas, planetary afflictions, and karmic burdens.' },
+    { icon: <FiHeart />, title: 'Inner Peace', desc: 'Calms the mind, reduces anxiety, and awakens deep spiritual courage.' },
+    { icon: <FiShield />, title: 'Spiritual Purification', desc: 'Purifies the subtle body and clears the path toward liberation.' },
+]
+
+const REASONS = [
+    'Recovery from a serious illness, surgery, or accident',
+    'When a family member is suffering from prolonged sickness',
+    'To remove fear of untimely death (Mrityu Bhaya)',
+    'On birthdays and Janma Nakshatra for long life',
+    'During difficult dasha, sade sati, or severe graha dosha',
+    'For protection of children and elders in the family',
+]
+
+const STEPS = [
+    { n: '01', title: 'Sankalp & Purification', text: 'The devotee takes a sacred vow and the puja space is purified with Ganga jal and mantras.' },
+    { n: '02', title: 'Kalash & Ganesh Pujan', text: 'Lord Ganesha is invoked first, followed by sacred Kalash sthapana.' },
+    { n: '03', title: 'Rudrabhishek', text: 'Shiva Lingam is bathed with panchamrit, milk, honey, curd, ghee, and holy water.' },
+    { n: '04', title: 'Mantra Japa', text: 'Mahamrityunjaya mantra chants are done with Vedic precision and sankalp.' },
+    { n: '05', title: 'Havan & Ahuti', text: 'Sacred fire offerings with bilva, samagri, and ghee complete the ritual.' },
+    { n: '06', title: 'Aarti & Prasad', text: 'The puja concludes with Shiva aarti and blessed prasad dispatch.' },
 ]
 
 export default function MahamrityunjayaPujaPage() {
-    const [selectedPkg, setSelectedPkg] = useState('standard')
+    const [selectedPkg, setSelectedPkg] = useState('vishesh')
     const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
     const [availability, setAvailability] = useState(null)
     const [status, setStatus] = useState('idle') // idle | loading | success | error
@@ -58,6 +103,13 @@ export default function MahamrityunjayaPujaPage() {
             .then(data => setAvailability(data))
             .catch(() => setAvailability(null))
     }, [form.date])
+
+    useEffect(() => {
+        document.body.classList.add('mm-page-active')
+        return () => {
+            document.body.classList.remove('mm-page-active')
+        }
+    }, [])
 
     const handleChange = e => {
         setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -120,142 +172,123 @@ export default function MahamrityunjayaPujaPage() {
     const today = new Date().toISOString().split('T')[0]
 
     return (
-        <div className="sp-page">
+        <div className="mm-page">
+            <div className="mm-topbar">ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् • Health & Protection Puja</div>
 
-            {/* ── Hero ── */}
-            <section
-                className="sp-hero"
-                style={{ '--sp-hero-image': `url(${heroImage})` }}
-                aria-label="Surya Puja — pandit offering arghya at sunrise by the river"
-            >
-                <div className="sp-hero-overlay">
-                    <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
-                    <h1>Mahamrityunjaya Puja</h1>
-                    <p>[Hero description for Mahamrityunjaya Puja will go here. This provides the primary benefits and calling.]</p>
-                    <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
-                </div>
-            </section>
-
-            {/* ── What is Surya Puja ── */}
-            <section className="sp-section sp-about">
-                <div className="sp-container">
-                    <div className="sp-label">Ancient Vedic Ritual</div>
-                    <h2>What is Mahamrityunjaya Puja?</h2>
-                    <p>[Detailed description of what Mahamrityunjaya Puja is, its Vedic significance, and the main deity or cosmic energy involved. Add specific context here later.]</p>
-                    <p>[Secondary paragraph detailing when it is traditionally performed and the historical references.]</p>
-                    <p>Surya Puja is traditionally performed at sunrise, facing east, on Sundays — the day governed by the Sun. It is particularly powerful during solar festivals like Chhath Puja, Makar Sankranti, and Ratha Saptami.</p>
-                </div>
-            </section>
-
-            {/* ── Why Perform ── */}
-            <section className="sp-section sp-why">
-                <div className="sp-container">
-                    <div className="sp-label">Purpose & Significance</div>
-                    <h2>Why Do People Perform Mahamrityunjaya Puja?</h2>
-                    <div className="sp-why-grid">
-                        <div className="sp-why-card">
-                            <h4>🔴 [Reason 1]</h4>
-                            <p>[Specific astrologial or life problem addressed by this puja.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>🏛️ [Reason 2]</h4>
-                            <p>[Another significant reason devotees seek this specific cosmic intervention.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👁️ [Reason 3]</h4>
-                            <p>[Health, mental, or physical conditions targeted by the ritual.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>💼 [Reason 4]</h4>
-                            <p>[Career, business, or prosperity-related obstacles removed.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👨‍👧 [Reason 5]</h4>
-                            <p>[Relationship, family, or ancestral benefits granted.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>⚡ [Reason 6]</h4>
-                            <p>[Dasha, transit or timing-specific amplifications of the puja's effects.]</p>
-                        </div>
+            <section className="mm-hero" style={{ '--mm-hero-image': `url(${heroImage})` }}>
+                <div className="mm-hero-overlay" />
+                <div className="mm-hero-content">
+                    <p className="mm-badge">✦ Health & Protection Puja ✦</p>
+                    <h1>Mahamrityunjaya <span>Puja</span></h1>
+                    <p className="mm-quote">Conqueror of Death, Giver of Eternal Life</p>
+                    <p className="mm-subtitle">
+                        When illness lingers and fear overshadows your loved ones, invoke Lord Shiva through the most powerful Vedic mantra for health, peace, and longevity.
+                    </p>
+                    <div className="mm-actions">
+                        <a href="#booking" className="mm-btn mm-btn-gold">Book Your Puja</a>
+                        <a href="#packages" className="mm-btn mm-btn-outline">View Packages</a>
+                    </div>
+                    <div className="mm-hero-meta">
+                        <span><FiStar /> 10,000+ Pujas Performed</span>
+                        <span><FiUsers /> Vedic Certified Pandits</span>
+                        <span><FiBookOpen /> Live Video Darshan</span>
                     </div>
                 </div>
             </section>
 
-            {/* ── Benefits ── */}
-            <section className="sp-section sp-benefits">
-                <div className="sp-container">
-                    <div className="sp-label">Divine Blessings</div>
-                    <h2>Benefits of Mahamrityunjaya Puja</h2>
-                    <div className="sp-benefits-grid">
+            <section className="mm-mantra">
+                <h2>ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्।<br />उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय माऽमृतात्॥</h2>
+                <p>"We worship the three-eyed Lord. May He liberate us from the bondage of death and grant immortal grace."</p>
+            </section>
+
+            <section className="mm-section">
+                <div className="mm-container mm-about">
+                    <div>
+                        <p className="mm-label">Sacred Knowledge</p>
+                        <h2>What is the Mahamrityunjaya Puja?</h2>
+                        <p>
+                            Mahamrityunjaya Puja is one of the most revered rituals of Sanatan Dharma, devoted to Lord Shiva as the Conqueror of Death. It invokes healing, protection, and deep inner strength.
+                        </p>
+                        <p>
+                            Rooted in Rig Veda and Yajur Veda traditions, this puja combines mantra japa, Rudrabhishek, and havan to reduce suffering and support complete wellbeing of body, mind, and spirit.
+                        </p>
+                    </div>
+                    <img src={shivaImage} alt="Sacred temple and Lord Shiva symbolism" />
+                </div>
+            </section>
+
+            <section className="mm-section mm-warm">
+                <div className="mm-container">
+                    <p className="mm-label center">The Calling</p>
+                    <h2 className="center">Why Devotees Perform This Puja</h2>
+                    <div className="mm-reasons">
+                        {REASONS.map((reason, idx) => (
+                            <div className="mm-reason-card" key={reason}>
+                                <span>{idx + 1}</span>
+                                <p>{reason}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="mm-section">
+                <div className="mm-container">
+                    <p className="mm-label center">Divine Blessings</p>
+                    <h2 className="center">Benefits of the Puja</h2>
+                    <div className="mm-benefits">
                         {BENEFITS.map((b, i) => (
-                            <div key={i} className="sp-benefit-card">
-                                <div className="sp-benefit-icon">{b.icon}</div>
+                            <div key={i} className="mm-benefit-card">
+                                <div className="mm-benefit-icon">{b.icon}</div>
                                 <h4>{b.title}</h4>
-                                {b.desc.includes('|') ? (
-                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
-                                        <p>{b.desc.split('|')[0].trim()}</p>
-                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
-                                    </div>
-                                ) : (
-                                    <p>{b.desc}</p>
-                                )}
+                                <p>{b.desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* ── Process ── */}
-            <section className="sp-section sp-process">
-                <div className="sp-container">
-                    <div className="sp-label">How It Works</div>
-                    <h2>Puja Process</h2>
-                    <div className="sp-stairs">
-                        {[
-                            { num: 1, icon: '🧘', title: 'Sankalp',          sub: 'Setting the sacred intention & devotee details' },
-                            { num: 2, icon: '🙏', title: 'Avahana',          sub: 'Invocation of Lord Surya with Vedic mantras' },
-                            { num: 3, icon: '🌸', title: 'Shodashopachar',   sub: '16 sacred offerings — flowers, dhoop, diya & more' },
-                            { num: 4, icon: '📖', title: 'Aditya Hridayam',  sub: 'Chanting of the powerful Surya hymn from Ramayana' },
-                            { num: 5, icon: '🔥', title: 'Havan / Ahuti',    sub: 'Sacred fire ritual with Surya-specific oblations' },
-                            { num: 6, icon: '💧', title: 'Surya Arghya',     sub: 'Offering water to the rising Sun (Arghya ritual)' },
-                            { num: 7, icon: '🎁', title: 'Aarti & Prasad',   sub: 'Divine blessings, aarti & prasad dispatched to you' },
-                        ].map((s, i) => (
-                            <div key={s.num} className="sp-stair" style={{ '--i': i }}>
-                                <div className="sp-stair-num">{s.num}</div>
-                                <div className="sp-stair-icon">{s.icon}</div>
-                                <div className="sp-stair-text">
-                                    <span className="sp-stair-title">{s.title}</span>
-                                    <span className="sp-stair-sub">{s.sub}</span>
-                                </div>
+            <section className="mm-section mm-process" style={{ '--mm-process-image': `url(${havanImage})` }}>
+                <div className="mm-process-overlay" />
+                <div className="mm-container mm-process-content">
+                    <p className="mm-label center">Sacred Vidhi</p>
+                    <h2 className="center">The Process of the Puja</h2>
+                    <div className="mm-steps">
+                        {STEPS.map(step => (
+                            <div key={step.n} className="mm-step-card">
+                                <span>{step.n}</span>
+                                <h4>{step.title}</h4>
+                                <p>{step.text}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* ── Pricing ── */}
-            <section className="sp-section sp-pricing" id="booking">
-                <div className="sp-container">
-                    <div className="sp-label">Choose Your Package</div>
-                    <h2>Puja Packages & Pricing</h2>
-                    <div className="sp-packages">
+            <section className="mm-section mm-warm" id="packages">
+                <div className="mm-container">
+                    <p className="mm-label center">Choose Your Sankalp</p>
+                    <h2 className="center">Puja Packages & Pricing</h2>
+                    <div className="mm-packages">
                         {PACKAGES.map(pkg => (
                             <div
                                 key={pkg.id}
-                                className={`sp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
+                                className={`mm-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
                                 onClick={() => setSelectedPkg(pkg.id)}
                             >
-                                {pkg.popular && <div className="sp-popular-badge">Most Popular</div>}
+                                {pkg.popular && <div className="mm-popular-badge">Most Chosen</div>}
+                                <p className="mm-sanskrit">{pkg.sanskrit}</p>
                                 <h3>{pkg.name}</h3>
-                                <div className="sp-price">
-                                    <span className="sp-price-currency">₹</span>
-                                    <span className="sp-price-amount">{pkg.price.toLocaleString('en-IN')}</span>
+                                <div className="mm-price">₹{pkg.price.toLocaleString('en-IN')}</div>
+                                <div className="mm-package-meta">
+                                    <span><FiUsers /> {pkg.pandits}</span>
+                                    <span><FiClock /> {pkg.duration}</span>
+                                    <span><FiBookOpen /> {pkg.chants}</span>
                                 </div>
-                                <div className="sp-duration">⏱ {pkg.duration}</div>
-                                <ul className="sp-features">
+                                <ul className="mm-features">
                                     {pkg.features.map((f, i) => <li key={i}><FiCheck /> {f}</li>)}
                                 </ul>
-                                <div className={`sp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
+                                <div className={`mm-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
                                     {selectedPkg === pkg.id ? '✓ Selected' : 'Select Package'}
                                 </div>
                             </div>
@@ -264,94 +297,98 @@ export default function MahamrityunjayaPujaPage() {
                 </div>
             </section>
 
-            {/* ── Booking Form ── */}
-            <section className="sp-section sp-booking-section">
-                <div className="sp-container">
-                    <div className="sp-label">Book Your Slot</div>
-                    <h2>Fill Booking Details</h2>
+            <section className="mm-section" id="booking">
+                <div className="mm-container">
+                    <p className="mm-label center">Begin Your Sacred Journey</p>
+                    <h2 className="center">Book Your Puja</h2>
 
                     {status === 'success' ? (
-                        <div className="sp-success-card">
-                            <div className="sp-success-icon"><FiCheck /></div>
+                        <div className="mm-success-card">
+                            <div className="mm-success-icon"><FiCheck /></div>
                             <h3>Puja Booked Successfully! 🙏</h3>
                             <p>{statusMsg}</p>
                             {bookedInfo && (
-                                <div className="sp-booking-summary">
+                                <div className="mm-booking-summary">
                                     <p><strong>Date:</strong> {bookedInfo.bookingDate}</p>
                                     <p><strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime} (slot locked)</p>
                                     <p><strong>Status:</strong> {bookedInfo.status}</p>
                                 </div>
                             )}
-                            <p className="sp-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
+                            <p className="mm-success-note">Our team will call you within 2 hours to confirm your slot and guide the ritual details.</p>
                         </div>
                     ) : (
-                        <form className="sp-form" onSubmit={handleSubmit}>
-                            <div className="sp-form-grid">
-                                <div className="sp-form-group">
+                        <form className="mm-form" onSubmit={handleSubmit}>
+                            <div className="mm-form-grid">
+                                <div className="mm-form-group">
                                     <label><FiUser /> Full Name *</label>
                                     <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="mm-form-group">
                                     <label><FiMail /> Email Address *</label>
                                     <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="mm-form-group">
                                     <label><FiPhone /> Phone Number *</label>
                                     <input name="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} required />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="mm-form-group">
                                     <label><FiMapPin /> Address / City</label>
                                     <input name="address" placeholder="Your city or full address" value={form.address} onChange={handleChange} />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="mm-form-group">
                                     <label>Gotra (Family Lineage)</label>
                                     <input name="gotra" placeholder="e.g. Kashyap, Bharadwaj (optional)" value={form.gotra} onChange={handleChange} />
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="mm-form-group">
                                     <label><FiCalendar /> Puja Date *</label>
                                     <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
                                     {availability && (
-                                        <div className={`sp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
+                                        <div className={`mm-avail-badge ${availability.available ? 'ok' : 'full'}`}>
                                             {availability.available
                                                 ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
                                                 : `No slots available for this date`}
                                         </div>
                                     )}
                                 </div>
-                                <div className="sp-form-group">
+                                <div className="mm-form-group">
                                     <label><FiClock /> Preferred Start Time *</label>
                                     <input name="time" type="time" value={form.time} onChange={handleChange} required
                                         min="05:00" max="19:00" step="1800" />
                                     {hint && (
-                                        <div className={`sp-hint ${hint.type}`}>
+                                        <div className={`mm-hint ${hint.type}`}>
                                             {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
                                         </div>
                                     )}
-                                    <p className="sp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
+                                    <p className="mm-time-note">Each booking locks a 5-hour window. Max 5 pujas per day.</p>
                                 </div>
-                                <div className="sp-form-group sp-full-width">
+                                <div className="mm-form-group mm-full-width">
                                     <label><FiMessageSquare /> Special Message / Wishes</label>
                                     <textarea name="message" rows={3} placeholder="Any specific wish, health issue, or prayer intention..." value={form.message} onChange={handleChange} />
                                 </div>
                             </div>
 
-                            <div className="sp-form-summary">
+                            <div className="mm-form-summary">
                                 <span>Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong></span>
                                 <span>Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></span>
                             </div>
 
                             {status === 'error' && (
-                                <div className="sp-error-msg"><FiAlertCircle /> {statusMsg}</div>
+                                <div className="mm-error-msg"><FiAlertCircle /> {statusMsg}</div>
                             )}
 
-                            <button type="submit" className="sp-submit-btn" disabled={status === 'loading'}>
-                                {status === 'loading' ? <><FiLoader className="sp-spin" /> Processing...</> : '🙏 Confirm Puja Booking'}
+                            <button type="submit" className="mm-submit-btn" disabled={status === 'loading'}>
+                                {status === 'loading' ? <><FiLoader className="mm-spin" /> Processing...</> : '🪔 Confirm Puja Booking'}
                             </button>
                         </form>
                     )}
                 </div>
             </section>
 
+            <footer className="mm-footer">
+                <p className="mm-footer-mantra">ॐ नमः शिवाय</p>
+                <p>May Lord Shiva bless you with health, happiness, and a long life.</p>
+                <small>© {new Date().getFullYear()} Sacred Pujas • Performed with devotion.</small>
+            </footer>
         </div>
     )
 }

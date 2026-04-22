@@ -1,357 +1,542 @@
-import { useState, useEffect } from 'react'
-import { GiSunrise, GiFlame, GiHealing, GiCoins, GiShield, GiScrollUnfurled } from 'react-icons/gi'
-import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/all_puja_bg.webp';
-import './GenericPujaPage.css'
+import { useEffect, useMemo, useState } from 'react'
+import {
+  FiUser,
+  FiPhone,
+  FiMail,
+  FiMapPin,
+  FiCalendar,
+  FiClock,
+  FiMessageSquare,
+  FiCheck,
+  FiAlertCircle,
+  FiLoader,
+} from 'react-icons/fi'
+import './DiwaliFestivalPujaStyle.css'
+import heroImg from '../../assets/puja/hero-lakshmi.jpg'
+import diyasRow from '../../assets/puja/diyas-row.jpg'
+import samagriImg from '../../assets/puja/samagri.jpg'
+import panditImg from '../../assets/puja/pandit.jpg'
 
-const PUJA_ID = 'diwali-pujas-puja'
-const PUJA_NAME = 'Diwali Pujas'
+const PUJA_ID = 'diwali-lakshmi-puja'
+const PUJA_NAME = 'Diwali Lakshmi Puja'
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
-const PACKAGES = [
-    {
-        id: 'basic',
-        name: 'Sadharan Puja',
-        price: 1100,
-        duration: '45 min',
-        features: ['Surya Arghya ritual', 'Aditya Hridayam recitation', 'Personal Sankalp', 'Prasad dispatch'],
-    },
-    {
-        id: 'standard',
-        name: 'Vishesh Puja',
-        price: 2100,
-        duration: '90 min',
-        features: ['All Basic features', 'Surya Namaskar Mantra (108x)', 'Havan with Surya Ahuti', 'Rudraksha energisation', 'Video recording'],
-        popular: true,
-    },
-    {
-        id: 'premium',
-        name: 'Maha Surya Puja',
-        price: 5100,
-        duration: '3 hours',
-        features: ['All Standard features', 'Navgraha Shanti', 'Surya Yantra energisation', 'Individual online participation', 'Kundli-specific remedies', 'Post-puja consultation'],
-    },
+const REASONS = [
+  { title: 'Wealth & Prosperity', text: 'Invite Goddess Lakshmi to bless your home with abundance and financial growth.' },
+  { title: 'Harmony at Home', text: 'Cleanse negative energy and fill your space with peace, warmth, and positivity.' },
+  { title: 'Family Wellbeing', text: 'Strengthen bonds and surround your loved ones with divine protection.' },
+  { title: 'New Beginnings', text: 'Mark Diwali with auspicious rituals that set the tone for the year ahead.' },
 ]
 
 const BENEFITS = [
-    { icon: <GiFlame />, title: 'Health & Vitality', desc: 'Surya Puja strengthens the immune system, eyesight, and overall physical vitality. It protects against chronic illness.' },
-    { icon: <GiCoins />, title: 'Career & Success', desc: 'Worshipping the Sun blesses devotees with leadership qualities, government favour, and professional recognition.' },
-    { icon: <GiShield />, title: 'Removes Obstacles', desc: 'Neutralises malefic Sun placements in the horoscope, removes delays in work, legal matters, and reputation issues.' },
-    { icon: <GiHealing />, title: 'Mental Clarity', desc: 'Brings confidence, willpower, self-respect, and clarity of thought. Removes depression and lack of direction.' },
-    { icon: <GiScrollUnfurled />, title: 'Spiritual Growth', desc: 'The Sun represents the Atma (soul). Surya Puja accelerates self-realisation and connects the devotee to divine light.' },
-    { icon: <GiSunrise />, title: 'Family Harmony', desc: 'Improves father–child relationships and brings blessings of elders, ancestors, and authority figures in life.' },
+  { title: 'Divine Blessings', text: 'Receive direct grace of Maa Lakshmi and Lord Ganesha.' },
+  { title: 'Financial Growth', text: 'Open pathways for wealth, success and new opportunities.' },
+  { title: 'Protection', text: 'Shield your home from negativity and evil influences.' },
+  { title: 'Inner Peace', text: 'Experience calm, clarity and spiritual fulfilment.' },
+  { title: 'Positive Energy', text: 'Purify your living space with sacred mantras and havan.' },
+  { title: 'Lasting Prosperity', text: 'Sow seeds of fortune that grow throughout the year.' },
+]
+
+const STEPS = [
+  { n: '01', title: 'Sankalp', text: 'Pandit ji begins with the sacred vow, taking your name and gotra for personalised intention.' },
+  { n: '02', title: 'Ganesh Pujan', text: 'Worship of Lord Ganesha to remove all obstacles before invoking Maa Lakshmi.' },
+  { n: '03', title: 'Kalash Sthapana', text: 'A holy kalash is established to invite divine presence into your home.' },
+  { n: '04', title: 'Lakshmi Avahan', text: 'Goddess Lakshmi is invoked through Vedic mantras and shodashopachara.' },
+  { n: '05', title: 'Aarti & Havan', text: 'Sacred fire ritual and aarti to seal blessings of wealth and prosperity.' },
+  { n: '06', title: 'Prasad & Ashirvad', text: 'Distribution of prasad and personal blessings for every family member.' },
+]
+
+const PACKAGES = [
+  {
+    id: 'basic',
+    name: 'Basic',
+    price: 2100,
+    tagline: 'Essential Blessings',
+    popular: false,
+    features: ['1 Verified Pandit', '60 minute Puja', 'Standard Samagri Kit', 'Live Sankalp', 'Digital Prasad Photo'],
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    price: 5100,
+    tagline: 'Most Chosen',
+    popular: true,
+    features: ['2 Verified Pandits', '2 hour Puja with Havan', 'Premium Samagri Kit', 'Personalised Sankalp', 'Aarti & Mantra Recital', 'Prasad delivered home'],
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    price: 11100,
+    tagline: 'Royal Experience',
+    popular: false,
+    features: ['4 Vedic Pandits', 'Full ceremony with Havan', 'Royal Silver Samagri Kit', '108 Lakshmi Mantra Jaap', 'Live HD Streaming', 'Silver coin & Yantra gift', 'Prasad + Ganga jal home delivery'],
+  },
 ]
 
 export default function DiwaliPujasPujaPage() {
-    const [selectedPkg, setSelectedPkg] = useState('standard')
-    const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
-    const [availability, setAvailability] = useState(null)
-    const [status, setStatus] = useState('idle') // idle | loading | success | error
-    const [statusMsg, setStatusMsg] = useState('')
-    const [bookedInfo, setBookedInfo] = useState(null)
+  const [selectedPkg, setSelectedPkg] = useState('standard')
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    gotra: '',
+    date: '',
+    time: '',
+    message: '',
+  })
+  const [availability, setAvailability] = useState(null)
+  const [status, setStatus] = useState('idle') // idle | loading | success | error
+  const [statusMsg, setStatusMsg] = useState('')
+  const [bookedInfo, setBookedInfo] = useState(null)
 
-    // Fetch availability whenever date changes
-    useEffect(() => {
-        if (!form.date) { setAvailability(null); return }
-        fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
-            .then(r => r.json())
-            .then(data => setAvailability(data))
-            .catch(() => setAvailability(null))
-    }, [form.date])
+  useEffect(() => {
+    document.body.classList.add('dw-page-active')
+    return () => document.body.classList.remove('dw-page-active')
+  }, [])
 
-    const handleChange = e => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-        if (status !== 'idle') { setStatus('idle'); setStatusMsg('') }
+  useEffect(() => {
+    if (!form.date) {
+      setAvailability(null)
+      return
+    }
+    fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
+      .then(r => r.json())
+      .then(data => setAvailability(data))
+      .catch(() => setAvailability(null))
+  }, [form.date])
+
+  const handleChange = e => {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    if (status !== 'idle') {
+      setStatus('idle')
+      setStatusMsg('')
+    }
+  }
+
+  const isTimeConflict = time => {
+    if (!availability || !time) return false
+    return availability.bookedTimeWindows?.some(({ start, end }) => {
+      const toMin = t => {
+        const [h, m] = t.split(':').map(Number)
+        return h * 60 + m
+      }
+      const chosen = toMin(time)
+      return chosen >= toMin(start) && chosen < toMin(end)
+    })
+  }
+
+  const timeHint = useMemo(() => {
+    if (!availability) return null
+    if (!availability.available) return { type: 'error', msg: 'No puja slots available for this date. Please choose another date.' }
+    if (form.time && isTimeConflict(form.time)) return { type: 'error', msg: 'This time is within a locked slot. Please choose a time outside locked windows.' }
+    return { type: 'ok', msg: `${availability.remainingSlots} slot(s) remaining today.` }
+  }, [availability, form.time])
+
+  const handleSubmit = async e => {
+    e.preventDefault()
+    if (!form.name || !form.email || !form.phone || !form.date || !form.time) {
+      setStatus('error')
+      setStatusMsg('Please fill all required fields.')
+      return
+    }
+    if (isTimeConflict(form.time)) {
+      setStatus('error')
+      setStatusMsg('Your chosen time conflicts with an existing booking. Please pick another slot.')
+      return
     }
 
-    const isTimeConflict = (time) => {
-        if (!availability || !time) return false
-        return availability.bookedTimeWindows?.some(({ start, end }) => {
-            const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
-            const chosen = toMin(time)
-            return chosen >= toMin(start) && chosen < toMin(end)
-        })
+    const pkg = PACKAGES.find(p => p.id === selectedPkg)
+    setStatus('loading')
+    try {
+      const res = await fetch(`${API_BASE}/api/puja-bookings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pujaId: PUJA_ID,
+          pujaName: PUJA_NAME,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+          gotra: form.gotra,
+          bookingDate: form.date,
+          startTime: form.time,
+          package: selectedPkg,
+          amount: pkg?.price || 0,
+          message: form.message,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Booking failed.')
+      setStatus('success')
+      setStatusMsg(data.message)
+      setBookedInfo(data.booking)
+    } catch (err) {
+      setStatus('error')
+      setStatusMsg(err.message)
     }
+  }
 
-    const getTimeHint = () => {
-        if (!availability) return null
-        if (!availability.available) return { type: 'error', msg: 'No puja slots available for this date. Please choose another date.' }
-        if (form.time && isTimeConflict(form.time)) return { type: 'error', msg: `This time is within a locked slot. Please choose a time outside locked windows.` }
-        return { type: 'ok', msg: `${availability.remainingSlots} slot(s) remaining today.` }
-    }
+  const today = new Date().toISOString().split('T')[0]
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!form.name || !form.email || !form.phone || !form.date || !form.time) {
-            setStatus('error'); setStatusMsg('Please fill all required fields.'); return
-        }
-        if (isTimeConflict(form.time)) {
-            setStatus('error'); setStatusMsg('Your chosen time conflicts with an existing booking. Please pick another slot.'); return
-        }
-        const pkg = PACKAGES.find(p => p.id === selectedPkg)
+  const scrollToBooking = () => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })
+  const scrollToAbout = () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })
 
-        setStatus('loading')
-        try {
-            const res = await fetch(`${API_BASE}/api/puja-bookings`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pujaId: PUJA_ID,
-                    pujaName: PUJA_NAME,
-                    name: form.name, email: form.email, phone: form.phone,
-                    address: form.address, gotra: form.gotra,
-                    bookingDate: form.date, startTime: form.time,
-                    package: selectedPkg, amount: pkg.price,
-                    message: form.message,
-                }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Booking failed.')
-            setStatus('success')
-            setStatusMsg(data.message)
-            setBookedInfo(data.booking)
-        } catch (err) {
-            setStatus('error')
-            setStatusMsg(err.message)
-        }
-    }
-
-    const hint = getTimeHint()
-    const today = new Date().toISOString().split('T')[0]
-
-    return (
-        <div className="sp-page">
-
-            {/* ── Hero ── */}
-            <section
-                className="sp-hero"
-                style={{ '--sp-hero-image': `url(${heroImage})` }}
-                aria-label="Surya Puja — pandit offering arghya at sunrise by the river"
-            >
-                <div className="sp-hero-overlay">
-                    <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
-                    <h1>Diwali Pujas</h1>
-                    <p>[Hero description for Diwali Pujas will go here. This provides the primary benefits and calling.]</p>
-                    <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
-                </div>
-            </section>
-
-            {/* ── What is Surya Puja ── */}
-            <section className="sp-section sp-about">
-                <div className="sp-container">
-                    <div className="sp-label">Ancient Vedic Ritual</div>
-                    <h2>What is Diwali Pujas?</h2>
-                    <p>[Detailed description of what Diwali Pujas is, its Vedic significance, and the main deity or cosmic energy involved. Add specific context here later.]</p>
-                    <p>[Secondary paragraph detailing when it is traditionally performed and the historical references.]</p>
-                    <p>Surya Puja is traditionally performed at sunrise, facing east, on Sundays — the day governed by the Sun. It is particularly powerful during solar festivals like Chhath Puja, Makar Sankranti, and Ratha Saptami.</p>
-                </div>
-            </section>
-
-            {/* ── Why Perform ── */}
-            <section className="sp-section sp-why">
-                <div className="sp-container">
-                    <div className="sp-label">Purpose & Significance</div>
-                    <h2>Why Do People Perform Diwali Pujas?</h2>
-                    <div className="sp-why-grid">
-                        <div className="sp-why-card">
-                            <h4>🔴 [Reason 1]</h4>
-                            <p>[Specific astrologial or life problem addressed by this puja.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>🏛️ [Reason 2]</h4>
-                            <p>[Another significant reason devotees seek this specific cosmic intervention.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👁️ [Reason 3]</h4>
-                            <p>[Health, mental, or physical conditions targeted by the ritual.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>💼 [Reason 4]</h4>
-                            <p>[Career, business, or prosperity-related obstacles removed.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👨‍👧 [Reason 5]</h4>
-                            <p>[Relationship, family, or ancestral benefits granted.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>⚡ [Reason 6]</h4>
-                            <p>[Dasha, transit or timing-specific amplifications of the puja's effects.]</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Benefits ── */}
-            <section className="sp-section sp-benefits">
-                <div className="sp-container">
-                    <div className="sp-label">Divine Blessings</div>
-                    <h2>Benefits of Diwali Pujas</h2>
-                    <div className="sp-benefits-grid">
-                        {BENEFITS.map((b, i) => (
-                            <div key={i} className="sp-benefit-card">
-                                <div className="sp-benefit-icon">{b.icon}</div>
-                                <h4>{b.title}</h4>
-                                {b.desc.includes('|') ? (
-                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
-                                        <p>{b.desc.split('|')[0].trim()}</p>
-                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
-                                    </div>
-                                ) : (
-                                    <p>{b.desc}</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Process ── */}
-            <section className="sp-section sp-process">
-                <div className="sp-container">
-                    <div className="sp-label">How It Works</div>
-                    <h2>Puja Process</h2>
-                    <div className="sp-stairs">
-                        {[
-                            { num: 1, icon: '🧘', title: 'Sankalp',          sub: 'Setting the sacred intention & devotee details' },
-                            { num: 2, icon: '🙏', title: 'Avahana',          sub: 'Invocation of Lord Surya with Vedic mantras' },
-                            { num: 3, icon: '🌸', title: 'Shodashopachar',   sub: '16 sacred offerings — flowers, dhoop, diya & more' },
-                            { num: 4, icon: '📖', title: 'Aditya Hridayam',  sub: 'Chanting of the powerful Surya hymn from Ramayana' },
-                            { num: 5, icon: '🔥', title: 'Havan / Ahuti',    sub: 'Sacred fire ritual with Surya-specific oblations' },
-                            { num: 6, icon: '💧', title: 'Surya Arghya',     sub: 'Offering water to the rising Sun (Arghya ritual)' },
-                            { num: 7, icon: '🎁', title: 'Aarti & Prasad',   sub: 'Divine blessings, aarti & prasad dispatched to you' },
-                        ].map((s, i) => (
-                            <div key={s.num} className="sp-stair" style={{ '--i': i }}>
-                                <div className="sp-stair-num">{s.num}</div>
-                                <div className="sp-stair-icon">{s.icon}</div>
-                                <div className="sp-stair-text">
-                                    <span className="sp-stair-title">{s.title}</span>
-                                    <span className="sp-stair-sub">{s.sub}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Pricing ── */}
-            <section className="sp-section sp-pricing" id="booking">
-                <div className="sp-container">
-                    <div className="sp-label">Choose Your Package</div>
-                    <h2>Puja Packages & Pricing</h2>
-                    <div className="sp-packages">
-                        {PACKAGES.map(pkg => (
-                            <div
-                                key={pkg.id}
-                                className={`sp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
-                                onClick={() => setSelectedPkg(pkg.id)}
-                            >
-                                {pkg.popular && <div className="sp-popular-badge">Most Popular</div>}
-                                <h3>{pkg.name}</h3>
-                                <div className="sp-price">
-                                    <span className="sp-price-currency">₹</span>
-                                    <span className="sp-price-amount">{pkg.price.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div className="sp-duration">⏱ {pkg.duration}</div>
-                                <ul className="sp-features">
-                                    {pkg.features.map((f, i) => <li key={i}><FiCheck /> {f}</li>)}
-                                </ul>
-                                <div className={`sp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
-                                    {selectedPkg === pkg.id ? '✓ Selected' : 'Select Package'}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Booking Form ── */}
-            <section className="sp-section sp-booking-section">
-                <div className="sp-container">
-                    <div className="sp-label">Book Your Slot</div>
-                    <h2>Fill Booking Details</h2>
-
-                    {status === 'success' ? (
-                        <div className="sp-success-card">
-                            <div className="sp-success-icon"><FiCheck /></div>
-                            <h3>Puja Booked Successfully! 🙏</h3>
-                            <p>{statusMsg}</p>
-                            {bookedInfo && (
-                                <div className="sp-booking-summary">
-                                    <p><strong>Date:</strong> {bookedInfo.bookingDate}</p>
-                                    <p><strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime} (slot locked)</p>
-                                    <p><strong>Status:</strong> {bookedInfo.status}</p>
-                                </div>
-                            )}
-                            <p className="sp-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
-                        </div>
-                    ) : (
-                        <form className="sp-form" onSubmit={handleSubmit}>
-                            <div className="sp-form-grid">
-                                <div className="sp-form-group">
-                                    <label><FiUser /> Full Name *</label>
-                                    <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiMail /> Email Address *</label>
-                                    <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiPhone /> Phone Number *</label>
-                                    <input name="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiMapPin /> Address / City</label>
-                                    <input name="address" placeholder="Your city or full address" value={form.address} onChange={handleChange} />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label>Gotra (Family Lineage)</label>
-                                    <input name="gotra" placeholder="e.g. Kashyap, Bharadwaj (optional)" value={form.gotra} onChange={handleChange} />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiCalendar /> Puja Date *</label>
-                                    <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
-                                    {availability && (
-                                        <div className={`sp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
-                                            {availability.available
-                                                ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
-                                                : `No slots available for this date`}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiClock /> Preferred Start Time *</label>
-                                    <input name="time" type="time" value={form.time} onChange={handleChange} required
-                                        min="05:00" max="19:00" step="1800" />
-                                    {hint && (
-                                        <div className={`sp-hint ${hint.type}`}>
-                                            {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
-                                        </div>
-                                    )}
-                                    <p className="sp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
-                                </div>
-                                <div className="sp-form-group sp-full-width">
-                                    <label><FiMessageSquare /> Special Message / Wishes</label>
-                                    <textarea name="message" rows={3} placeholder="Any specific wish, health issue, or prayer intention..." value={form.message} onChange={handleChange} />
-                                </div>
-                            </div>
-
-                            <div className="sp-form-summary">
-                                <span>Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong></span>
-                                <span>Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></span>
-                            </div>
-
-                            {status === 'error' && (
-                                <div className="sp-error-msg"><FiAlertCircle /> {statusMsg}</div>
-                            )}
-
-                            <button type="submit" className="sp-submit-btn" disabled={status === 'loading'}>
-                                {status === 'loading' ? <><FiLoader className="sp-spin" /> Processing...</> : '🙏 Confirm Puja Booking'}
-                            </button>
-                        </form>
-                    )}
-                </div>
-            </section>
-
+  return (
+    <div className="dw-page">
+      {/* HERO */}
+      <section className="dw-hero" aria-label="Diwali Lakshmi Puja Hero">
+        <div className="dw-hero-bg">
+          <img src={heroImg} alt="Goddess Lakshmi puja with pandit and family during Diwali" className="dw-hero-img" />
+          <div className="dw-hero-overlay" />
+          <div className="dw-hero-overlay-2" />
         </div>
-    )
+
+        <div className="dw-sparkles" aria-hidden="true" />
+        <div className="dw-aura" aria-hidden="true" />
+
+        <div className="dw-container dw-hero-inner">
+          <div className="dw-hero-badge">Diwali Special 2025</div>
+          <h1 className="dw-hero-title">
+            <span>Diwali</span>
+            <span className="dw-hero-title-accent">Lakshmi Puja</span>
+          </h1>
+          <p className="dw-hero-quote">"Invite wealth, prosperity, and divine blessings into your home this Diwali."</p>
+
+          <div className="dw-hero-cta">
+            <button type="button" className="dw-btn dw-btn-primary" onClick={scrollToBooking}>
+              Book This Puja Now
+            </button>
+            <button type="button" className="dw-link" onClick={scrollToAbout}>
+              Learn More
+            </button>
+          </div>
+
+          <div className="dw-trust-strip" aria-label="Trust Indicators">
+            <span>Verified Pandits</span>
+            <span className="dw-dot">•</span>
+            <span>1000+ Pujas</span>
+            <span className="dw-dot">•</span>
+            <span>100% Authentic</span>
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT IS THIS PUJA */}
+      <section id="about" className="dw-section dw-about">
+        <div className="dw-container dw-about-inner">
+          <div className="dw-divider">
+            <span className="dw-divider-line" />
+            <span className="dw-divider-label">The Sacred Tradition</span>
+            <span className="dw-divider-line" />
+          </div>
+
+          <h2 className="dw-h2">
+            What is <span className="dw-gold">Lakshmi Puja</span>?
+          </h2>
+          <p className="dw-lead">
+            On the night of Diwali, families across India light diyas, draw rangolis and welcome
+            <span className="dw-strong"> Goddess Lakshmi</span> — the giver of wealth, prosperity and well-being — into their homes.
+            Performed alongside <span className="dw-strong">Lord Ganesha</span>, the remover of obstacles, this puja is a heartfelt invitation for
+            abundance, harmony and divine grace to settle in your life for the year ahead.
+          </p>
+          <p className="dw-muted-italic">
+            A tradition passed through generations — performed today by trusted Vedic pandits at your home.
+          </p>
+        </div>
+      </section>
+
+      {/* WHY PEOPLE PERFORM */}
+      <section className="dw-section dw-why">
+        <div className="dw-why-dots" aria-hidden="true" />
+        <div className="dw-container">
+          <div className="dw-center">
+            <div className="dw-divider">
+              <span className="dw-divider-line" />
+              <span className="dw-divider-label">The Reason</span>
+              <span className="dw-divider-line" />
+            </div>
+            <h2 className="dw-h2">Why families perform this puja</h2>
+            <p className="dw-sub">More than ritual — it is a moment of intention, gratitude and renewal.</p>
+          </div>
+
+          <div className="dw-grid dw-grid-2">
+            {REASONS.map((r, i) => (
+              <div key={i} className="dw-card dw-reason-card">
+                <div className="dw-card-orb" aria-hidden="true" />
+                <div className="dw-reason-icon" aria-hidden="true" />
+                <div>
+                  <h3 className="dw-h3">{r.title}</h3>
+                  <p className="dw-p">{r.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS */}
+      <section className="dw-section dw-benefits">
+        <div className="dw-benefits-bg" style={{ backgroundImage: `url(${diyasRow})` }} aria-hidden="true" />
+        <div className="dw-container">
+          <div className="dw-center">
+            <div className="dw-divider dw-divider-invert">
+              <span className="dw-divider-line" />
+              <span className="dw-divider-label">The Blessings</span>
+              <span className="dw-divider-line" />
+            </div>
+            <h2 className="dw-h2 dw-invert">
+              Benefits of <span className="dw-shimmer">Lakshmi Puja</span>
+            </h2>
+            <p className="dw-sub dw-sub-invert">Spiritual grace and tangible transformation in your everyday life.</p>
+          </div>
+
+          <div className="dw-grid dw-grid-3">
+            {BENEFITS.map((b, i) => (
+              <div key={i} className="dw-benefit-card">
+                <div className="dw-benefit-icon" aria-hidden="true" />
+                <h3 className="dw-h3 dw-h3-invert">{b.title}</h3>
+                <p className="dw-p dw-p-invert">{b.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PROCESS */}
+      <section className="dw-section dw-process">
+        <div className="dw-container">
+          <div className="dw-process-grid">
+            <div className="dw-process-image-wrap">
+              <div className="dw-process-glow" aria-hidden="true" />
+              <img src={samagriImg} alt="Authentic puja samagri arranged on brass thali" className="dw-process-img" loading="lazy" />
+              <div className="dw-process-badge">
+                <p className="dw-process-badge-kicker">Authentic</p>
+                <p className="dw-process-badge-title">Samagri Kit</p>
+                <p className="dw-process-badge-sub">Sourced from Varanasi</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="dw-divider">
+                <span className="dw-divider-line" />
+                <span className="dw-divider-label">The Process</span>
+                <span className="dw-divider-line" />
+              </div>
+              <h2 className="dw-h2">
+                Performed with <span className="dw-gold">authenticity</span>
+              </h2>
+              <p className="dw-sub">A six-step Vedic ceremony, conducted exactly as the shastras prescribe.</p>
+
+              <div className="dw-steps">
+                {STEPS.map((s, i) => (
+                  <div key={i} className="dw-step">
+                    <div className="dw-step-n">{s.n}</div>
+                    <div className="dw-step-line">
+                      <div className="dw-step-content">
+                        <h3 className="dw-step-title">{s.title}</h3>
+                        <p className="dw-step-text">{s.text}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PACKAGES */}
+      <section className="dw-section dw-packages">
+        <div className="dw-container">
+          <div className="dw-center">
+            <div className="dw-divider">
+              <span className="dw-divider-line" />
+              <span className="dw-divider-label">Choose Your Puja</span>
+              <span className="dw-divider-line" />
+            </div>
+            <h2 className="dw-h2">
+              Packages crafted for <span className="dw-gold">every devotee</span>
+            </h2>
+            <p className="dw-sub">Transparent pricing. No hidden costs. Authentic from start to finish.</p>
+          </div>
+
+          <div className="dw-grid dw-grid-3 dw-pack-grid">
+            {PACKAGES.map(p => (
+              <div
+                key={p.id}
+                className={`dw-pack-card ${p.popular ? 'is-popular' : ''} ${selectedPkg === p.id ? 'is-selected' : ''}`}
+                onClick={() => setSelectedPkg(p.id)}
+                role="button"
+                tabIndex={0}
+              >
+                {p.popular && <div className="dw-pack-chip">Most Chosen</div>}
+                <p className={`dw-pack-tagline ${p.popular ? 'invert' : ''}`}>{p.tagline}</p>
+                <h3 className={`dw-pack-name ${p.popular ? 'invert' : ''}`}>{p.name}</h3>
+                <div className="dw-pack-price">
+                  <span className={`dw-pack-currency ${p.popular ? 'invert' : ''}`}>₹</span>
+                  <span className={`dw-pack-amount ${p.popular ? 'invert' : ''}`}>{p.price.toLocaleString('en-IN')}</span>
+                </div>
+                <div className={`dw-pack-divider ${p.popular ? 'invert' : ''}`} />
+                <ul className={`dw-pack-features ${p.popular ? 'invert' : ''}`}>
+                  {p.features.map((f, i) => (
+                    <li key={i}>
+                      <FiCheck />
+                      <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" className={`dw-btn dw-btn-package ${p.popular ? 'is-gold' : ''}`} onClick={scrollToBooking}>
+                  Choose {p.name}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* BOOKING */}
+      <section id="booking" className="dw-section dw-booking">
+        <div className="dw-container dw-book-grid">
+          <div className="dw-book-info">
+            <div className="dw-divider dw-divider-invert">
+              <span className="dw-divider-line" />
+              <span className="dw-divider-label">Book Now</span>
+              <span className="dw-divider-line" />
+            </div>
+            <h2 className="dw-h2 dw-invert">
+              Reserve your <span className="dw-shimmer">divine</span> moment
+            </h2>
+            <p className="dw-sub dw-sub-invert">Slots fill quickly during Diwali. Confirm your puja with a verified pandit today.</p>
+
+            <div className="dw-book-image-wrap">
+              <img src={panditImg} alt="Verified Vedic pandit performing havan" className="dw-book-img" loading="lazy" />
+            </div>
+          </div>
+
+          <div className="dw-book-card">
+            {status === 'success' ? (
+              <div className="dw-success">
+                <div className="dw-success-icon">
+                  <FiCheck />
+                </div>
+                <h3>Puja Booked Successfully! 🙏</h3>
+                <p>{statusMsg}</p>
+                {bookedInfo && (
+                  <div className="dw-booking-summary">
+                    <p>
+                      <strong>Date:</strong> {bookedInfo.bookingDate}
+                    </p>
+                    <p>
+                      <strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime} (slot locked)
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {bookedInfo.status}
+                    </p>
+                  </div>
+                )}
+                <p className="dw-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
+              </div>
+            ) : (
+              <form className="dw-form" onSubmit={handleSubmit}>
+                <div className="dw-form-grid">
+                  <div className="dw-form-group">
+                    <label>
+                      <FiUser /> Full Name *
+                    </label>
+                    <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
+                  </div>
+                  <div className="dw-form-group">
+                    <label>
+                      <FiMail /> Email Address *
+                    </label>
+                    <input name="email" type="email" placeholder="you@email.com" value={form.email} onChange={handleChange} required />
+                  </div>
+                  <div className="dw-form-group">
+                    <label>
+                      <FiPhone /> Phone Number *
+                    </label>
+                    <input name="phone" type="tel" placeholder="+91 98xxxxxxxx" value={form.phone} onChange={handleChange} required />
+                  </div>
+                  <div className="dw-form-group">
+                    <label>
+                      <FiMapPin /> Address / City
+                    </label>
+                    <input name="address" placeholder="City, area" value={form.address} onChange={handleChange} />
+                  </div>
+                  <div className="dw-form-group">
+                    <label>Gotra (optional)</label>
+                    <input name="gotra" placeholder="e.g. Kashyap" value={form.gotra} onChange={handleChange} />
+                  </div>
+                  <div className="dw-form-group">
+                    <label>
+                      <FiCalendar /> Puja Date *
+                    </label>
+                    <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
+                    {availability && (
+                      <div className={`dw-avail ${availability.available ? 'ok' : 'full'}`}>
+                        {availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available for this date'}
+                      </div>
+                    )}
+                  </div>
+                  <div className="dw-form-group">
+                    <label>
+                      <FiClock /> Preferred Start Time *
+                    </label>
+                    <input name="time" type="time" value={form.time} onChange={handleChange} required min="05:00" max="19:00" step="1800" />
+                    {timeHint && (
+                      <div className={`dw-hint ${timeHint.type}`}>
+                        {timeHint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {timeHint.msg}
+                      </div>
+                    )}
+                    <p className="dw-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
+                  </div>
+                  <div className="dw-form-group dw-full">
+                    <label>
+                      <FiMessageSquare /> Special Message / Wishes
+                    </label>
+                    <textarea name="message" rows={3} placeholder="Share your intention for this puja..." value={form.message} onChange={handleChange} />
+                  </div>
+                </div>
+
+                <div className="dw-form-summary">
+                  <span>
+                    Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong>
+                  </span>
+                  <span>
+                    Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong>
+                  </span>
+                </div>
+
+                {status === 'error' && (
+                  <div className="dw-error">
+                    <FiAlertCircle /> {statusMsg}
+                  </div>
+                )}
+
+                <button type="submit" className="dw-btn dw-btn-submit" disabled={status === 'loading'}>
+                  {status === 'loading' ? (
+                    <>
+                      <FiLoader className="dw-spin" /> Processing...
+                    </>
+                  ) : (
+                    '🪔 Confirm Puja Booking'
+                  )}
+                </button>
+                <p className="dw-form-footnote">Our team will call you within 30 minutes to confirm.</p>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <footer className="dw-footer">
+        <div className="dw-container dw-center">
+          <div className="dw-footer-hi">शुभ दीपावली</div>
+          <p className="dw-footer-copy">© {new Date().getFullYear()} Divine Pujas — Performed with devotion, delivered with trust.</p>
+        </div>
+      </footer>
+    </div>
+  )
 }

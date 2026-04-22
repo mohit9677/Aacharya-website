@@ -1,4 +1,160 @@
-import { useState, useEffect } from 'react'
+import fs from 'node:fs'
+import path from 'node:path'
+
+const ROOT = 'D:/AstroBharatAI/AstroBharatAI aacharya website'
+const TARGET_DIR = path.join(ROOT, 'client/src/pages/pujas')
+const GUIDE_TXT = path.join(ROOT, '.tmp_sacred_puja_guide.txt')
+
+const targets = [
+  { file: 'LakshmiKuberaPujaPage.jsx', component: 'LakshmiKuberaPujaPage', pujaId: 'lakshmi-kubera-puja', heading: 'Lakshmi Kuber Puja' },
+  { file: 'GaneshPujaPage.jsx', component: 'GaneshPujaPage', pujaId: 'ganesh-puja', heading: 'Ganesh Puja' },
+  { file: 'BusinessGrowthPujaPage.jsx', component: 'BusinessGrowthPujaPage', pujaId: 'business-growth-puja', heading: 'Business Growth Puja' },
+  { file: 'CareerJobSuccessPujaPage.jsx', component: 'CareerJobSuccessPujaPage', pujaId: 'career-job-success-puja', heading: 'Career / Job / Success Puja' },
+  { file: 'DhanYogActivationPujaPage.jsx', component: 'DhanYogActivationPujaPage', pujaId: 'dhan-yog-activation-puja', heading: 'Dhan Yog Activation Puja' },
+  { file: 'FinancialStabilityPujaPage.jsx', component: 'FinancialStabilityPujaPage', pujaId: 'financial-stability-puja', heading: 'Financial Stability Puja' },
+]
+
+function trimLine(s) {
+  return (s ?? '').replace(/\s+/g, ' ').trim()
+}
+
+function readGuideLines() {
+  if (!fs.existsSync(GUIDE_TXT)) {
+    throw new Error(`Missing extracted guide text at ${GUIDE_TXT}. Re-extract sacred_puja_guide.docx first.`)
+  }
+  return fs
+    .readFileSync(GUIDE_TXT, 'utf8')
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+}
+
+function isPujaHeadingLine(line) {
+  // Example: "Lakshmi Kuber Puja   •   लक्ष्मी कुबेर पूजा"
+  return /\s•\s/.test(line) && !line.startsWith('✦') && !line.startsWith('●') && !line.startsWith('[')
+}
+
+function sliceSection(lines, headingEnglish) {
+  const startIdx = lines.findIndex((l) => l.startsWith(headingEnglish))
+  if (startIdx === -1) return null
+  let endIdx = lines.length
+  for (let i = startIdx + 1; i < lines.length; i++) {
+    if (isPujaHeadingLine(lines[i])) {
+      endIdx = i
+      break
+    }
+  }
+  return lines.slice(startIdx, endIdx)
+}
+
+function pullFirstQuotedMantra(lines) {
+  // Try to find something like: Chant ...: 'Om ...'
+  for (const l of lines) {
+    const m = l.match(/'([^']{10,200})'/)
+    if (m?.[1]) return trimLine(m[1])
+  }
+  return ''
+}
+
+function extractEnglishIntro(blockLines) {
+  // Prefer "✦ What Is This Puja?" -> "In English:" paragraphs
+  const out = []
+  let mode = null
+  for (const l of blockLines) {
+    if (l.startsWith('✦ What Is This Puja?')) mode = 'seek'
+    else if (mode === 'seek' && l === 'In English:') mode = 'collect'
+    else if (mode === 'collect') {
+      if (l === 'हिंदी में:' || l.startsWith('✦ ')) break
+      out.push(l)
+    }
+  }
+  const joined = trimLine(out.join(' '))
+  if (joined) return joined
+
+  // Fallback to "✦ About This Puja" English line(s)
+  const out2 = []
+  let mode2 = null
+  for (const l of blockLines) {
+    if (l.startsWith('✦ About This Puja')) mode2 = 'seek'
+    else if (mode2 === 'seek' && l.startsWith('● English')) mode2 = 'collect'
+    else if (mode2 === 'collect') {
+      if (l.startsWith('● Hindi') || l.startsWith('✦ ')) break
+      out2.push(l)
+    }
+  }
+  return trimLine(out2.join(' '))
+}
+
+function extractWhy(blockLines) {
+  const out = []
+  let inWhy = false
+  for (const l of blockLines) {
+    if (l.startsWith('✦ Why Do People Perform This Puja?')) inWhy = true
+    else if (inWhy && l.startsWith('✦ ')) break
+    else if (inWhy && l.startsWith('[EN]')) out.push(trimLine(l.replace(/^\[EN\]\s*/, '')))
+  }
+  return out
+}
+
+function extractBenefits(blockLines) {
+  const out = []
+  let inBen = false
+  for (const l of blockLines) {
+    if (l.startsWith('✦ Benefits of This Puja')) inBen = true
+    else if (inBen && l.startsWith('✦ ')) break
+    else if (inBen && l.startsWith('[EN]')) out.push(trimLine(l.replace(/^\[EN\]\s*/, '')))
+  }
+  return out
+}
+
+function extractProcess(blockLines) {
+  const out = []
+  let inProc = false
+  for (const l of blockLines) {
+    if (l.startsWith('✦ Puja Process')) inProc = true
+    else if (inProc && l.startsWith('✦ ')) break
+    else if (inProc && !l.startsWith('[HI]') && !l.startsWith('[EN]')) out.push(trimLine(l))
+  }
+  return out
+}
+
+function toJsArray(value) {
+  return JSON.stringify(value, null, 2)
+}
+
+function makeBenefitObjects(benefitLines) {
+  // Convert guide benefit lines into {title, desc} best-effort.
+  // If no clear split, create generic titles.
+  return benefitLines.slice(0, 6).map((line, idx) => {
+    const m = line.match(/^(.*?)[—:-]\s+(.*)$/)
+    if (m) return { title: trimLine(m[1]), desc: trimLine(m[2]) }
+    return { title: `Benefit ${idx + 1}`, desc: line }
+  })
+}
+
+function makeProcessObjects(processLines) {
+  // Use first 6-7 lines as steps.
+  const lines = processLines.filter(Boolean)
+  const trimmed = lines.slice(0, 7)
+  return trimmed.map((l) => {
+    // if sentence has " - " split, else keep as sub
+    const m = l.match(/^(.*?)[—:-]\s+(.*)$/)
+    if (m) return { title: trimLine(m[1]), sub: trimLine(m[2]) }
+    // keep shorter title
+    const title = l.split('.').slice(0, 1).join('.').slice(0, 48)
+    return { title: trimLine(title) || 'Step', sub: l }
+  })
+}
+
+function inferHeroPieces(pujaName) {
+  // Split on last word for gold gradient word.
+  const parts = pujaName.split(' ')
+  if (parts.length <= 1) return { a: pujaName, b: '' }
+  return { a: parts.slice(0, -1).join(' '), b: parts.at(-1) }
+}
+
+function pageSource(cfg) {
+  return `import { useState, useEffect } from 'react'
 import {
   FiUser,
   FiPhone,
@@ -21,22 +177,22 @@ import pujaImage from '../../assets/puja/pandit-aarti.png'
 import mandalaImage from '../../assets/puja/mangal-yantra.png'
 import './LakshmiPraptiStyle.css'
 
-const PUJA_ID = 'business-growth-puja'
-const PUJA_NAME = 'Business Growth Puja'
-const MANTRA = "Om Hreem Shreem Lakshmibhayo Namaha"
+const PUJA_ID = '${cfg.pujaId}'
+const PUJA_NAME = '${cfg.pujaName}'
+const MANTRA = ${JSON.stringify(cfg.mantra || '')}
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 const PACKAGES = [
   {
     id: 'basic',
-    name: 'Saral Business Growth Puja',
+    name: 'Saral ${cfg.pujaName}',
     price: 5100,
     duration: '1.5 hours',
     features: ['Sankalp and core mantra path', 'Basic samagri and puja setup', 'Aarti and prasad blessing', 'Online participation support'],
   },
   {
     id: 'standard',
-    name: 'Shubh Business Growth Puja',
+    name: 'Shubh ${cfg.pujaName}',
     price: 11100,
     duration: '3 hours',
     features: ['Everything in Saral package', 'Extended mantra japa', 'Havan with focused ahutis', 'Personalized intention sankalp', 'Prasad dispatch support'],
@@ -44,79 +200,18 @@ const PACKAGES = [
   },
   {
     id: 'premium',
-    name: 'Divya Business Growth Puja Anushthan',
+    name: 'Divya ${cfg.pujaName} Anushthan',
     price: 21100,
     duration: '5-6 hours',
     features: ['Complete Vedic anushthan', 'Advanced mantra and ritual sequence', 'Expanded havan process', 'Personalized chart-aware remedies', 'Priority pandit support'],
   },
 ]
 
-const REASONS = [
-  "Business owners facing stagnant sales, poor footfall, or lack of client leads perform this puja to attract fresh customers, revive revenue streams, and reignite commercial momentum.",
-  "Entrepreneurs entering new markets, launching products, or expanding to new locations perform this puja to receive cosmic support and ensure their expansion is divinely blessed.",
-  "Companies recovering from financial losses, bad partnerships, or economic setbacks perform this ritual to rebuild energy, restore trust, and attract profitable opportunities.",
-  "Traders and shop owners perform this puja on the shop's anniversary or at the start of a new financial year to energetically reset and amplify their commercial fortune.",
-  "Online businesses and startups perform this puja to align digital growth with cosmic prosperity, improving visibility, conversions, and brand recognition across competitive markets.",
-  "Business partners and investors perform this puja jointly to create a sacred energetic bond that ensures long-term loyalty, mutual growth, and a divinely blessed commercial partnership."
-]
-const BENEFITS = [
-  {
-    "title": "Benefit 1",
-    "desc": "Dramatically increases customer footfall, sales conversions, and overall business revenue through divine energetic alignment."
-  },
-  {
-    "title": "Benefit 2",
-    "desc": "Creates a powerful positive aura around your business premises that naturally attracts high-value clients and partners."
-  },
-  {
-    "title": "Benefit 3",
-    "desc": "Protects business from bad debts, unfair competitors, legal disputes, and financial fraud with divine intervention."
-  },
-  {
-    "title": "Benefit 4",
-    "desc": "Improves team harmony, leadership clarity, and decision-making abilities for faster and more confident business growth."
-  },
-  {
-    "title": "Benefit 5",
-    "desc": "Opens new doors to contracts, government tenders, international deals, and unexpected profitable opportunities."
-  },
-  {
-    "title": "Benefit 6",
-    "desc": "Builds a powerful reputation and goodwill in the market, making your business the most trusted and preferred choice."
-  }
-]
-const PROCESS = [
-  {
-    "title": "Perform the puja at the business premises or main cash counter",
-    "sub": "ideally on a Thursday or on Akshaya Tritiya."
-  },
-  {
-    "title": "Clean the entire business space and sprinkle Gan",
-    "sub": "Clean the entire business space and sprinkle Ganga Jal to energetically purify and prepare the environment."
-  },
-  {
-    "title": "Set up the altar with idols of Lord Ganesha, God",
-    "sub": "Set up the altar with idols of Lord Ganesha, Goddess Lakshmi, and a Vyapar Vridhi Yantra."
-  },
-  {
-    "title": "Light 5 ghee lamps and dhoop, offering fragrance",
-    "sub": "Light 5 ghee lamps and dhoop, offering fragrance and divine light to create a sacred business atmosphere."
-  },
-  {
-    "title": "Offer yellow flowers, turmeric, saffron, cowrie",
-    "sub": "Offer yellow flowers, turmeric, saffron, cowrie shells, and a handful of grains symbolising abundance."
-  },
-  {
-    "title": "Chant the Vyapar Vridhi Mantra and Lakshmi Beej Mantra 108 times",
-    "sub": "'Om Hreem Shreem Lakshmibhayo Namaha'."
-  },
-  {
-    "title": "Perform a brief havan (fire ritual) with havan s",
-    "sub": "Perform a brief havan (fire ritual) with havan samagri and ghee, offering commerce-related items into the sacred fire."
-  }
-]
+const REASONS = ${toJsArray(cfg.reasons)}
+const BENEFITS = ${toJsArray(cfg.benefits)}
+const PROCESS = ${toJsArray(cfg.process)}
 
-export default function BusinessGrowthPujaPage() {
+export default function ${cfg.component}() {
   const [selectedPkg, setSelectedPkg] = useState('standard')
   const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
   const [availability, setAvailability] = useState(null)
@@ -126,7 +221,7 @@ export default function BusinessGrowthPujaPage() {
 
   useEffect(() => {
     if (!form.date) { setAvailability(null); return }
-    fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
+    fetch(\`\${API_BASE}/api/puja-bookings/availability?pujaId=\${PUJA_ID}&date=\${form.date}\`)
       .then(r => r.json())
       .then(data => setAvailability(data))
       .catch(() => setAvailability(null))
@@ -150,7 +245,7 @@ export default function BusinessGrowthPujaPage() {
     if (!availability) return null
     if (!availability.available) return { type: 'error', msg: 'No puja slots available for this date. Please choose another date.' }
     if (form.time && isTimeConflict(form.time)) return { type: 'error', msg: 'This time is within a locked slot. Please choose a time outside locked windows.' }
-    return { type: 'ok', msg: `${availability.remainingSlots} slot(s) remaining today.` }
+    return { type: 'ok', msg: \`\${availability.remainingSlots} slot(s) remaining today.\` }
   }
 
   const handleSubmit = async e => {
@@ -165,7 +260,7 @@ export default function BusinessGrowthPujaPage() {
 
     setStatus('loading')
     try {
-      const res = await fetch(`${API_BASE}/api/puja-bookings`, {
+      const res = await fetch(\`\${API_BASE}/api/puja-bookings\`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -201,13 +296,13 @@ export default function BusinessGrowthPujaPage() {
         <div className="lp-container lp-hero-grid">
           <div className="lp-hero-content">
             <span className="lp-pill"><GiSparkles /> Vedic Wealth Ritual</span>
-            <h1>Business Growth <span>Puja</span></h1>
+            <h1>${cfg.heroTitleA} <span>${cfg.heroTitleB}</span></h1>
             {MANTRA ? (
               <p className="lp-mantra">{MANTRA}</p>
             ) : (
               <p className="lp-mantra" style={{ opacity: 0.7 }}>ॐ शुभं भवतु</p>
             )}
-            <p className="lp-subtitle">Business Growth Puja is a specially designed Vedic ritual crafted to supercharge your commercial endeavours with divine blessings from multiple deities — primarily Lord Ganesha (remover of business obstacles), Goddess La…</p>
+            <p className="lp-subtitle">${cfg.subtitle}</p>
             <div className="lp-cta-row">
               <a href="#booking" className="lp-btn lp-btn-primary">Book Your Puja</a>
               <a href="#packages" className="lp-btn lp-btn-outline">View Packages</a>
@@ -220,7 +315,7 @@ export default function BusinessGrowthPujaPage() {
           </div>
           <div className="lp-hero-art">
             <div className="lp-glow" />
-            <img src={heroImage} alt="Business Growth Puja" />
+            <img src={heroImage} alt="${cfg.pujaName}" />
             <div className="lp-floating-card">
               <GiFlame />
               <div>
@@ -235,14 +330,14 @@ export default function BusinessGrowthPujaPage() {
       <section className="lp-section lp-about">
         <div className="lp-container lp-about-grid">
           <div className="lp-about-image-wrap">
-            <img src={pujaImage} alt="Business Growth Puja setup" className="lp-about-image" />
+            <img src={pujaImage} alt="${cfg.pujaName} setup" className="lp-about-image" />
             <div className="lp-about-badge">Authentic Vedic Vidhi</div>
           </div>
           <div className="lp-about-copy">
             <p className="lp-label">What is this puja?</p>
             <h2>The Sacred Ritual of <span>Prosperity</span></h2>
-            <p>Business Growth Puja is a specially designed Vedic ritual crafted to supercharge your commercial endeavours with divine blessings from multiple deities — primarily Lord Ganesha (remover of business obstacles), Goddess Lakshmi (provider of wealth), and Lord Vishnu (sustainer of business stability). This powerful puja is performed at the business premises or at a dedicated altar, with the intention of attracting more customers, increasing revenue, expanding market reach, and eliminating competitors' negative energies…</p>
-            <p>Why devotees perform it: Business owners facing stagnant sales, poor footfall, or lack of client leads perform this puja to attract fresh customers, revive revenue streams, and reignite commercial momentum.</p>
+            <p>${cfg.aboutP1}</p>
+            <p>${cfg.aboutP2}</p>
             <div className="lp-about-stats">
               <div><strong>5000+</strong><span>Devotees Blessed</span></div>
               <div><strong>15+ yrs</strong><span>Pandit Experience</span></div>
@@ -307,7 +402,7 @@ export default function BusinessGrowthPujaPage() {
             {PACKAGES.map(pkg => (
               <div
                 key={pkg.id}
-                className={`lp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
+                className={\`lp-package-card \${selectedPkg === pkg.id ? 'selected' : ''} \${pkg.popular ? 'popular' : ''}\`}
                 onClick={() => setSelectedPkg(pkg.id)}
               >
                 {pkg.popular && <div className="lp-popular-badge">Most Popular</div>}
@@ -320,7 +415,7 @@ export default function BusinessGrowthPujaPage() {
                 <ul className="lp-features">
                   {pkg.features.map((f, i) => <li key={i}><FiCheck /> {f}</li>)}
                 </ul>
-                <div className={`lp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
+                <div className={\`lp-select-btn \${selectedPkg === pkg.id ? 'active' : ''}\`}>
                   {selectedPkg === pkg.id ? '✓ Selected' : 'Select Package'}
                 </div>
               </div>
@@ -375,8 +470,8 @@ export default function BusinessGrowthPujaPage() {
                   <label><FiCalendar /> Puja Date *</label>
                   <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
                   {availability && (
-                    <div className={`lp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
-                      {availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available for this date'}
+                    <div className={\`lp-avail-badge \${availability.available ? 'ok' : 'full'}\`}>
+                      {availability.available ? \`\${availability.remainingSlots}/\${availability.totalSlots} slots available\` : 'No slots available for this date'}
                     </div>
                   )}
                 </div>
@@ -384,7 +479,7 @@ export default function BusinessGrowthPujaPage() {
                   <label><FiClock /> Preferred Start Time *</label>
                   <input name="time" type="time" value={form.time} onChange={handleChange} required min="05:00" max="19:00" step="1800" />
                   {hint && (
-                    <div className={`lp-hint ${hint.type}`}>
+                    <div className={\`lp-hint \${hint.type}\`}>
                       {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
                     </div>
                   )}
@@ -415,3 +510,38 @@ export default function BusinessGrowthPujaPage() {
     </div>
   )
 }
+`
+}
+const guideLines = readGuideLines()
+
+for (const t of targets) {
+  const block = sliceSection(guideLines, t.heading)
+  if (!block) throw new Error(`Could not find section for "${t.heading}" in guide text`)
+
+  const pujaName = trimLine(block[0].split('•')[0])
+  const hero = inferHeroPieces(pujaName)
+  const why = extractWhy(block)
+  const benLines = extractBenefits(block)
+  const procLines = extractProcess(block)
+  const longIntro = extractEnglishIntro(block)
+  const mantra = pullFirstQuotedMantra(procLines) || pullFirstQuotedMantra(block)
+
+  const cfg = {
+    ...t,
+    pujaName,
+    heroTitleA: hero.a,
+    heroTitleB: hero.b || 'Puja',
+    mantra,
+    subtitle: longIntro ? longIntro.slice(0, 220) + (longIntro.length > 220 ? '…' : '') : `Book ${pujaName} performed by Vedic pandits for authentic blessings.`,
+    aboutP1: longIntro ? longIntro.slice(0, 520) + (longIntro.length > 520 ? '…' : '') : `Learn the meaning and significance of ${pujaName}.`,
+    aboutP2: why[0] ? `Why devotees perform it: ${why[0]}` : 'Performed with devotion and correct vidhi, this puja aligns your intentions with divine grace.',
+    reasons: why.length ? why.slice(0, 6) : ['Remove obstacles', 'Attract blessings', 'Improve stability', 'Enhance growth', 'Protect outcomes', 'Create peace'],
+    benefits: makeBenefitObjects(benLines),
+    process: makeProcessObjects(procLines),
+  }
+
+  const outPath = path.join(TARGET_DIR, t.file)
+  fs.writeFileSync(outPath, pageSource(cfg), 'utf8')
+  console.log(`updated ${t.file} from sacred_puja_guide`)
+}
+
