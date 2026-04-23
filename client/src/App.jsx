@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import HomePage from './pages/HomePage'
@@ -88,10 +88,15 @@ import KarwaChauthPujaPage from './pages/pujas/KarwaChauthPujaPage';
 import FloatingChatbot from './components/FloatingChatbot'
 
 function App() {
+    const { pathname } = useLocation()
+    const standalonePujaRoutes = new Set([
+    ])
+    const isStandalonePuja = standalonePujaRoutes.has(pathname)
+
     return (
         <AuthProvider>
-            <Navbar />
-            <FloatingChatbot />
+            {!isStandalonePuja && <Navbar />}
+            {!isStandalonePuja && <FloatingChatbot />}
             <main>
                 <Routes>
                     <Route path="/" element={<HomePage />} />
@@ -177,7 +182,7 @@ function App() {
                 </Routes>
             </main>
 
-            <Footer />
+            {!isStandalonePuja && <Footer />}
         </AuthProvider>
     )
 }

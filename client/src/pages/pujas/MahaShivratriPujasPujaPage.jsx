@@ -1,357 +1,390 @@
-import { useState, useEffect } from 'react'
-import { GiSunrise, GiFlame, GiHealing, GiCoins, GiShield, GiScrollUnfurled } from 'react-icons/gi'
-import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/all_puja_bg.webp';
-import './GenericPujaPage.css'
-
-const PUJA_ID = 'maha-shivratri-pujas-puja'
-const PUJA_NAME = 'Maha Shivratri Pujas'
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+import { useEffect, useState } from "react";
+import { Award, Check, Flame, HeartHandshake, ShieldCheck, Sparkles, Moon, Users, Flower2 } from "lucide-react";
+import { FiUser, FiPhone, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck } from "react-icons/fi";
+import { toast } from "react-hot-toast";
+import "./MahaShivratriFestivalStyle.css";
+import heroImg from "../../assets/puja/shiva-hero.jpg";
+import ritualImg from "../../assets/puja/shiva-ritual.jpg";
+import samagriImg from "../../assets/puja/shiva-samagri.jpg";
 
 const PACKAGES = [
-    {
-        id: 'basic',
-        name: 'Sadharan Puja',
-        price: 1100,
-        duration: '45 min',
-        features: ['Surya Arghya ritual', 'Aditya Hridayam recitation', 'Personal Sankalp', 'Prasad dispatch'],
-    },
-    {
-        id: 'standard',
-        name: 'Vishesh Puja',
-        price: 2100,
-        duration: '90 min',
-        features: ['All Basic features', 'Surya Namaskar Mantra (108x)', 'Havan with Surya Ahuti', 'Rudraksha energisation', 'Video recording'],
-        popular: true,
-    },
-    {
-        id: 'premium',
-        name: 'Maha Surya Puja',
-        price: 5100,
-        duration: '3 hours',
-        features: ['All Standard features', 'Navgraha Shanti', 'Surya Yantra energisation', 'Individual online participation', 'Kundli-specific remedies', 'Post-puja consultation'],
-    },
-]
+  {
+    id: "basic",
+    name: "Basic",
+    tag: "Sacred Start",
+    price: 2100,
+    features: [
+      "1 verified pandit",
+      "Rudrabhishek (60 mins)",
+      "108 Om Namah Shivaya jaap",
+      "Sankalp in your name and gotra",
+      "Digital prasad photo",
+    ],
+  },
+  {
+    id: "standard",
+    name: "Standard",
+    tag: "Most Chosen",
+    price: 5100,
+    featured: true,
+    features: [
+      "2 verified pandits",
+      "Rudrabhishek + Laghu Havan",
+      "1008 Mahamrityunjaya jaap",
+      "Family sankalp and blessings",
+      "Live video of complete puja",
+      "Prasad courier",
+    ],
+  },
+  {
+    id: "premium",
+    name: "Premium",
+    tag: "Maha Seva",
+    price: 11100,
+    features: [
+      "4 senior Vedic pandits",
+      "Maha Rudrabhishek and Havan",
+      "11 mala Mahamrityunjaya chant",
+      "Bhasma and Bilva special offering",
+      "HD recording + consultation",
+      "Rudraksha and prasad courier",
+    ],
+  },
+];
+
+const REASONS = [
+  { icon: Moon, title: "Powerful Night", text: "Maha Shivratri is considered the most spiritually charged night for Shiva upasana." },
+  { icon: ShieldCheck, title: "Protection", text: "Seek protection from fear, negativity, and life obstacles through sacred mantras." },
+  { icon: HeartHandshake, title: "Family Harmony", text: "Pray for health, peace, and unity in family and marriage." },
+  { icon: Sparkles, title: "Spiritual Growth", text: "Deepen meditation and inner transformation through Vedic rituals." },
+];
 
 const BENEFITS = [
-    { icon: <GiFlame />, title: 'Health & Vitality', desc: 'Surya Puja strengthens the immune system, eyesight, and overall physical vitality. It protects against chronic illness.' },
-    { icon: <GiCoins />, title: 'Career & Success', desc: 'Worshipping the Sun blesses devotees with leadership qualities, government favour, and professional recognition.' },
-    { icon: <GiShield />, title: 'Removes Obstacles', desc: 'Neutralises malefic Sun placements in the horoscope, removes delays in work, legal matters, and reputation issues.' },
-    { icon: <GiHealing />, title: 'Mental Clarity', desc: 'Brings confidence, willpower, self-respect, and clarity of thought. Removes depression and lack of direction.' },
-    { icon: <GiScrollUnfurled />, title: 'Spiritual Growth', desc: 'The Sun represents the Atma (soul). Surya Puja accelerates self-realisation and connects the devotee to divine light.' },
-    { icon: <GiSunrise />, title: 'Family Harmony', desc: 'Improves father–child relationships and brings blessings of elders, ancestors, and authority figures in life.' },
-]
+  { title: "Karma Shuddhi", text: "Rudrabhishek helps cleanse accumulated karmic burden." },
+  { title: "Health & Longevity", text: "Mahamrityunjaya mantra is chanted for healing and long life." },
+  { title: "Mental Peace", text: "Shiva sadhana reduces stress and creates inner calm." },
+  { title: "Career Stability", text: "Blessings are sought for focus, growth, and removal of delays." },
+  { title: "Marital Balance", text: "Auspicious for marital harmony and emotional bonding." },
+  { title: "Divine Grace", text: "Invokes Shiva kripa for overall spiritual and material balance." },
+];
+
+const PROCESS = [
+  { n: "01", title: "Sankalp", text: "Pandit takes your name, gotra, and puja intention." },
+  { n: "02", title: "Ganesh & Kalash Sthapana", text: "Ritual begins with Vighnaharta invocation and kalash setup." },
+  { n: "03", title: "Rudrabhishek", text: "Shivling abhishek with milk, curd, honey, ghee, and Gangajal." },
+  { n: "04", title: "Bilva Archana", text: "Sacred Bilva leaves offered with Shiva mantras." },
+  { n: "05", title: "Mahamrityunjaya Jaap", text: "Dedicated mantra chanting for health, peace, and protection." },
+  { n: "06", title: "Aarti & Ashirwad", text: "Final aarti, prasad, and blessing for your family." },
+];
 
 export default function MahaShivratriPujasPujaPage() {
-    const [selectedPkg, setSelectedPkg] = useState('standard')
-    const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
-    const [availability, setAvailability] = useState(null)
-    const [status, setStatus] = useState('idle') // idle | loading | success | error
-    const [statusMsg, setStatusMsg] = useState('')
-    const [bookedInfo, setBookedInfo] = useState(null)
+  const [selectedPkg, setSelectedPkg] = useState("standard");
+  const [done, setDone] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    gotra: "",
+    date: "",
+    time: "",
+    message: "",
+  });
 
-    // Fetch availability whenever date changes
-    useEffect(() => {
-        if (!form.date) { setAvailability(null); return }
-        fetch(`${API_BASE}/api/puja-bookings/availability?pujaId=${PUJA_ID}&date=${form.date}`)
-            .then(r => r.json())
-            .then(data => setAvailability(data))
-            .catch(() => setAvailability(null))
-    }, [form.date])
+  useEffect(() => {
+    document.body.classList.add("shiv-page-active");
+    return () => document.body.classList.remove("shiv-page-active");
+  }, []);
 
-    const handleChange = e => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
-        if (status !== 'idle') { setStatus('idle'); setStatusMsg('') }
+  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const today = new Date().toISOString().split("T")[0];
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.name || !form.phone || !form.date || !form.time) {
+      toast.error("Please fill all required fields.");
+      return;
     }
+    setDone(true);
+    toast.success("Booking received. Our team will contact you shortly.");
+  };
 
-    const isTimeConflict = (time) => {
-        if (!availability || !time) return false
-        return availability.bookedTimeWindows?.some(({ start, end }) => {
-            const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m }
-            const chosen = toMin(time)
-            return chosen >= toMin(start) && chosen < toMin(end)
-        })
-    }
+  const scrollToBooking = () => document.getElementById("booking")?.scrollIntoView({ behavior: "smooth" });
 
-    const getTimeHint = () => {
-        if (!availability) return null
-        if (!availability.available) return { type: 'error', msg: 'No puja slots available for this date. Please choose another date.' }
-        if (form.time && isTimeConflict(form.time)) return { type: 'error', msg: `This time is within a locked slot. Please choose a time outside locked windows.` }
-        return { type: 'ok', msg: `${availability.remainingSlots} slot(s) remaining today.` }
-    }
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!form.name || !form.email || !form.phone || !form.date || !form.time) {
-            setStatus('error'); setStatusMsg('Please fill all required fields.'); return
-        }
-        if (isTimeConflict(form.time)) {
-            setStatus('error'); setStatusMsg('Your chosen time conflicts with an existing booking. Please pick another slot.'); return
-        }
-        const pkg = PACKAGES.find(p => p.id === selectedPkg)
-
-        setStatus('loading')
-        try {
-            const res = await fetch(`${API_BASE}/api/puja-bookings`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    pujaId: PUJA_ID,
-                    pujaName: PUJA_NAME,
-                    name: form.name, email: form.email, phone: form.phone,
-                    address: form.address, gotra: form.gotra,
-                    bookingDate: form.date, startTime: form.time,
-                    package: selectedPkg, amount: pkg.price,
-                    message: form.message,
-                }),
-            })
-            const data = await res.json()
-            if (!res.ok) throw new Error(data.error || 'Booking failed.')
-            setStatus('success')
-            setStatusMsg(data.message)
-            setBookedInfo(data.booking)
-        } catch (err) {
-            setStatus('error')
-            setStatusMsg(err.message)
-        }
-    }
-
-    const hint = getTimeHint()
-    const today = new Date().toISOString().split('T')[0]
-
-    return (
-        <div className="sp-page">
-
-            {/* ── Hero ── */}
-            <section
-                className="sp-hero"
-                style={{ '--sp-hero-image': `url(${heroImage})` }}
-                aria-label="Surya Puja — pandit offering arghya at sunrise by the river"
-            >
-                <div className="sp-hero-overlay">
-                    <div className="sp-hero-badge"><GiSunrise /> Planet Puja</div>
-                    <h1>Maha Shivratri Pujas</h1>
-                    <p>[Hero description for Maha Shivratri Pujas will go here. This provides the primary benefits and calling.]</p>
-                    <a href="#booking" className="sp-hero-cta">Book Your Puja</a>
-                </div>
-            </section>
-
-            {/* ── What is Surya Puja ── */}
-            <section className="sp-section sp-about">
-                <div className="sp-container">
-                    <div className="sp-label">Ancient Vedic Ritual</div>
-                    <h2>What is Maha Shivratri Pujas?</h2>
-                    <p>[Detailed description of what Maha Shivratri Pujas is, its Vedic significance, and the main deity or cosmic energy involved. Add specific context here later.]</p>
-                    <p>[Secondary paragraph detailing when it is traditionally performed and the historical references.]</p>
-                    <p>Surya Puja is traditionally performed at sunrise, facing east, on Sundays — the day governed by the Sun. It is particularly powerful during solar festivals like Chhath Puja, Makar Sankranti, and Ratha Saptami.</p>
-                </div>
-            </section>
-
-            {/* ── Why Perform ── */}
-            <section className="sp-section sp-why">
-                <div className="sp-container">
-                    <div className="sp-label">Purpose & Significance</div>
-                    <h2>Why Do People Perform Maha Shivratri Pujas?</h2>
-                    <div className="sp-why-grid">
-                        <div className="sp-why-card">
-                            <h4>🔴 [Reason 1]</h4>
-                            <p>[Specific astrologial or life problem addressed by this puja.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>🏛️ [Reason 2]</h4>
-                            <p>[Another significant reason devotees seek this specific cosmic intervention.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👁️ [Reason 3]</h4>
-                            <p>[Health, mental, or physical conditions targeted by the ritual.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>💼 [Reason 4]</h4>
-                            <p>[Career, business, or prosperity-related obstacles removed.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>👨‍👧 [Reason 5]</h4>
-                            <p>[Relationship, family, or ancestral benefits granted.]</p>
-                        </div>
-                        <div className="sp-why-card">
-                            <h4>⚡ [Reason 6]</h4>
-                            <p>[Dasha, transit or timing-specific amplifications of the puja's effects.]</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Benefits ── */}
-            <section className="sp-section sp-benefits">
-                <div className="sp-container">
-                    <div className="sp-label">Divine Blessings</div>
-                    <h2>Benefits of Maha Shivratri Pujas</h2>
-                    <div className="sp-benefits-grid">
-                        {BENEFITS.map((b, i) => (
-                            <div key={i} className="sp-benefit-card">
-                                <div className="sp-benefit-icon">{b.icon}</div>
-                                <h4>{b.title}</h4>
-                                {b.desc.includes('|') ? (
-                                    <div className="sp-translation-wrapper" style={{ flexDirection: 'column', gap: '0.6rem', marginBottom: 0 }}>
-                                        <p>{b.desc.split('|')[0].trim()}</p>
-                                        <p className="sp-hindi"><em>{b.desc.split('|')[1].trim()}</em></p>
-                                    </div>
-                                ) : (
-                                    <p>{b.desc}</p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Process ── */}
-            <section className="sp-section sp-process">
-                <div className="sp-container">
-                    <div className="sp-label">How It Works</div>
-                    <h2>Puja Process</h2>
-                    <div className="sp-stairs">
-                        {[
-                            { num: 1, icon: '🧘', title: 'Sankalp',          sub: 'Setting the sacred intention & devotee details' },
-                            { num: 2, icon: '🙏', title: 'Avahana',          sub: 'Invocation of Lord Surya with Vedic mantras' },
-                            { num: 3, icon: '🌸', title: 'Shodashopachar',   sub: '16 sacred offerings — flowers, dhoop, diya & more' },
-                            { num: 4, icon: '📖', title: 'Aditya Hridayam',  sub: 'Chanting of the powerful Surya hymn from Ramayana' },
-                            { num: 5, icon: '🔥', title: 'Havan / Ahuti',    sub: 'Sacred fire ritual with Surya-specific oblations' },
-                            { num: 6, icon: '💧', title: 'Surya Arghya',     sub: 'Offering water to the rising Sun (Arghya ritual)' },
-                            { num: 7, icon: '🎁', title: 'Aarti & Prasad',   sub: 'Divine blessings, aarti & prasad dispatched to you' },
-                        ].map((s, i) => (
-                            <div key={s.num} className="sp-stair" style={{ '--i': i }}>
-                                <div className="sp-stair-num">{s.num}</div>
-                                <div className="sp-stair-icon">{s.icon}</div>
-                                <div className="sp-stair-text">
-                                    <span className="sp-stair-title">{s.title}</span>
-                                    <span className="sp-stair-sub">{s.sub}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Pricing ── */}
-            <section className="sp-section sp-pricing" id="booking">
-                <div className="sp-container">
-                    <div className="sp-label">Choose Your Package</div>
-                    <h2>Puja Packages & Pricing</h2>
-                    <div className="sp-packages">
-                        {PACKAGES.map(pkg => (
-                            <div
-                                key={pkg.id}
-                                className={`sp-package-card ${selectedPkg === pkg.id ? 'selected' : ''} ${pkg.popular ? 'popular' : ''}`}
-                                onClick={() => setSelectedPkg(pkg.id)}
-                            >
-                                {pkg.popular && <div className="sp-popular-badge">Most Popular</div>}
-                                <h3>{pkg.name}</h3>
-                                <div className="sp-price">
-                                    <span className="sp-price-currency">₹</span>
-                                    <span className="sp-price-amount">{pkg.price.toLocaleString('en-IN')}</span>
-                                </div>
-                                <div className="sp-duration">⏱ {pkg.duration}</div>
-                                <ul className="sp-features">
-                                    {pkg.features.map((f, i) => <li key={i}><FiCheck /> {f}</li>)}
-                                </ul>
-                                <div className={`sp-select-btn ${selectedPkg === pkg.id ? 'active' : ''}`}>
-                                    {selectedPkg === pkg.id ? '✓ Selected' : 'Select Package'}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ── Booking Form ── */}
-            <section className="sp-section sp-booking-section">
-                <div className="sp-container">
-                    <div className="sp-label">Book Your Slot</div>
-                    <h2>Fill Booking Details</h2>
-
-                    {status === 'success' ? (
-                        <div className="sp-success-card">
-                            <div className="sp-success-icon"><FiCheck /></div>
-                            <h3>Puja Booked Successfully! 🙏</h3>
-                            <p>{statusMsg}</p>
-                            {bookedInfo && (
-                                <div className="sp-booking-summary">
-                                    <p><strong>Date:</strong> {bookedInfo.bookingDate}</p>
-                                    <p><strong>Time:</strong> {bookedInfo.startTime} – {bookedInfo.endTime} (slot locked)</p>
-                                    <p><strong>Status:</strong> {bookedInfo.status}</p>
-                                </div>
-                            )}
-                            <p className="sp-success-note">Our team will call you within 2 hours to confirm your slot and guide you through the virtual participation process.</p>
-                        </div>
-                    ) : (
-                        <form className="sp-form" onSubmit={handleSubmit}>
-                            <div className="sp-form-grid">
-                                <div className="sp-form-group">
-                                    <label><FiUser /> Full Name *</label>
-                                    <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiMail /> Email Address *</label>
-                                    <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiPhone /> Phone Number *</label>
-                                    <input name="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} required />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiMapPin /> Address / City</label>
-                                    <input name="address" placeholder="Your city or full address" value={form.address} onChange={handleChange} />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label>Gotra (Family Lineage)</label>
-                                    <input name="gotra" placeholder="e.g. Kashyap, Bharadwaj (optional)" value={form.gotra} onChange={handleChange} />
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiCalendar /> Puja Date *</label>
-                                    <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
-                                    {availability && (
-                                        <div className={`sp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
-                                            {availability.available
-                                                ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
-                                                : `No slots available for this date`}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="sp-form-group">
-                                    <label><FiClock /> Preferred Start Time *</label>
-                                    <input name="time" type="time" value={form.time} onChange={handleChange} required
-                                        min="05:00" max="19:00" step="1800" />
-                                    {hint && (
-                                        <div className={`sp-hint ${hint.type}`}>
-                                            {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
-                                        </div>
-                                    )}
-                                    <p className="sp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
-                                </div>
-                                <div className="sp-form-group sp-full-width">
-                                    <label><FiMessageSquare /> Special Message / Wishes</label>
-                                    <textarea name="message" rows={3} placeholder="Any specific wish, health issue, or prayer intention..." value={form.message} onChange={handleChange} />
-                                </div>
-                            </div>
-
-                            <div className="sp-form-summary">
-                                <span>Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong></span>
-                                <span>Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></span>
-                            </div>
-
-                            {status === 'error' && (
-                                <div className="sp-error-msg"><FiAlertCircle /> {statusMsg}</div>
-                            )}
-
-                            <button type="submit" className="sp-submit-btn" disabled={status === 'loading'}>
-                                {status === 'loading' ? <><FiLoader className="sp-spin" /> Processing...</> : '🙏 Confirm Puja Booking'}
-                            </button>
-                        </form>
-                    )}
-                </div>
-            </section>
-
+  return (
+    <div className="shiv-page">
+      <section className="shiv-hero">
+        <div className="shiv-hero-bg">
+          <img src={heroImg} alt="Maha Shivratri Puja with Lord Shiva" />
+          <div className="shiv-hero-overlay" />
+          <div className="shiv-moon-glow" aria-hidden="true" />
         </div>
-    )
+
+        <div className="shiv-container shiv-hero-inner">
+          <div className="shiv-pill">
+            <Sparkles size={16} /> <span>Maha Shivratri • Night of Shiva</span>
+          </div>
+          <p className="shiv-mantra">om namah shivaya</p>
+          <h1 className="shiv-h1">
+            Maha Shivratri <span>Puja</span>
+          </h1>
+          <p className="shiv-hero-p">
+            Perform authentic Vedic Maha Shivratri puja for protection, peace, and spiritual upliftment under the guidance of verified pandits.
+          </p>
+          <div className="shiv-hero-actions">
+            <button type="button" className="shiv-btn shiv-btn-gold" onClick={scrollToBooking}>
+              Book This Puja Now
+            </button>
+            <a className="shiv-link" href="#about">
+              Learn the ritual
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="shiv-section shiv-about">
+        <div className="shiv-container shiv-grid-2">
+          <div className="shiv-img-wrap">
+            <img src={ritualImg} alt="Rudrabhishek ritual for Maha Shivratri" className="shiv-img" loading="lazy" />
+          </div>
+          <div>
+            <div className="shiv-section-heading shiv-left">
+              <div className="shiv-eyebrow">About Maha Shivratri</div>
+              <h2 className="shiv-h2">
+                Actual significance of <span className="shiv-gold-text">Maha Shivratri Puja</span>
+              </h2>
+            </div>
+            <div className="shiv-copy">
+              <p>
+                Maha Shivratri is one of the most sacred festivals dedicated to Lord Shiva. It symbolizes spiritual awakening, discipline, and surrender to the divine.
+              </p>
+              <p>
+                Devotees observe vrat, perform night vigil, and offer Rudrabhishek to seek freedom from fear, inner negativity, and karmic burden.
+              </p>
+              <p>
+                This puja is especially performed for health, protection, family harmony, and progress in life while staying aligned with dharma.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="shiv-section shiv-reasons">
+        <div className="shiv-container">
+          <div className="shiv-section-heading">
+            <div className="shiv-eyebrow">Why This Puja</div>
+            <h2 className="shiv-h2">Why devotees perform Maha Shivratri Puja</h2>
+          </div>
+          <div className="shiv-reasons-grid">
+            {REASONS.map((item) => (
+              <div key={item.title} className="shiv-reason-card">
+                <div className="shiv-reason-icon">
+                  <item.icon size={26} />
+                </div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="shiv-section shiv-benefits">
+        <div className="shiv-container">
+          <div className="shiv-section-heading">
+            <div className="shiv-eyebrow">Blessings</div>
+            <h2 className="shiv-h2">
+              Key benefits of <span className="shiv-gold-text">Maha Shivratri</span>
+            </h2>
+          </div>
+          <div className="shiv-benefit-grid">
+            {BENEFITS.map((b) => (
+              <div key={b.title} className="shiv-benefit">
+                <div className="shiv-check">
+                  <Check size={18} strokeWidth={3} />
+                </div>
+                <div>
+                  <h3>{b.title}</h3>
+                  <p>{b.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="shiv-section shiv-process">
+        <div className="shiv-container">
+          <div className="shiv-section-heading">
+            <div className="shiv-eyebrow shiv-eyebrow-light">Ritual Process</div>
+            <h2 className="shiv-h2 shiv-light">
+              Step-by-step <span className="shiv-gold-text">Puja Vidhi</span>
+            </h2>
+          </div>
+          <div className="shiv-process-grid">
+            <div>
+              {PROCESS.map((step) => (
+                <div key={step.n} className="shiv-step">
+                  <div className="shiv-step-n">{step.n}</div>
+                  <div>
+                    <h3>{step.title}</h3>
+                    <p>{step.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="shiv-samagri-card">
+              <img src={samagriImg} alt="Maha Shivratri puja samagri setup" loading="lazy" />
+              <div className="shiv-samagri-chip">
+                <Flame size={18} /> <span>Authentic Samagri</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="shiv-section shiv-packages">
+        <div className="shiv-container">
+          <div className="shiv-section-heading">
+            <div className="shiv-eyebrow">Packages</div>
+            <h2 className="shiv-h2">
+              Choose your <span className="shiv-gold-text">Puja Seva</span>
+            </h2>
+          </div>
+          <div className="shiv-pack-grid">
+            {PACKAGES.map((p) => (
+              <div key={p.id} className={`shiv-pack ${p.featured ? "featured" : ""}`} onClick={() => setSelectedPkg(p.id)} role="button" tabIndex={0}>
+                {p.featured && <div className="shiv-chip">Most Chosen</div>}
+                <div className="shiv-center">
+                  <p className="shiv-pack-tag">{p.tag}</p>
+                  <h3 className="shiv-pack-name">{p.name}</h3>
+                  <div className="shiv-pack-price">
+                    <span>Rs</span>
+                    <span>{p.price.toLocaleString("en-IN")}</span>
+                  </div>
+                </div>
+                <div className="shiv-divider" />
+                <ul className="shiv-features">
+                  {p.features.map((f) => (
+                    <li key={f}>
+                      <Check size={16} strokeWidth={2.5} /> <span>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button type="button" className={`shiv-btn ${p.featured ? "shiv-btn-gold" : "shiv-btn-dark"}`} onClick={scrollToBooking}>
+                  Choose {p.name}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="booking" className="shiv-section shiv-booking">
+        <div className="shiv-container">
+          <div className="shiv-section-heading">
+            <div className="shiv-eyebrow">Book Now</div>
+            <h2 className="shiv-h2">
+              Reserve your <span className="shiv-gold-text">Maha Shivratri Puja</span>
+            </h2>
+          </div>
+          <div className="shiv-book-card">
+            {done ? (
+              <div className="shiv-success">
+                <div className="shiv-check" style={{ margin: "0 auto 10px" }}>
+                  <FiCheck size={18} />
+                </div>
+                <h3>Booking Submitted Successfully</h3>
+                <p>Our support team will call you shortly to confirm your selected package and slot.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <div className="shiv-form-grid">
+                  <div className="shiv-form-group">
+                    <label>
+                      <FiUser /> Full Name *
+                    </label>
+                    <input name="name" value={form.name} onChange={handleChange} placeholder="Your full name" required />
+                  </div>
+                  <div className="shiv-form-group">
+                    <label>
+                      <FiPhone /> Phone *
+                    </label>
+                    <input name="phone" value={form.phone} onChange={handleChange} placeholder="+91 98XXXXXXXX" required />
+                  </div>
+                  <div className="shiv-form-group">
+                    <label>
+                      <FiMapPin /> Address / City
+                    </label>
+                    <input name="address" value={form.address} onChange={handleChange} placeholder="City / Town" />
+                  </div>
+                  <div className="shiv-form-group">
+                    <label>Gotra (optional)</label>
+                    <input name="gotra" value={form.gotra} onChange={handleChange} placeholder="e.g. Kashyap" />
+                  </div>
+                  <div className="shiv-form-group">
+                    <label>
+                      <FiCalendar /> Puja Date *
+                    </label>
+                    <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
+                  </div>
+                  <div className="shiv-form-group">
+                    <label>
+                      <FiClock /> Preferred Time *
+                    </label>
+                    <input name="time" type="time" value={form.time} onChange={handleChange} required />
+                  </div>
+                  <div className="shiv-form-group shiv-full">
+                    <label>
+                      <FiMessageSquare /> Sankalp / Special Message
+                    </label>
+                    <textarea name="message" rows={3} value={form.message} onChange={handleChange} placeholder="Share your puja intention..." />
+                  </div>
+                  <div className="shiv-form-group shiv-full">
+                    <label>Selected Package</label>
+                    <input value={PACKAGES.find((p) => p.id === selectedPkg)?.name || ""} readOnly />
+                  </div>
+                </div>
+                <button type="submit" className="shiv-btn shiv-btn-gold" style={{ width: "100%", marginTop: 14 }}>
+                  Confirm Booking
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      <footer className="shiv-footer">
+        <div className="shiv-container">
+          <div className="shiv-footer-grid">
+            <div className="shiv-footer-card">
+              <div className="shiv-footer-badge">
+                <ShieldCheck size={30} />
+              </div>
+              <h3>Verified Pandits</h3>
+              <p>Experienced Vedic pandits trained in Shiva rituals and mantras.</p>
+            </div>
+            <div className="shiv-footer-card">
+              <div className="shiv-footer-badge">
+                <Users size={30} />
+              </div>
+              <h3>10,000+ Families</h3>
+              <p>Trusted by devotees across India for authentic puja experiences.</p>
+            </div>
+            <div className="shiv-footer-card">
+              <div className="shiv-footer-badge">
+                <Award size={30} />
+              </div>
+              <h3>100% Traditional</h3>
+              <p>No shortcuts - rituals are performed strictly per Vedic vidhi.</p>
+            </div>
+          </div>
+          <div className="shiv-footer-bottom">
+            <p>har har mahadev</p>
+            <small>may Lord Shiva bless all beings</small>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }
+
