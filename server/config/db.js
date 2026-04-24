@@ -3,7 +3,20 @@ const mongoose = require('mongoose');
 let retryTimer = null;
 let retryCount = 0;
 
+const getRetryDelayMs = () => {
+  const baseMs = Number(process.env.MONGO_RETRY_INTERVAL_MS || 5000);
+  const maxMs = Number(process.env.MONGO_RETRY_MAX_INTERVAL_MS || 60000);
+  const factor = Number(process.env.MONGO_RETRY_BACKOFF_FACTOR || 1.6);
+  const delay = Math.round(baseMs * Math.pow(factor, Math.max(retryCount - 1, 0)));
+  return Math.min(delay, maxMs);
+};
+
 const connectDB = async () => {
+  if (!process.env.MONGO_URI) {
+    console.warn('⚠️ MONGO_URI missing. Skipping MongoDB connection.');
+    return;
+  }
+
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
@@ -14,18 +27,16 @@ const connectDB = async () => {
     console.error(`❌ MongoDB Error: ${error.message}`);
     console.log(`⚠️ Continuing without database connection.`);
 
-    // Retry in background so the admin dashboard can recover automatically
-    const retryIntervalMs = Number(process.env.MONGO_RETRY_INTERVAL_MS || 5000);
-    const maxRetries = Number(process.env.MONGO_RETRY_MAX || 0); // 0 = infinite
+    const maxRetries = Number(process.env.MONGO_RETRY_MAX || 12);
     retryCount += 1;
 
     if (retryTimer) return;
-    if (maxRetries && retryCount > maxRetries) {
+    if (retryCount > maxRetries) {
       console.warn(`⚠️ MongoDB retry max reached (${maxRetries}). Will not retry further.`);
       return;
     }
 
-    console.warn(`🔁 Retrying MongoDB connection in ${retryIntervalMs}ms (attempt ${retryCount})...`);
+    const retryIntervalMs = getRetryDelayMs();
     retryTimer = setTimeout(async () => {
       retryTimer = null;
       try {
