@@ -18,9 +18,9 @@ import {
     FiAward,
 } from 'react-icons/fi'
 import { GiSparkles, GiFlame, GiLotus, GiReceiveMoney, GiDiamonds } from 'react-icons/gi'
-import heroImage from '../../assets/puja/hero-diya.png'
-import pujaImage from '../../assets/puja/pandit-aarti.png'
-import mandalaImage from '../../assets/puja/mangal-yantra.png'
+import heroImage from '../../assets/lakshami prapti.png'
+import pujaImage from '../../assets/puja/lakshmi-prapti-puja.png'
+import mandalaImage from '../../assets/puja/lakshmi-prapti-puja.png'
 import './LakshmiPraptiStyle.css'
 
 const PUJA_ID = 'lakshmi-prapti-puja'

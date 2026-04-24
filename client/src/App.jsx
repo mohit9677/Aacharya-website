@@ -29,7 +29,6 @@ import AIAstrologersPage from './pages/AIAstrologersPage'
 import LearningPage from './pages/LearningPage'
 import MandirPage from './pages/MandirPage'
 import MartPage from './pages/MartPage'
-import BookPujaPage from './pages/BookPujaPage'
 import SuryaPujaPage from './pages/SuryaPujaPage'
 import ChandraPujaPage from './pages/pujas/ChandraPujaPage';
 import MangalPujaPage from './pages/pujas/MangalPujaPage';
@@ -115,7 +114,6 @@ function App() {
                     <Route path="/learning" element={<LearningPage />} />
                     <Route path="/mandir" element={<MandirPage />} />
                     <Route path="/mart" element={<MartPage />} />
-                    <Route path="/book-puja" element={<BookPujaPage />} />
                     <Route path="/puja/surya-puja" element={<SuryaPujaPage />} />
               <Route path="/puja/chandra-puja" element={<ChandraPujaPage />} />
               <Route path="/puja/mangal-puja" element={<MangalPujaPage />} />
