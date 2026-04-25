@@ -16,9 +16,9 @@ import {
   FiAward,
 } from 'react-icons/fi'
 import { GiSparkles, GiFlame, GiLotus, GiReceiveMoney } from 'react-icons/gi'
-import heroImage from '../../assets/puja/hero-diya.png'
-import pujaImage from '../../assets/puja/pandit-aarti.png'
-import mandalaImage from '../../assets/puja/mangal-yantra.png'
+import heroImage from '../../Marriage/ganesh puja.webp'
+import pujaImage from '../../Marriage/ganesh puja (2).webp'
+import mandalaImage from '../../Marriage/ganesh puja.webp'
 import './LakshmiPraptiStyle.css'
 
 const PUJA_ID = 'ganesh-puja'

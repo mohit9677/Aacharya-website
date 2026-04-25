@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/puja/hero-diya.png'
-import processImage from '../../assets/puja/pandit-aarti.png'
-import mandalaImage from '../../assets/puja/mangal-yantra.png'
+import heroImage from '../../Marriage/love marriage.webp'
+import processImage from '../../Marriage/love marriage (2).webp'
+import mandalaImage from '../../Marriage/love marriage.webp'
 import './VivahPujaStyle.css'
 
 const PUJA_ID = 'love-marriage-puja'

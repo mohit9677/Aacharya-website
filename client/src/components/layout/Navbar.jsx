@@ -240,7 +240,7 @@ export default function Navbar() {
 
         if (bgImage) {
             return {
-                backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.55)), url(${bgImage})`,
+                backgroundImage: `url(${bgImage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
@@ -443,9 +443,15 @@ export default function Navbar() {
             <NavLink to="/mart" className={({ isActive }) => `mobile-tab-link ${isActive ? 'active' : ''}`}>
                 Digital Mart
             </NavLink>
-            <NavLink to="/book-puja" className={({ isActive }) => `mobile-tab-link ${isActive ? 'active' : ''}`}>
+            <button
+                className={`mobile-tab-link ${isPujaOpen ? 'active' : ''}`}
+                onClick={() => {
+                    setIsOpen(true)
+                    setIsPujaOpen((prev) => !prev)
+                }}
+            >
                 Book Puja
-            </NavLink>
+            </button>
         </nav>
 
         <ComingSoonModal isOpen={showComingSoon} onClose={() => setShowComingSoon(false)} />

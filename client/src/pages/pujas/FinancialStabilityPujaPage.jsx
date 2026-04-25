@@ -16,9 +16,9 @@ import {
   FiAward,
 } from 'react-icons/fi'
 import { GiSparkles, GiFlame, GiLotus, GiReceiveMoney } from 'react-icons/gi'
-import heroImage from '../../assets/financial stability.png'
-import pujaImage from '../../assets/puja/financial.png'
-import mandalaImage from '../../assets/puja/financial.png'
+import heroImage from '../../Marriage/financial stability.webp'
+import pujaImage from '../../Marriage/business.webp'
+import mandalaImage from '../../Marriage/job.webp'
 import './LakshmiPraptiStyle.css'
 
 const PUJA_ID = 'financial-stability-puja'

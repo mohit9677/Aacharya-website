@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Briefcase, Users, Shield, Sparkles, Flame, Check, Loader2, AlertCircle } from 'lucide-react';
 
-import heroImg from '../../assets/puja/hero-diya.png';
-import yantraImg from '../../assets/puja/mangal-yantra.png';
-import havanImg from '../../assets/puja/havan-kund.png';
+import heroImg from '../../Marriage/libra.webp';
+import yantraImg from '../../Marriage/libra (2).webp';
+import havanImg from '../../Marriage/libra (3).webp';
 import './MeshPujaStyle.css';
 
 const PUJA_ID   = 'tula-puja';

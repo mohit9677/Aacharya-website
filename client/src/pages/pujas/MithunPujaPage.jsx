@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Briefcase, Users, Shield, Sparkles, Flame, Check, Loader2, AlertCircle } from 'lucide-react';
 
-import heroImg from '../../assets/puja/hero-diya.png';
-import yantraImg from '../../assets/puja/mangal-yantra.png';
-import havanImg from '../../assets/puja/havan-kund.png';
+import heroImg from '../../Marriage/gemini.webp';
+import yantraImg from '../../Marriage/gemini (2).webp';
+import havanImg from '../../Marriage/gemini (3).webp';
 import './MeshPujaStyle.css';
 
 const PUJA_ID   = 'mithun-puja';
