@@ -16,9 +16,9 @@ import {
   FiAward,
 } from 'react-icons/fi'
 import { GiSparkles, GiFlame, GiLotus, GiReceiveMoney } from 'react-icons/gi'
-import heroImage from '../../assets/financial stability.png'
-import pujaImage from '../../assets/puja/financial.png'
-import mandalaImage from '../../assets/puja/financial.png'
+import heroImage from '../../Marriage/financial stability.webp'
+import pujaImage from '../../Marriage/business.webp'
+import mandalaImage from '../../Marriage/job.webp'
 import './LakshmiPraptiStyle.css'
 
 const PUJA_ID = 'financial-stability-puja'
@@ -118,7 +118,27 @@ const PROCESS = [
 
 export default function FinancialStabilityPujaPage() {
   const [selectedPkg, setSelectedPkg] = useState('standard')
-  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    gender: 'male',
+    dateOfBirth: '',
+    timeOfBirth: '',
+    gotra: '',
+    fatherName: '',
+    birthPlace: '',
+    pinCode: '',
+    pujaPurpose: '',
+    fullAddress: '',
+    nearestLandmark: '',
+    sankalpPlace: '',
+    date: '',
+    time: '',
+    message: '',
+    agreeTerms: false,
+  })
+
   const [availability, setAvailability] = useState(null)
   const [status, setStatus] = useState('idle')
   const [statusMsg, setStatusMsg] = useState('')
@@ -133,7 +153,7 @@ export default function FinancialStabilityPujaPage() {
   }, [form.date])
 
   const handleChange = e => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
     if (status !== 'idle') { setStatus('idle'); setStatusMsg('') }
   }
 
@@ -171,10 +191,24 @@ export default function FinancialStabilityPujaPage() {
         body: JSON.stringify({
           pujaId: PUJA_ID,
           pujaName: PUJA_NAME,
-          name: form.name, email: form.email, phone: form.phone,
-          address: form.address, gotra: form.gotra,
-          bookingDate: form.date, startTime: form.time,
-          package: selectedPkg, amount: pkg.price,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          gender: form.gender,
+          dateOfBirth: form.dateOfBirth,
+          timeOfBirth: form.timeOfBirth,
+          gotra: form.gotra,
+          fatherName: form.fatherName,
+          birthPlace: form.birthPlace,
+          pinCode: form.pinCode,
+          pujaPurpose: form.pujaPurpose,
+          fullAddress: form.fullAddress,
+          nearestLandmark: form.nearestLandmark,
+          sankalpPlace: form.sankalpPlace,
+          bookingDate: form.date,
+          startTime: form.time,
+          package: selectedPkg,
+          amount: pkg?.price || 0,
           message: form.message,
         }),
       })
@@ -351,52 +385,100 @@ export default function FinancialStabilityPujaPage() {
           ) : (
             <form className="lp-form" onSubmit={handleSubmit}>
               <div className="lp-form-grid">
-                <div className="lp-form-group">
-                  <label><FiUser /> Full Name *</label>
-                  <input name="name" placeholder="Your full name" value={form.name} onChange={handleChange} required />
-                </div>
-                <div className="lp-form-group">
-                  <label><FiMail /> Email Address *</label>
-                  <input name="email" type="email" placeholder="you@email.com" value={form.email} onChange={handleChange} required />
-                </div>
-                <div className="lp-form-group">
-                  <label><FiPhone /> Phone Number *</label>
-                  <input name="phone" type="tel" placeholder="+91 98765 43210" value={form.phone} onChange={handleChange} required />
-                </div>
-                <div className="lp-form-group">
-                  <label><FiMapPin /> Address / City</label>
-                  <input name="address" placeholder="Your city or full address" value={form.address} onChange={handleChange} />
-                </div>
-                <div className="lp-form-group">
-                  <label>Gotra (optional)</label>
-                  <input name="gotra" placeholder="e.g. Kashyap" value={form.gotra} onChange={handleChange} />
-                </div>
-                <div className="lp-form-group">
-                  <label><FiCalendar /> Puja Date *</label>
-                  <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
-                  {availability && (
-                    <div className={`lp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
-                      {availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available for this date'}
-                    </div>
-                  )}
-                </div>
-                <div className="lp-form-group">
-                  <label><FiClock /> Preferred Start Time *</label>
-                  <input name="time" type="time" value={form.time} onChange={handleChange} required min="05:00" max="19:00" step="1800" />
-                  {hint && (
-                    <div className={`lp-hint ${hint.type}`}>
-                      {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
-                    </div>
-                  )}
-                  <p className="lp-time-note">⚠ Each booking locks a 5-hour window. Max 5 pujas per day.</p>
-                </div>
-                <div className="lp-form-group lp-full-width">
-                  <label><FiMessageSquare /> Special Message / Wishes</label>
-                  <textarea name="message" rows={3} value={form.message} onChange={handleChange} placeholder="Share your intention for this puja..." />
-                </div>
-              </div>
+                                <div className="lp-form-group">
+                                    <label><FiUser /> Full Name (Sankalp Person) *</label>
+                                    <input name="name" placeholder="Enter full name" value={form.name} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label><FiMail /> Email *</label>
+                                    <input name="email" type="email" placeholder="your@email.com" value={form.email} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label><FiPhone /> WhatsApp Number *</label>
+                                    <input name="phone" type="tel" placeholder="10-digit number" value={form.phone} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label>Gender *</label>
+                                    <select name="gender" value={form.gender} onChange={handleChange} required>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                                <div className="lp-form-group">
+                                    <label>Date of Birth *</label>
+                                    <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label><FiClock /> Time of Birth *</label>
+                                    <input name="timeOfBirth" type="time" value={form.timeOfBirth} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label>Gotra *</label>
+                                    <input name="gotra" placeholder="Enter your gotra" value={form.gotra} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label>Father's Name *</label>
+                                    <input name="fatherName" placeholder="Enter your father's name" value={form.fatherName} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label><FiMapPin /> Birth Place *</label>
+                                    <input name="birthPlace" placeholder="Birth place" value={form.birthPlace} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label><FiCalendar /> Preferred Puja Date *</label>
+                                    <input name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
+                                    {availability && (
+                                        <div className={`lp-avail-badge ${availability.available ? 'ok' : 'full'}`}>
+                                            {availability.available
+                                                ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
+                                                : 'No slots available for this date'}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="lp-form-group">
+                                    <label>Pin Code *</label>
+                                    <input name="pinCode" placeholder="6-digit pin code" value={form.pinCode} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group">
+                                    <label><FiClock /> Preferred Start Time *</label>
+                                    <input name="time" type="time" value={form.time} onChange={handleChange} required min="05:00" max="19:00" step="1800" />
+                                    {hint && (
+                                        <div className={`lp-hint ${hint.type}`}>
+                                            {hint.type === 'error' ? <FiAlertCircle /> : <FiCheck />} {hint.msg}
+                                        </div>
+                                    )}
+                                    <p className="lp-time-note">Each booking locks a 5-hour window. Max 5 pujas per day.</p>
+                                </div>
+                                <div className="lp-form-group lp-full-width">
+                                    <label>Puja Purpose *</label>
+                                    <textarea name="pujaPurpose" rows={2} placeholder="Describe the reason for this puja" value={form.pujaPurpose} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group lp-full-width">
+                                    <label>Full Address *</label>
+                                    <textarea name="fullAddress" rows={2} placeholder="House number, street, locality" value={form.fullAddress} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group lp-full-width">
+                                    <label>Nearest Landmark *</label>
+                                    <input name="nearestLandmark" placeholder="Nearest landmark" value={form.nearestLandmark} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group lp-full-width">
+                                    <label>Sankalp Place *</label>
+                                    <input name="sankalpPlace" placeholder="Enter sankalp place" value={form.sankalpPlace} onChange={handleChange} required />
+                                </div>
+                                <div className="lp-form-group lp-full-width">
+                                    <label><FiMessageSquare /> Special Message / Wishes</label>
+                                    <textarea name="message" rows={3} placeholder="Any extra information" value={form.message} onChange={handleChange} />
+                                </div>
+                                <div className="lp-form-group lp-full-width">
+                                    <label style={{ display:'flex', alignItems:'flex-start', gap:'10px' }}>
+                                        <input type="checkbox" name="agreeTerms" checked={form.agreeTerms} onChange={handleChange} required style={{ width:'auto', marginTop:'4px', flexShrink:0 }} />
+                                        <span>I agree to the Terms and Conditions and understand all puja bookings are non-refundable. *</span>
+                                    </label>
+                                </div>
+                            </div>
 
-              <div className="lp-form-summary">
+                            <div className="lp-form-summary">
                 <span>Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong></span>
                 <span>Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></span>
               </div>

@@ -95,7 +95,7 @@ export default function MahaShivratriPujasPujaPage() {
     return () => document.body.classList.remove("shiv-page-active");
   }, []);
 
-  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
   const today = new Date().toISOString().split("T")[0];
 
   const handleSubmit = (e) => {

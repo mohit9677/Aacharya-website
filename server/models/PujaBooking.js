@@ -9,8 +9,17 @@ const pujaBookingSchema = new mongoose.Schema({
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, lowercase: true, trim: true },
     phone: { type: String, required: true, trim: true },
-    address: { type: String, default: '', trim: true },
+    gender: { type: String, enum: ['male', 'female', 'other'], default: 'male' },
+    dateOfBirth: { type: String, default: '', trim: true },
+    timeOfBirth: { type: String, default: '', trim: true },
     gotra: { type: String, default: '', trim: true },       // Family lineage (optional)
+    fatherName: { type: String, default: '', trim: true },
+    birthPlace: { type: String, default: '', trim: true },
+    pinCode: { type: String, default: '', trim: true },
+    pujaPurpose: { type: String, default: '', trim: true },
+    fullAddress: { type: String, default: '', trim: true },
+    nearestLandmark: { type: String, default: '', trim: true },
+    sankalpPlace: { type: String, default: '', trim: true },
 
     // Booking slot
     bookingDate: { type: String, required: true },          // "YYYY-MM-DD" stored as string for easy daily queries

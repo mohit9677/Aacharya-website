@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { FiUser, FiPhone, FiMail, FiMapPin, FiCalendar, FiClock, FiMessageSquare, FiCheck, FiAlertCircle, FiLoader } from 'react-icons/fi'
-import heroImage from '../../assets/puja/hero-diya.png'
-import processImage from '../../assets/puja/pandit-aarti.png'
-import mandalaImage from '../../assets/puja/mangal-yantra.png'
+import heroImage from '../../Marriage/relationship.webp'
+import processImage from '../../Marriage/relationship (2).webp'
+import mandalaImage from '../../Marriage/relationship.webp'
 import './VivahPujaStyle.css'
 
 const PUJA_ID = 'relationship-healing-puja'
@@ -134,7 +134,27 @@ const WHY_PERFORM = [
 
 export default function RelationshipHealingPujaPage() {
   const [selectedPkg, setSelectedPkg] = useState('standard')
-  const [form, setForm] = useState({ name: '', email: '', phone: '', address: '', gotra: '', date: '', time: '', message: '' })
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    gender: 'male',
+    dateOfBirth: '',
+    timeOfBirth: '',
+    gotra: '',
+    fatherName: '',
+    birthPlace: '',
+    pinCode: '',
+    pujaPurpose: '',
+    fullAddress: '',
+    nearestLandmark: '',
+    sankalpPlace: '',
+    date: '',
+    time: '',
+    message: '',
+    agreeTerms: false,
+  })
+
   const [availability, setAvailability] = useState(null)
   const [status, setStatus] = useState('idle')
   const [statusMsg, setStatusMsg] = useState('')
@@ -149,7 +169,7 @@ export default function RelationshipHealingPujaPage() {
   }, [form.date])
 
   const handleChange = e => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
     if (status !== 'idle') { setStatus('idle'); setStatusMsg('') }
   }
 
@@ -187,10 +207,24 @@ export default function RelationshipHealingPujaPage() {
         body: JSON.stringify({
           pujaId: PUJA_ID,
           pujaName: PUJA_NAME,
-          name: form.name, email: form.email, phone: form.phone,
-          address: form.address, gotra: form.gotra,
-          bookingDate: form.date, startTime: form.time,
-          package: selectedPkg, amount: pkg.price,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          gender: form.gender,
+          dateOfBirth: form.dateOfBirth,
+          timeOfBirth: form.timeOfBirth,
+          gotra: form.gotra,
+          fatherName: form.fatherName,
+          birthPlace: form.birthPlace,
+          pinCode: form.pinCode,
+          pujaPurpose: form.pujaPurpose,
+          fullAddress: form.fullAddress,
+          nearestLandmark: form.nearestLandmark,
+          sankalpPlace: form.sankalpPlace,
+          bookingDate: form.date,
+          startTime: form.time,
+          package: selectedPkg,
+          amount: pkg?.price || 0,
           message: form.message,
         }),
       })
@@ -359,16 +393,26 @@ export default function RelationshipHealingPujaPage() {
           ) : (
             <form className="vp-form" onSubmit={handleSubmit}>
               <div className="vp-grid">
-                <label><FiUser /> Full Name *<input name="name" value={form.name} onChange={handleChange} required /></label>
-                <label><FiPhone /> Phone *<input name="phone" type="tel" value={form.phone} onChange={handleChange} required /></label>
-                <label><FiMail /> Email *<input name="email" type="email" value={form.email} onChange={handleChange} required /></label>
-                <label><FiMapPin /> Address / City<input name="address" value={form.address} onChange={handleChange} /></label>
-                <label>Gotra<input name="gotra" value={form.gotra} onChange={handleChange} /></label>
-                <label><FiCalendar /> Puja Date *<input name="date" type="date" min={today} value={form.date} onChange={handleChange} required /></label>
-                <label><FiClock /> Start Time *<input name="time" type="time" min="05:00" max="19:00" step="1800" value={form.time} onChange={handleChange} required /></label>
-                <label className="full"><FiMessageSquare /> Message<textarea name="message" rows={3} value={form.message} onChange={handleChange} /></label>
-              </div>
-              {availability && <p className={`vp-hint ${availability.available ? 'ok' : 'err'}`}>{availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available for this date'}</p>}
+                                <label><FiUser /> Full Name (Sankalp Person) *<input name="name" value={form.name} onChange={handleChange} required /></label>
+                                <label><FiPhone /> WhatsApp Number *<input name="phone" type="tel" value={form.phone} onChange={handleChange} required /></label>
+                                <label><FiMail /> Email *<input name="email" type="email" value={form.email} onChange={handleChange} required /></label>
+                                <label>Gender *<select name="gender" value={form.gender} onChange={handleChange} required><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></label>
+                                <label>Date of Birth *<input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} required /></label>
+                                <label><FiClock /> Time of Birth *<input name="timeOfBirth" type="time" value={form.timeOfBirth} onChange={handleChange} required /></label>
+                                <label>Gotra *<input name="gotra" value={form.gotra} onChange={handleChange} required /></label>
+                                <label>Father's Name *<input name="fatherName" value={form.fatherName} onChange={handleChange} required /></label>
+                                <label><FiMapPin /> Birth Place *<input name="birthPlace" value={form.birthPlace} onChange={handleChange} required /></label>
+                                <label><FiCalendar /> Puja Date *<input name="date" type="date" min={today} value={form.date} onChange={handleChange} required /></label>
+                                <label>Pin Code *<input name="pinCode" value={form.pinCode} onChange={handleChange} required /></label>
+                                <label><FiClock /> Start Time *<input name="time" type="time" min="05:00" max="19:00" step="1800" value={form.time} onChange={handleChange} required /></label>
+                                <label className="full">Puja Purpose *<textarea name="pujaPurpose" rows={2} value={form.pujaPurpose} onChange={handleChange} required /></label>
+                                <label className="full">Full Address *<textarea name="fullAddress" rows={2} value={form.fullAddress} onChange={handleChange} required /></label>
+                                <label className="full">Nearest Landmark *<input name="nearestLandmark" value={form.nearestLandmark} onChange={handleChange} required /></label>
+                                <label className="full">Sankalp Place *<input name="sankalpPlace" value={form.sankalpPlace} onChange={handleChange} required /></label>
+                                <label className="full"><FiMessageSquare /> Message<textarea name="message" rows={3} value={form.message} onChange={handleChange} /></label>
+                                <label className="full" style={{ display:'flex', alignItems:'flex-start', gap:'10px' }}><input type="checkbox" name="agreeTerms" checked={form.agreeTerms} onChange={handleChange} required style={{ width:'auto', marginTop:'4px', flexShrink:0 }} /><span>I agree to the Terms and Conditions and understand all puja bookings are non-refundable. *</span></label>
+                            </div>
+                            {availability && <p className={`vp-hint ${availability.available ? 'ok' : 'err'}`}>{availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available for this date'}</p>}
               {hint && <p className={`vp-hint ${hint.type === 'ok' ? 'ok' : 'err'}`}>{hint.msg}</p>}
               {status === 'error' && <div className="vp-error"><FiAlertCircle /> {statusMsg}</div>}
               <div className="vp-summary">Selected: <strong>{PACKAGES.find(p => p.id === selectedPkg)?.name}</strong> | Amount: <strong>₹{PACKAGES.find(p => p.id === selectedPkg)?.price.toLocaleString('en-IN')}</strong></div>

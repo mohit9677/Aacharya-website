@@ -64,14 +64,17 @@ exports.getAvailability = async (req, res, next) => {
 
 // ─────────────────────────────────────────────
 // POST /api/puja-bookings
-// Body: { pujaId, pujaName, name, email, phone, address, gotra,
+// Body: { pujaId, pujaName, name, email, phone, gender, dateOfBirth, timeOfBirth,
+//         gotra, fatherName, birthPlace, pinCode, pujaPurpose, fullAddress,
+//         nearestLandmark, sankalpPlace,
 //         bookingDate, startTime, package, amount, message }
 // ─────────────────────────────────────────────
 exports.createBooking = async (req, res, next) => {
     try {
         const {
             pujaId, pujaName,
-            name, email, phone, address, gotra,
+            name, email, phone, gender, dateOfBirth, timeOfBirth, gotra,
+            fatherName, birthPlace, pinCode, pujaPurpose, fullAddress, nearestLandmark, sankalpPlace,
             bookingDate, startTime,
             package: pkg, amount, message,
         } = req.body;
@@ -119,8 +122,17 @@ exports.createBooking = async (req, res, next) => {
         const newBooking = await PujaBooking.create({
             pujaId, pujaName,
             name, email, phone,
-            address: address || '',
+            gender: gender || 'male',
+            dateOfBirth: dateOfBirth || '',
+            timeOfBirth: timeOfBirth || '',
             gotra: gotra || '',
+            fatherName: fatherName || '',
+            birthPlace: birthPlace || '',
+            pinCode: pinCode || '',
+            pujaPurpose: pujaPurpose || '',
+            fullAddress: fullAddress || '',
+            nearestLandmark: nearestLandmark || '',
+            sankalpPlace: sankalpPlace || '',
             bookingDate,
             startTime,
             endTime,

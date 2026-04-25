@@ -443,7 +443,13 @@ export default function Navbar() {
             <NavLink to="/mart" className={({ isActive }) => `mobile-tab-link ${isActive ? 'active' : ''}`}>
                 Digital Mart
             </NavLink>
-            <button type="button" onClick={() => setIsPujaOpen(!isPujaOpen)} className="mobile-tab-link" style={{ border: 'none', background: 'transparent' }}>
+            <button
+                className={`mobile-tab-link ${isPujaOpen ? 'active' : ''}`}
+                onClick={() => {
+                    setIsOpen(true)
+                    setIsPujaOpen((prev) => !prev)
+                }}
+            >
                 Book Puja
             </button>
         </nav>
