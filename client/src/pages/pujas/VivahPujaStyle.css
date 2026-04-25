@@ -23,7 +23,13 @@
 .vp-hero-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(52, 22, 14, 0.5), rgba(52, 22, 14, 0.85)); }
 .vp-hero-content { position: relative; text-align: center; color: #faefe4; }
 .vp-dev { color: #efc877; font-size: 28px; margin: 0; }
-.vp-hero h1 { margin: 10px 0 0; font-size: clamp(2.8rem, 8vw, 6.2rem); line-height: 1.02; }
+.vp-hero h1 {
+  margin: 10px 0 0;
+  font-size: clamp(2.8rem, 8vw, 6.2rem);
+  line-height: 1.02;
+  color: #fff6e8;
+  text-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+}
 .vp-tagline { max-width: 760px; margin: 16px auto 0; font-size: clamp(1.05rem, 2vw, 1.45rem); color: #f3dcc4; }
 .vp-hero-actions { margin-top: 28px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .vp-btn { text-decoration: none; border-radius: 12px; padding: 11px 18px; font-weight: 700; }

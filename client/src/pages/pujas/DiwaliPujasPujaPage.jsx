@@ -107,7 +107,7 @@ export default function DiwaliPujasPujaPage() {
   }, [form.date])
 
   const handleChange = e => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
     if (status !== 'idle') {
       setStatus('idle')
       setStatusMsg('')
@@ -158,8 +158,17 @@ export default function DiwaliPujasPujaPage() {
           name: form.name,
           email: form.email,
           phone: form.phone,
-          address: form.address,
+          gender: form.gender,
+          dateOfBirth: form.dateOfBirth,
+          timeOfBirth: form.timeOfBirth,
           gotra: form.gotra,
+          fatherName: form.fatherName,
+          birthPlace: form.birthPlace,
+          pinCode: form.pinCode,
+          pujaPurpose: form.pujaPurpose,
+          fullAddress: form.fullAddress,
+          nearestLandmark: form.nearestLandmark,
+          sankalpPlace: form.sankalpPlace,
           bookingDate: form.date,
           startTime: form.time,
           package: selectedPkg,

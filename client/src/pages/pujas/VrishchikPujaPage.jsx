@@ -153,7 +153,26 @@ const fadeRight={ hidden: { opacity: 0, x: 24  }, show: { opacity: 1, x: 0 } };
 
 export default function VrishchikPujaPage() {
   const [selectedPkg, setSelectedPkg] = useState('vishesh');
-  const [form, setForm]               = useState({ name:'', email:'', phone:'', address:'', gotra:'', date:'', time:'', message:'' });
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    gender: 'male',
+    dateOfBirth: '',
+    timeOfBirth: '',
+    gotra: '',
+    fatherName: '',
+    birthPlace: '',
+    pinCode: '',
+    pujaPurpose: '',
+    fullAddress: '',
+    nearestLandmark: '',
+    sankalpPlace: '',
+    date: '',
+    time: '',
+    message: '',
+    agreeTerms: false,
+  })
   const [availability, setAvail]      = useState(null);
   const [status, setStatus]           = useState('idle'); // idle | loading | success | error
   const [statusMsg, setMsg]           = useState('');
@@ -166,7 +185,7 @@ export default function VrishchikPujaPage() {
   }, [form.date]);
 
   const handleChange = e => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
     if (status !== 'idle') { setStatus('idle'); setMsg(''); }
   };
 
@@ -188,8 +207,14 @@ export default function VrishchikPujaPage() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    if (!form.name||!form.email||!form.phone||!form.date||!form.time) {
-      setStatus('error'); setMsg('Please fill all required fields.'); return;
+    if (!form.name || !form.email || !form.phone || !form.date || !form.time) {
+      setStatus('error'); setStatusMsg('Please fill all required fields.'); return;
+    }
+    if (!form.dateOfBirth || !form.timeOfBirth || !form.gotra || !form.fatherName || !form.birthPlace || !form.pinCode || !form.pujaPurpose || !form.fullAddress || !form.nearestLandmark || !form.sankalpPlace) {
+      setStatus('error'); setStatusMsg('Please fill all required booking details.'); return;
+    }
+    if (!form.agreeTerms) {
+      setStatus('error'); setStatusMsg('Please accept terms and conditions to continue.'); return;
     }
     if (isConflict(form.time)) {
       setStatus('error'); setMsg('Your time conflicts with an existing booking.'); return;
@@ -201,11 +226,25 @@ export default function VrishchikPujaPage() {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
           pujaId:PUJA_ID, pujaName:PUJA_NAME,
-          name:form.name, email:form.email, phone:form.phone,
-          address:form.address, gotra:form.gotra,
-          bookingDate:form.date, startTime:form.time,
-          package:selectedPkg, amount:pkg.price,
-          message:form.message,
+          name: form.name,
+          email: form.email,
+          phone: form.phone,
+          gender: form.gender,
+          dateOfBirth: form.dateOfBirth,
+          timeOfBirth: form.timeOfBirth,
+          gotra: form.gotra,
+          fatherName: form.fatherName,
+          birthPlace: form.birthPlace,
+          pinCode: form.pinCode,
+          pujaPurpose: form.pujaPurpose,
+          fullAddress: form.fullAddress,
+          nearestLandmark: form.nearestLandmark,
+          sankalpPlace: form.sankalpPlace,
+          bookingDate: form.date,
+          startTime: form.time,
+          package: selectedPkg,
+          amount: pkg?.price || 0,
+          message: form.message,
         }),
       });
       const data = await res.json();
@@ -386,7 +425,26 @@ export default function VrishchikPujaPage() {
                       </div>
                     )}
                     <p className="mp-success__shubh">शुभं भवतु</p>
-                    <button className="mp-btn mp-btn--outline" style={{ marginTop:'2rem' }} onClick={() => { setForm({ name:'',email:'',phone:'',address:'',gotra:'',date:'',time:'',message:'' }); setStatus('idle'); }}>
+                    <button className="mp-btn mp-btn--outline" style={{ marginTop:'2rem' }} onClick={() => { setForm({
+                        name: '',
+                        email: '',
+                        phone: '',
+                        gender: 'male',
+                        dateOfBirth: '',
+                        timeOfBirth: '',
+                        gotra: '',
+                        fatherName: '',
+                        birthPlace: '',
+                        pinCode: '',
+                        pujaPurpose: '',
+                        fullAddress: '',
+                        nearestLandmark: '',
+                        sankalpPlace: '',
+                        date: '',
+                        time: '',
+                        message: '',
+                        agreeTerms: false,
+                      }); setStatus('idle'); }}>
                       Make Another Booking
                     </button>
                   </motion.div>
@@ -394,38 +452,85 @@ export default function VrishchikPujaPage() {
                   <motion.form key="form" onSubmit={handleSubmit} initial={{ opacity:1 }} exit={{ opacity:0 }} className="mp-form">
                     <div className="mp-form-row">
                       <div className="mp-form-group">
-                        <label className="mp-label" htmlFor="name">Full Name *</label>
-                        <input className="mp-input" id="name" name="name" value={form.name} onChange={handleChange} required placeholder="As per your janma kundali" />
+                        <label className="mp-label" htmlFor="name">Full Name (Sankalp Person) *</label>
+                        <input className="mp-input" id="name" name="name" value={form.name} onChange={handleChange} required />
                       </div>
                       <div className="mp-form-group">
-                        <label className="mp-label" htmlFor="phone">Phone Number *</label>
-                        <input className="mp-input" id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} required placeholder="+91 98XXXXXXXX" />
+                        <label className="mp-label" htmlFor="phone">WhatsApp Number *</label>
+                        <input className="mp-input" id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange} required />
                       </div>
                     </div>
-
                     <div className="mp-form-row">
                       <div className="mp-form-group">
-                        <label className="mp-label" htmlFor="email">Email Address *</label>
-                        <input className="mp-input" id="email" name="email" type="email" value={form.email} onChange={handleChange} required placeholder="you@example.com" />
+                        <label className="mp-label" htmlFor="email">Email *</label>
+                        <input className="mp-input" id="email" name="email" type="email" value={form.email} onChange={handleChange} required />
                       </div>
                       <div className="mp-form-group">
-                        <label className="mp-label" htmlFor="gotra">Gotra <span style={{ fontWeight:400, color:'hsl(10,20%,40%)' }}>(optional)</span></label>
-                        <input className="mp-input" id="gotra" name="gotra" value={form.gotra} onChange={handleChange} placeholder="Kashyap, Bharadwaj, etc." />
+                        <label className="mp-label" htmlFor="gender">Gender *</label>
+                        <select className="mp-input" id="gender" name="gender" value={form.gender} onChange={handleChange} required>
+                          <option value="male">Male</option>
+                          <option value="female">Female</option>
+                          <option value="other">Other</option>
+                        </select>
                       </div>
                     </div>
-
-                    <div className="mp-form-group">
-                      <label className="mp-label" htmlFor="address">Address / City</label>
-                      <input className="mp-input" id="address" name="address" value={form.address} onChange={handleChange} placeholder="City, State" />
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="dateOfBirth">Date of Birth *</label>
+                        <input className="mp-input" id="dateOfBirth" name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} required />
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="timeOfBirth">Time of Birth *</label>
+                        <input className="mp-input" id="timeOfBirth" name="timeOfBirth" type="time" value={form.timeOfBirth} onChange={handleChange} required />
+                      </div>
                     </div>
-
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="gotra">Gotra *</label>
+                        <input className="mp-input" id="gotra" name="gotra" value={form.gotra} onChange={handleChange} required />
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="fatherName">Father's Name *</label>
+                        <input className="mp-input" id="fatherName" name="fatherName" value={form.fatherName} onChange={handleChange} required />
+                      </div>
+                    </div>
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="birthPlace">Birth Place *</label>
+                        <input className="mp-input" id="birthPlace" name="birthPlace" value={form.birthPlace} onChange={handleChange} required />
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="pinCode">Pin Code *</label>
+                        <input className="mp-input" id="pinCode" name="pinCode" value={form.pinCode} onChange={handleChange} required />
+                      </div>
+                    </div>
+                    <div className="mp-form-group">
+                      <label className="mp-label" htmlFor="pujaPurpose">Puja Purpose *</label>
+                      <textarea className="mp-textarea" id="pujaPurpose" name="pujaPurpose" rows={2} value={form.pujaPurpose} onChange={handleChange} required />
+                    </div>
+                    <div className="mp-form-group">
+                      <label className="mp-label" htmlFor="fullAddress">Full Address *</label>
+                      <textarea className="mp-textarea" id="fullAddress" name="fullAddress" rows={2} value={form.fullAddress} onChange={handleChange} required />
+                    </div>
+                    <div className="mp-form-row">
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="nearestLandmark">Nearest Landmark *</label>
+                        <input className="mp-input" id="nearestLandmark" name="nearestLandmark" value={form.nearestLandmark} onChange={handleChange} required />
+                      </div>
+                      <div className="mp-form-group">
+                        <label className="mp-label" htmlFor="sankalpPlace">Sankalp Place *</label>
+                        <input className="mp-input" id="sankalpPlace" name="sankalpPlace" value={form.sankalpPlace} onChange={handleChange} required />
+                      </div>
+                    </div>
                     <div className="mp-form-row">
                       <div className="mp-form-group">
                         <label className="mp-label" htmlFor="date">Puja Date *</label>
                         <input className="mp-input" id="date" name="date" type="date" min={today} value={form.date} onChange={handleChange} required />
                         {availability && (
-                          <p className={`mp-avail ${availability.available?'mp-avail--ok':'mp-avail--full'}`}>
-                            {availability.available ? `${availability.remainingSlots}/${availability.totalSlots} slots available` : 'No slots available on this date'}
+                          <p className={`mp-avail ${availability.available ? 'mp-avail--ok' : 'mp-avail--full'}`}>
+                            {availability.available
+                              ? `${availability.remainingSlots}/${availability.totalSlots} slots available`
+                              : 'No slots available on this date'}
                           </p>
                         )}
                       </div>
@@ -433,28 +538,34 @@ export default function VrishchikPujaPage() {
                         <label className="mp-label" htmlFor="time">Start Time *</label>
                         <input className="mp-input" id="time" name="time" type="time" min="05:00" max="19:00" step="1800" value={form.time} onChange={handleChange} required />
                         {hint && (
-                          <p className={`mp-hint ${hint.ok?'mp-hint--ok':'mp-hint--err'}`}>
+                          <p className={`mp-hint ${hint.ok ? 'mp-hint--ok' : 'mp-hint--err'}`}>
                             {hint.ok ? <Check size={12}/> : <AlertCircle size={12}/>} {hint.msg}
                           </p>
                         )}
                       </div>
                     </div>
-
                     <div className="mp-form-group">
                       <label className="mp-label">Selected Package</label>
                       <div className="mp-pkg-picker">
                         {pkgList.map(p => (
-                          <button type="button" key={p.id} onClick={() => setSelectedPkg(p.id)} className={`mp-pkg-pick-btn${selectedPkg===p.id?' mp-pkg-pick-btn--active':''}`}>
+                          <button type="button" key={p.id}
+                            onClick={() => setSelectedPkg(p.id)}
+                            className={`mp-pkg-pick-btn${selectedPkg===p.id?' mp-pkg-pick-btn--active':''}`}>
                             <div className="mp-pkg-pick-name mp-serif">{p.name}</div>
                             <div className="mp-pkg-pick-price">{p.priceText}</div>
                           </button>
                         ))}
                       </div>
                     </div>
-
                     <div className="mp-form-group">
-                      <label className="mp-label" htmlFor="message">Your Sankalpa / Message <span style={{ fontWeight:400, color:'hsl(10,20%,40%)' }}>(optional)</span></label>
-                      <textarea className="mp-textarea" id="message" name="message" rows={3} value={form.message} onChange={handleChange} placeholder="Share the specific intention of your puja..." />
+                      <label className="mp-label" htmlFor="message">Additional Notes</label>
+                      <textarea className="mp-textarea" id="message" name="message" rows={3} value={form.message} onChange={handleChange} />
+                    </div>
+                    <div className="mp-form-group">
+                      <label className="mp-label" htmlFor="agreeTerms" style={{ display:'flex', gap:'8px', alignItems:'flex-start' }}>
+                        <input id="agreeTerms" name="agreeTerms" type="checkbox" checked={form.agreeTerms} onChange={handleChange} required style={{ marginTop:'4px' }} />
+                        <span>I agree to the Terms and Conditions and understand all puja bookings are non-refundable. *</span>
+                      </label>
                     </div>
 
                     {status==='error' && (

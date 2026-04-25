@@ -228,6 +228,23 @@ select {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
+/* Keep terms checkbox compact and aligned on every puja form */
+input[name="agreeTerms"] {
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  max-width: 16px !important;
+  padding: 0 !important;
+  margin-top: 4px !important;
+  margin-right: 8px !important;
+  flex: 0 0 16px !important;
+  vertical-align: top;
+}
+
+label input[name="agreeTerms"] + span {
+  display: inline-block;
+}
+
 input:focus,
 textarea:focus,
 select:focus {

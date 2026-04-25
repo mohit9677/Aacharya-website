@@ -95,7 +95,7 @@ export default function SaraswatiPujaPage() {
   }, []);
 
   const today = new Date().toISOString().split("T")[0];
-  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e) => setForm((prev) => ({ ...prev, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
 
   const handleSubmit = (e) => {
     e.preventDefault();
